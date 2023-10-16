@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- 引入 Vant 的样式表 -->
+    <link rel="stylesheet" href="/static/vant.min.css" />
+
+    <!-- 引入 Vue 和 Vant 的 JS 文件 -->
+    <script src="/static/vue3.min.js"></script>
+    <script src="/static/vant.min.js"></script>
+
+    <!-- 使用 meta 标签设置移动端的显示参数，禁止缩放 -->
+    <meta charset="UTF-8" name="viewport" content="width=device-width,user-scalable=no,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0" />
+    <title>Python Libs Dependency Graph</title>
+    	<style>
+		a{text-decoration:none}
+		a:hover{color:blue,text-decoration:none}
+		a:visited{color:black,text-decoration:none}
+		a:link{color:black,text-decoration:none}
+		a:active{color:black,text-decoration:none}
+	</style>
+    <style>
+			.node {
+			  stroke: #fff;
+			  stroke-width: 1px;
+			  opacity: 0.7;
+			}
+			.link {
+			  stroke: #999;
+			  stroke-opacity: .7;
+			}
+
+			.tooltip{
+				position: absolute;
+				width: 240px;
+				height: auto;
+				font-family: 微软雅黑;
+				font-size: 16px;
+				text-align: left;
+				color: black;
+				border-width: 1px solid black;
+				background-color: 7FFF00;
+				border-radius: 3px;
+			}
+			.tooltip:after{
+				content: '';
+				position: absolute;
+				bottom: 100%;
+				left: 20%;
+				margin-left: -3px;
+				width: 0;
+				height: 0;
+				border-bottom: 12px solid black;
+				border-right: 12px solid transparent;
+				border-left: 12px solid transparent;
+			}
+	</style>
+</head>
+<body>
+
+<script src="static/d3.v7.min.js"></script>
+    <div id="app" class="van-hairline--surround" >
+    <!-- 顶部导航栏 -->
+    <van-row>
+        <van-col span="2">
+            <van-nav-bar title="PyVIS"> </van-nav-bar>
+        </van-col>
+        <van-col span="20">
+            <van-nav-bar title="Python Module Visualization"></van-nav-bar>
+        </van-col>
+        <van-col span="2">
+            <van-nav-bar title="@CUC"></van-nav-bar>
+        </van-col>
+    </van-row>
+
+    <van-row>
+        <van-col offset="0" span="4" class="van-hairline--surround">
+           <van-row>
+                <van-col offset="0" span="16">
+                    <van-field v-model="keyword" placeholder="Module Name"></van-field>
+                </van-col>
+                <van-col span="8">
+                    <van-button class="van-haptics-feedback" @click="search()" type="primary">Search</van-button>
+                </van-col>
+            </van-row>
+        </van-col>
+        <van-col span="20">
+            <svg id="net" width="100%" height="100%" ></svg>
+        </van-col>
+    </van-row>
+</div>
+
+<script>
+    const app = Vue.createApp({
+        data() {
+            return {
+                keyword: ''
+            };
+        },
+        methods: {
+            search() {
+                console.log(this.keyword);
+            }
+        }
+    });
+    app.use(vant);
+    app.use(vant.Lazyload);
+    app.mount('#app');
+</script>
+		<script>
+		    var width=(window.innerWidth||document.documentElement.clientWidth||document.body.clientWidth)*0.95;
+		    var height=(window.innerHeight||document.documentElement.clientHeight||document.body.clientHeight)*0.92;
+
+			var color = d3.schemeCategory10;
+
+			var forceSimulation = d3.forceSimulation()
+						            .force("link",d3.forceLink())
+						            .force("charge",d3.forceManyBody().strength(-100))
+						            .force("center",d3.forceCenter(width/2,height/2));
+
+			var svg = d3.select("#net")
+				        .attr("width", width*0.85)
+				        .attr("height", height);
+		    module="pylibs.json"
+		    jsonfile="static/netjson/"+module
+			d3.json(jsonfile).then(function(graph) {
+                  //节点数据
+				  forceSimulation.nodes(graph.nodes)
+    		                     .on("tick");
+    	          //生成边数据
+    	          forceSimulation.force("link")
+    		                     .links(graph.links)
+    		                     .distance(40);
+
+                  for (var i=0;i<graph.nodes.length;i++){
+                        var sum=0;
+                        for(var j=0;j<graph.links.length;j++){
+                            if ((graph.links[j].source.index==i)||(graph.links[j].target.index==i))
+                            //if (graph.links[j].target.index==i)
+                                sum=sum+1;
+                        }
+                        graph.nodes[i].weight=sum;
+                  }
+
+				  var link = svg.selectAll(".link")
+					  .data(graph.links)
+					  .enter()
+					  .append("line")
+					  .attr("class", "link")
+					  .style("stroke-width", 1);
+
+				  var node = svg.selectAll(".node")
+                          .data(graph.nodes)
+                          .enter()
+                          .append("a")
+                          .attr("xlint:href",function(d){
+									return "http://127.0.0.1:5006/module?wanted="+d.name;
+						  })
+						  .append("circle")
+                          .attr("class", "node")
+                          .attr("r", d=>d.weight*2+6)
+                          .style("fill", (d,i)=>color[i%10])
+                          .call(drag());
+
+                  var texts=svg.selectAll(".forceText")
+                                 .data(graph.nodes)
+                                 .enter()
+                                 .append("text")
+                                 .attr("class","forceText")
+                                 .attr("text-anchor","middle")
+                                 .attr("stroke", "#336666")
+                                 .attr("stroke-family","仿宋")
+                                 .style("font-size","10px")
+                                 //.attr("dx","-1.5em")
+                                 .attr("dy","1.5em")
+                                 .text(function(d){return d.name;});
+
+                forceSimulation.on("tick", () => {
+                    link
+                        .attr("x1", d => d.source.x)
+                        .attr("y1", d => d.source.y)
+                        .attr("x2", d => d.target.x)
+                        .attr("y2", d => d.target.y);
+
+                    node
+                        .attr("cx", d => d.x)
+                        .attr("cy", d => d.y);
+                    texts.attr("x",function(d){return d.x;});
+			        texts.attr("y",function(d){return d.y;});
+                });
+
+
+             function drag(){
+
+              function dragstarted(event, d) {
+                if (!event.active) forceSimulation.alphaTarget(0.3).restart();
+                d.fx = d.x;
+                d.fy = d.y;
+              }
+
+              function dragged(event, d) {
+                d.fx = event.x;
+                d.fy = event.y;
+              }
+
+              function dragended(event, d) {
+                if (!event.active) forceSimulation.alphaTarget(0);
+                d.fx = null;
+                d.fy = null;
+              }
+
+              return d3.drag()
+                  .on("start", dragstarted)
+                  .on("drag", dragged)
+                  .on("end", dragended);
+            }
+
+				});
+
+		</script>
+
+
+
+
+</body>
+</html>
