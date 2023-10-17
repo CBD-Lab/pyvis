@@ -54,22 +54,57 @@
 				border-right: 12px solid transparent;
 				border-left: 12px solid transparent;
 			}
+           .custom-navbar {
+                height: 10vh;
+                background-color: #7C9D96;
+                font-size:25px!important;
+            }
+           .custom-navbar .van-nav-bar__title {
+                font-size:1em;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 100%;
+            }
+            .van-hairline--surround{
+                background-color:#7C9D96;
+            }
+            .graphpart{
+                background-color:#F1F0E8;
+            }
+            .searchbox{
+                border:2px solid #3F2305;
+                overflow:hidden;
+
+            }
+            .searchbox .searchtext{
+                background-color:#F1F0E8!important;
+<!--                border:1px solid #7C9D96;-->
+               }
+            .searchbox .van-haptics-feedback {
+                background-color: #F1F0E8!important;
+                color:black!important;
+<!--                width:69px!important;-->
+<!--                border:1px solid #7C9D96;-->
+<!--                font-weight:bolder!important;-->
+                }
+
 	</style>
 </head>
 <body>
 
 <script src="static/d3.v7.min.js"></script>
-    <div id="app" class="van-hairline--surround" >
+    <div id="app">
     <!-- 顶部导航栏 -->
     <van-row>
-        <van-col span="2">
-            <van-nav-bar title="PyVIS"> </van-nav-bar>
+        <van-col span="4" >
+            <van-nav-bar class="custom-navbar" title="PyVIS"> </van-nav-bar>
         </van-col>
-        <van-col span="20">
-            <van-nav-bar title="Python Module Visualization"></van-nav-bar>
+        <van-col span="16">
+            <van-nav-bar class="custom-navbar" title="Python Module Visualization"></van-nav-bar>
         </van-col>
-        <van-col span="2">
-            <van-nav-bar title="@CUC"></van-nav-bar>
+        <van-col span="4">
+            <van-nav-bar class="custom-navbar" title="@CUC"></van-nav-bar>
         </van-col>
     </van-row>
     <van-row>
@@ -79,12 +114,12 @@
     <van-row>
         <van-col offset="0" span="4" class="van-hairline--surround">
             <!--左侧搜索栏-->
-           <van-row>
+           <van-row class="searchbox">
                 <van-col offset="0" span="16">
-                    <van-field v-model="keyword" placeholder="Module Name"></van-field>
+                    <van-field class="searchtext" v-model="keyword" placeholder="Module Name"></van-field>
                 </van-col>
                 <van-col span="8">
-                    <van-button class="van-haptics-feedback" @click="search()" type="primary">Search</van-button>
+                    <van-button class="van-haptics-feedback" @click="search()">Search</van-button>
                 </van-col>
             </van-row>
             <van-row>
@@ -96,21 +131,21 @@
                 </van-col>
             </van-row>
             <!--左侧控制区-->
-            <van-row>Node Radius: </van-row>
+            <van-row>Node Radius</van-row>
             <van-row><input style="position:relative;top:3px;" type="range" id="nodescale" min="0.5" max="10" value="1"></van-row>
-            <van-row>Edge Length: </van-row>van
+            <van-row>Edge Length</van-row>
             <van-row><input style="position:relative;top:3px;" type="range" id="edgescale" min="50" max="500" value="150"></van-row>
-            <van-row>Charge: </van-row>
-            <van-row><input style="position:relative;top:3px;" type="range" id="chargescale" min="10" max="2000" value="600"></van-row>
-            <van-row><input type="radio" name="radio" value="边权" id="radio1" checked onclick="javascript:selectit()">Weight</input></van-row>
-            <van-row><input type="radio" name="radio" value="小圆" id="radio2" onclick="javascript:selectit()">Radius</input></van-row>
+            <van-row>Charge</van-row>
+            <van-row><input style="position:relative;top:3px;" type="range" id="chargescale" min="5" max="1000" value="600"></van-row>
+<!--            <van-row><input type="radio" name="radio" value="边权" id="radio1" checked onclick="javascript:selectit()">Weight</input></van-row>-->
+<!--            <van-row><input type="radio" name="radio" value="小圆" id="radio2" onclick="javascript:selectit()">Radius</input></van-row>-->
             <van-row><input type="radio" name="flush" value="重绘" id="flush" onclick="javascript:location.reload()">Repaint</input></van-row>
 
 
 
 
         </van-col>
-        <van-col span="20">
+        <van-col class="graphpart" span="20">
             <svg id="net" width="100%" height="100%" ></svg>
         </van-col>
     </van-row>
@@ -251,12 +286,13 @@
                 });
 
                 d3.select("input[id=edgescale]").on("change", function() {
-                    force.linkDistance(this.value)
-                         .start();
+                    forceSimulation.force('link').distance(this.value)
+                    forceSimulation.alpha(1).restart();
                 });
                 d3.select("input[id=chargescale]").on("change", function() {
-                    force.charge(-this.value)
-                         .start();
+                    console.log(this.value)
+                     forceSimulation.force("charge").strength(-this.value);
+                     forceSimulation.alpha(1).restart();
                 });
                 d3.select("input[id=nodescale]").on("change", function() {
                     console.log(this.value);
