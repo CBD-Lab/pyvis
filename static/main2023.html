@@ -54,12 +54,23 @@
 				border-right: 12px solid transparent;
 				border-left: 12px solid transparent;
 			}
+            .button-container {
+                margin-top: 10px;
+                display: flex;
+                align-items: start;
+            }
+            .van-button {
+                margin-left: 10px; 
+            }
+            #search {
+                margin-top: 10px;
+            }
 	</style>
 </head>
 <body>
 
 <script src="static/d3.v7.min.js"></script>
-    <div id="app" class="van-hairline--surround" >
+<div id="app" class="van-hairline--surround" >
     <!-- 顶部导航栏 -->
     <van-row>
         <van-col span="2">
@@ -75,7 +86,7 @@
 
     <van-row>
         <van-col offset="0" span="4" class="van-hairline--surround">
-           <van-row>
+           <van-row id="search">
                 <van-col offset="0" span="16">
                     <van-field v-model="keyword" placeholder="Module Name"></van-field>
                 </van-col>
@@ -91,14 +102,101 @@
                     </van-cell-group>
                 </van-col>
             </van-row>
+            <van-cow>
+                <div id="bpp">
+                    <div class="button-container">
+                        <van-button round type="danger":loading="loading1" loading-type="spinner" onclick="downloadPhoto()" @click="downloadPhoto1()">
+                            <van-icon name="down" >下载svg</van-icon>
+                        </van-button>
+                        <van-button round type="primary":loading="loading2" loading-type="spinner" onclick="downloadPhoto('png')" @click="downloadPhoto2()">
+                            <van-icon name="down" >下载png</van-icon>
+                        </van-button>
+                    </div>
+                </div>
+            </van-cow>
         </van-col>
         <van-col span="20">
-            <svg id="net" width="100%" height="100%" ></svg>
+            <div id="svgbox">
+                <svg id="net" width="100%" height="100%" ></svg>
+            </div>
+            <div id="svgdataurl" style="display: none;"></div>
+            <canvas style="display:none"></canvas>
         </van-col>
     </van-row>
 
 </div>
+<script>
+	// vue实例绑定在DOM元素上
+	new Vue({
+	  el: '#app .van-hairline--surround #bpp',
+	  data: { 
+		loading1: false,
+		loading2: false,
+	  },
+	  methods: {
+		downloadPhoto1() {
+		this.loading1 = true;
+		setTimeout(() => {
+			this.loading1 = false;
+      },500);
+    },
+		downloadPhoto2() {
+		this.loading2 = true;
+		setTimeout(() => {
+			this.loading2 = false;
+      },500);
+    }
+	},
+	});
+</script>
+<script>
+    function downloadPhoto(form = "svg") {
+		// 导出最基础的svg
+		var html = d3.select("svg")
+					.attr("version", 1.1)
+					.attr("xmlns", "http://www.w3.org/2000/svg")
+					.attr("id", "svgdemo")
+					.node().parentNode.innerHTML;
+		console.log(html);
+		var imgsrc = 'data:image/svg+xml;base64,' + window.btoa(unescape(encodeURIComponent(html)));
+		// 从 String 对象中创建一个 base-64 编码的 ASCII 字符串，其中字符串中的每个字符都被视为一个二进制数据字节。
+		console.log(imgsrc);
+		var image = new Image;
+		image.src = imgsrc;
+		if (form === "png") {
+				var svg = d3.select("#svgbox").node()
+				var img = '<img src="' + imgsrc + '">';
+				d3.select("#svgdataurl").html(img);
+				var boxWidth = svg.offsetWidth
+				var boxHeight = svg.offsetHeight
+				var canvas = document.querySelector("canvas");
+				var context = canvas.getContext("2d");
+				canvas.height = boxHeight; //canvas高度变化时清空画布
+				canvas.width = boxWidth;
+				image.onload = function () {
+					context.drawImage(image, 0, 0);
+					var canvasdata = canvas.toDataURL("image/png");
+					var pngimg = '<img src="' + canvasdata + '">';
+					d3.select("#pngdataurl").html(pngimg);
+					var photo = document.createElement("a");
+					photo.download = "直方图.png";
+					photo.href = canvasdata;
+					document.body.appendChild(photo);
+					photo.click();
+				}
+		}else{
+				console.log(form);
+				image.onload = function (){
+					var photo = document.createElement("a");
+					photo.download = "直方图.svg";
+					photo.href = imgsrc;
+					document.body.appendChild(photo);
+					photo.click();
+				}
+		}
+		};
 
+</script>
 <script>
     const app = Vue.createApp({
         data() {
@@ -143,7 +241,7 @@
             },
             drawGraph(graph){
                 var width=(window.innerWidth||document.documentElement.clientWidth||document.body.clientWidth)*0.95;
-		        var height=(window.innerHeight||document.documentElement.clientHeight||document.body.clientHeight)*0.92;
+		        var height=(window.innerHeight||document.documentElement.clientHeight||document.body.clientHeight)*1.2;
 
 			    var color = d3.schemeCategory10;
 
