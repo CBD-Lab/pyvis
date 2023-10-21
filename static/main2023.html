@@ -141,7 +141,7 @@
                                       overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                                 <div style="flex: 1; text-align: left;">{{ path }}</div>
                                 <template #right-icon>
-                                    <van-radio :name="path" />
+                                    <van-radio :name="index" />
                                 </template>
                             </van-cell>
                         </van-cell-group>
@@ -154,6 +154,16 @@
                     <van-field v-model="virtualValue" placeholder="Virtual Environment Path">
                         <template #button>
                             <van-button class="van-haptics-feedback" @click="confirm()" type="primary">Confirm</van-button>
+                        </template>
+                    </van-field>
+                </van-col>
+            </van-row>
+
+            <van-row id="search">
+                <van-col offset="0" span="24">
+                    <van-field v-model="localKeyword" placeholder="Local Module Name">
+                         <template #button>
+                            <van-button class="van-haptics-feedback" @click="localSearch()" type="primary">Search</van-button>
                         </template>
                     </van-field>
                 </van-col>
@@ -254,10 +264,13 @@
                 links: '',
                 localPath: [],
                 showLocalOptions: false,
-                localValue: 0,
+                localValue: null,
                 virtualPath: '',
                 showVirtualField: false,
                 virtualValue: '',
+                userPath: '',
+                localKeyword: '',
+
             };
         },
         methods: {
@@ -285,11 +298,19 @@
                     });
                     */
                 axios.get("http://127.0.0.1:5006/module?wanted=" + this.keyword).then(res=>{
-                     //console.log(res.data);
-                     //console.log(res.data.nodes);
+                     console.log(res.data);
+                     console.log(res.data.nodes);
                      this.drawGraph(res.data);
                 });
             },
+
+            localSearch() {
+                var that = this;
+                axios.get("http://127.0.0.1:5006/localModule?wanted=" + this.localKeyword).then(res=>{
+                     this.drawGraph(res.data);
+                });
+            },
+
             drawGraph(graph){
                 var width=(window.innerWidth||document.documentElement.clientWidth||document.body.clientWidth)*0.95;
 		        var height=(window.innerHeight||document.documentElement.clientHeight||document.body.clientHeight)*1.2;
@@ -419,15 +440,34 @@
                 this.showLocalOptions = true;
                 this.showVirtualField = false;
             },
+
             select() {
                 console.log("selected localPath: " + this.localValue);
+                this.userPath = this.localValue;
+                this.transPath();
             },
+
             showVirtual() {
                 this.showVirtualField = true;
                 this.showLocalOptions = false;
             },
             confirm() {
                 console.log("virtualPath: " + this.virtualValue);
+                this.userPath = this.virtualValue;
+                this.transPath();
+            },
+
+            transPath() {  // 发送路径给后端
+                fetch("/userPath?new_path=" + this.userPath).then(res => {
+                    if (res.ok) {
+                        return res.json();
+                    }
+                    throw new Error("Network response was not ok.");
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                });
+                console.log("yes!");
             },
 
         },//end methods;
