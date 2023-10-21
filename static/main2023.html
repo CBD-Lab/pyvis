@@ -12,65 +12,70 @@
     <!-- 使用 meta 标签设置移动端的显示参数，禁止缩放 -->
     <meta charset="UTF-8" name="viewport" content="width=device-width,user-scalable=no,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0" />
     <title>Python Libs Dependency Graph</title>
-    	<style>
-		a{text-decoration:none}
+    <style>
+	    a{text-decoration:none}
 		a:hover{color:blue,text-decoration:none}
 		a:visited{color:black,text-decoration:none}
 		a:link{color:black,text-decoration:none}
 		a:active{color:black,text-decoration:none}
 	</style>
     <style>
-			.node {
-			  stroke: #fff;
-			  stroke-width: 1px;
-			  opacity: 0.7;
-			}
-			.link {
-			  stroke: #999;
-			  stroke-opacity: .7;
-			}
+	    .node {
+		    stroke: #fff;
+			stroke-width: 1px;
+			opacity: 0.7;
+		}
+		.link {
+			stroke: #999;
+			stroke-opacity: .7;
+		}
 
-			.tooltip{
-				position: absolute;
-				width: 240px;
-				height: auto;
-				font-family: 微软雅黑;
-				font-size: 16px;
-				text-align: left;
-				color: black;
-				border-width: 1px solid black;
-				background-color: 7FFF00;
-				border-radius: 3px;
-			}
-			.tooltip:after{
-				content: '';
-				position: absolute;
-				bottom: 100%;
-				left: 20%;
-				margin-left: -3px;
-				width: 0;
-				height: 0;
-				border-bottom: 12px solid black;
-				border-right: 12px solid transparent;
-				border-left: 12px solid transparent;
-			}
-            .button-container {
-                margin-top: 10px;
-                display: flex;
-                align-items: start;
-            }
-            .van-button {
-                margin-left: 10px; 
-            }
-            #search {
-                margin-top: 10px;
-            }
+		.tooltip{
+		    position: absolute;
+			width: 240px;
+			height: auto;
+			font-family: 微软雅黑;
+			font-size: 16px;
+			text-align: left;
+			color: black;
+			border-width: 1px solid black;
+			background-color: 7FFF00;
+			border-radius: 3px;
+		}
+		.tooltip:after{
+			content: '';
+			position: absolute;
+			bottom: 100%;
+			left: 20%;
+			margin-left: -3px;
+			width: 0;
+			height: 0;
+			border-bottom: 12px solid black;
+			border-right: 12px solid transparent;
+			border-left: 12px solid transparent;
+		}
+        .button-container {
+            margin-top: 10px;
+            display: flex;
+            align-items: start;
+        }
+        .van-button {
+            margin-left: 10px;
+        }
+        #search {
+            margin-top: 10px;
+        }
+        .common-row {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+        }
 	</style>
 </head>
 <body>
 
 <script src="static/d3.v7.min.js"></script>
-<div id="app" class="van-hairline--surround" >
+<div id="app" class="van-hairline--surround">
     <!-- 顶部导航栏 -->
     <van-row>
         <van-col span="2">
@@ -86,14 +91,16 @@
 
     <van-row>
         <van-col offset="0" span="4" class="van-hairline--surround">
-           <van-row id="search">
-                <van-col offset="0" span="16">
-                    <van-field v-model="keyword" placeholder="Module Name"></van-field>
-                </van-col>
-                <van-col span="8">
-                    <van-button class="van-haptics-feedback" @click="search()" type="primary">Search</van-button>
+            <van-row id="search">
+                <van-col offset="0" span="24">
+                    <van-field v-model="keyword" placeholder="Module Name">
+                         <template #button>
+                            <van-button class="van-haptics-feedback" @click="search()" type="primary">Search</van-button>
+                        </template>
+                    </van-field>
                 </van-col>
             </van-row>
+
             <van-row>
                 <van-col span="24">
                     <van-cell-group inset>
@@ -102,7 +109,8 @@
                     </van-cell-group>
                 </van-col>
             </van-row>
-            <van-cow>
+
+            <van-row>
                 <div id="bpp">
                     <div class="button-container">
                         <van-button round type="danger":loading="loading1" loading-type="spinner" onclick="downloadPhoto()" @click="downloadPhoto1()">
@@ -113,23 +121,60 @@
                         </van-button>
                     </div>
                 </div>
-            </van-cow>
+            </van-row>
+
+            <van-row class="common-row" style="height:40%">
+                <van-col span="12">
+                    <van-button class="van-haptics-feedback" @click="showLocal()" type="primary">Local PyViz</van-button>
+                </van-col>
+                <van-col span="12">
+                    <van-button class="van-haptics-feedback" @click="showVirtual()" type="primary">Virtual PyViz</van-button>
+                </van-col>
+            </van-row>
+
+            <van-row v-if="showLocalOptions" class="common-row">
+                <van-col span="24">
+                    <van-radio-group v-model="localValue">
+                        <van-cell-group inset>
+                            <van-cell v-for="(path, index) in localPath" :key="index" clickable @click="select()"
+                                      style="display: flex; justify-content: space-between; align-items: center;
+                                      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                <div style="flex: 1; text-align: left;">{{ path }}</div>
+                                <template #right-icon>
+                                    <van-radio :name="path" />
+                                </template>
+                            </van-cell>
+                        </van-cell-group>
+                    </van-radio-group>
+                </van-col>
+            </van-row>
+
+            <van-row v-if="showVirtualField" class="common-row">
+                <van-col span="24">
+                    <van-field v-model="virtualValue" placeholder="Virtual Environment Path">
+                        <template #button>
+                            <van-button class="van-haptics-feedback" @click="confirm()" type="primary">Confirm</van-button>
+                        </template>
+                    </van-field>
+                </van-col>
+            </van-row>
+
         </van-col>
+
         <van-col span="20">
             <div id="svgbox">
-                <svg id="net" width="100%" height="100%" ></svg>
+                <svg id="net" width="100%" height="100%"></svg>
             </div>
             <div id="svgdataurl" style="display: none;"></div>
             <canvas style="display:none"></canvas>
         </van-col>
     </van-row>
-
 </div>
 <script>
 	// vue实例绑定在DOM元素上
 	new Vue({
 	  el: '#app .van-hairline--surround #bpp',
-	  data: { 
+	  data: {
 		loading1: false,
 		loading2: false,
 	  },
@@ -201,12 +246,18 @@
     const app = Vue.createApp({
         data() {
             return {
-                //keyword: '',
+                keyword: '',
                 result: [],
                 //show_vocab: false,
                 //vocab: ''
-                nodes:'',
-                links:''
+                nodes: '',
+                links: '',
+                localPath: [],
+                showLocalOptions: false,
+                localValue: 0,
+                virtualPath: '',
+                showVirtualField: false,
+                virtualValue: '',
             };
         },
         methods: {
@@ -357,18 +408,44 @@
                 }// end drag()
             },//  end drawGraph()
             show(vocab) {
-                        this.show_vocab = true;
-                        this.vocab = vocab;
+                this.show_vocab = true;
+                this.vocab = vocab;
             },
             back() {
-                        this.show_vocab = false;
+                this.show_vocab = false;
             },
+
+            showLocal() {
+                this.showLocalOptions = true;
+                this.showVirtualField = false;
+            },
+            select() {
+                console.log("selected localPath: " + this.localValue);
+            },
+            showVirtual() {
+                this.showVirtualField = true;
+                this.showLocalOptions = false;
+            },
+            confirm() {
+                console.log("virtualPath: " + this.virtualValue);
+            },
+
         },//end methods;
         mounted() {
-                axios.get("http://127.0.0.1:5006/module").then(res=>{
-                     //console.log(res.data);
-                     //console.log(res.data.nodes);
-                     this.drawGraph(res.data);
+            axios.get("http://127.0.0.1:5006/module").then(res=>{
+                //console.log(res.data);
+                //console.log(res.data.nodes);
+                this.drawGraph(res.data);
+            });
+
+            axios.get("http://localhost:5006/localPath")
+                .then((response) => {
+                    this.localPath = response.data.result;
+                    console.log(this.localPath);
+                })
+                .catch((error) => {
+                    console.error("An error occurred while fetching localPath:", error);
+                    this.localPath = "An error occurred.";
                 });
         },
     });
@@ -376,6 +453,5 @@
     app.use(vant.Lazyload);
     app.mount('#app');
 </script>
-
 </body>
 </html>
