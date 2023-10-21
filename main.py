@@ -1,8 +1,12 @@
 from flask import Flask, render_template, request, jsonify
+from flask_cors import CORS
 import os
 import pymysql
+import subprocess
+
 
 app = Flask(__name__)
+CORS(app)
 
 
 @app.route("/")
@@ -47,6 +51,19 @@ def module():
     jsonfile = "netjson/"+wanted+".json"
     print(jsonfile)
     return app.send_static_file(jsonfile)
+
+
+@app.route('/localPath', methods=['GET'])
+def localPath():
+    try:
+        output = subprocess.check_output('where pip3', shell=True)
+        paths = output.decode('utf-8').split('\n')
+        paths = [path.strip() for path in paths if path.strip() != '']
+        result = {'result': paths}
+        return jsonify(result)
+    except Exception as e:
+        print(f'Error executing the command: {str(e)}')
+        return jsonify({'error': 'An error occurred while executing the command'}), 500
 
 
 if "__main__" == __name__:  # 程序入口
