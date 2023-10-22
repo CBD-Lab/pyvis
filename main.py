@@ -7,13 +7,22 @@ import subprocess
 
 app = Flask(__name__)
 CORS(app)
+import inspect
+
+from flask import Flask,render_template,request,jsonify
+import os
+import pymysql
+import torch.nn
+import ast
+from types import *
+import findclass
+
+app=Flask(__name__)
 
 
 @app.route("/")
 def english_app():
-    # return "Hello"
-    return app.send_static_file("mobile.html")
-
+    return app.send_static_file("main2023.html")
 
 @app.route("/mobile")
 def mobileApp():
@@ -24,8 +33,8 @@ def mobileApp():
     cursor = db.cursor()
     print(cursor)
     try:
-        # sql="select * from map_enword limit 10"
-        sql = "select * from map_enword where english like '" + wanted + "%'"
+        #sql="select * from map_enword limit 10"
+        sql = "select * from map_enword where english like '"+wanted+"%'"
         cursor.execute(sql)
         rs = cursor.fetchall()
         words = list(rs)
@@ -33,25 +42,33 @@ def mobileApp():
         wcount = len(words)
     except:
         rs = 'db-error'
-    # return render_template("eng.html", words=words, wcount=wcount)
-    return jsonify({"result": words})
+    #return render_template("eng.html",words=words,wcount=wcount)
+    return jsonify({"result":words})
 
 
 @app.route("/net")
 def netvis():
-    return app.send_static_file("main2023.html")
-
+    return app.send_static_file("main20231017.html")
 
 @app.route("/module")
 def module():
     print("module")
     wanted = request.args.get("wanted", type=str)
-    if wanted is None:
+    if (wanted == None)or(wanted=="undefined")or(wanted==""):
         wanted = 'pylibs'
-    jsonfile = "netjson/"+wanted+".json"
+    jsonfile="netjson/"+wanted+".json"
     print(jsonfile)
     return app.send_static_file(jsonfile)
 
+@app.route("/treevis")
+def treevis():
+    #print("module")
+    wanted = request.args.get("wanted", type=str)
+    if (wanted == None)or(wanted=="undefined")or(wanted==""):
+        wanted = 'nn'
+    jsonfile="treejson/"+wanted+".json"
+    #print(jsonfile)
+    return app.send_static_file(jsonfile)
 
 @app.route("/localModule")
 def localModule():
@@ -386,7 +403,5 @@ def userPath():
 
     return jsonify({'message': 'Tasks completed successfully'})
 
-
-
-if "__main__" == __name__:  # 程序入口
+if "__main__"==__name__:   #程序入口
     app.run(port=5006)
