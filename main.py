@@ -1,28 +1,22 @@
 from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
+from types import *
 import os
 import pymysql
 import subprocess
+import torch.nn
+import ast
+import inspect
 
 
 app = Flask(__name__)
 CORS(app)
-import inspect
-
-from flask import Flask,render_template,request,jsonify
-import os
-import pymysql
-import torch.nn
-import ast
-from types import *
-
-
-app=Flask(__name__)
 
 
 @app.route("/")
 def english_app():
     return app.send_static_file("main20231022.html")
+
 
 @app.route("/mobile")
 def mobileApp():
@@ -50,6 +44,7 @@ def mobileApp():
 def netvis():
     return app.send_static_file("main2023.html")
 
+
 @app.route("/module")
 def module():
     print("module")
@@ -60,6 +55,7 @@ def module():
     print(jsonfile)
     return app.send_static_file(jsonfile)
 
+
 @app.route("/treevis")
 def treevis():
     #print("module")
@@ -69,6 +65,7 @@ def treevis():
     jsonfile="treejson/"+wanted+".json"
     #print(jsonfile)
     return app.send_static_file(jsonfile)
+
 
 @app.route("/localModule")
 def localModule():
@@ -198,7 +195,6 @@ def pylibs2023():
     nodes(pylibs)
     f.write(json.dumps(netjson))
     f.close()
-
 
 
 def pyNet4Inspect2ClassFunction2023():
@@ -372,7 +368,6 @@ def pyNet4Inspect2ClassFunction2023():
             print(f"Error in package {filename}: {e}. Skipping...")
 
 
-
 @app.route('/userPath', methods=['GET'])
 def userPath():
     new_path = request.args.get('new_path', type=int)
@@ -403,5 +398,6 @@ def userPath():
 
     return jsonify({'message': 'Tasks completed successfully'})
 
-if "__main__"==__name__:   #程序入口
+
+if "__main__"==__name__:   # 程序入口
     app.run(port=5006)
