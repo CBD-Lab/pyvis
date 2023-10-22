@@ -22,7 +22,7 @@ app=Flask(__name__)
 
 @app.route("/")
 def english_app():
-    return app.send_static_file("main2023.html")
+    return app.send_static_file("main20231022.html")
 
 @app.route("/mobile")
 def mobileApp():
@@ -48,7 +48,7 @@ def mobileApp():
 
 @app.route("/net")
 def netvis():
-    return app.send_static_file("main20231017.html")
+    return app.send_static_file("main2023.html")
 
 @app.route("/module")
 def module():
