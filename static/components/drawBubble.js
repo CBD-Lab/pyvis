@@ -44,6 +44,7 @@ function drawBubble(data){
     					.attr("cy", 0)
    						.attr("r", d => d.r)
     					.attr("fill", d => color[d.depth])
+    					.attr("opacity",0.7)
     					.on("mouseenter", function(event, d) { // "mouseenter" 替代 "mouseover"
 								 d3.select(this)
 								   .attr("stroke", "#000")
@@ -57,19 +58,6 @@ function drawBubble(data){
                             tooltip.style("visibility",'false');
                              });
 
-//       var text = gc.append("text")
-//            .attr("font-size", "12px")
-//            .attr("text-anchor", "middle")
-//            .attr("dy", "0.5em")
-//            .attr("class", "txt")
-//            .attr("id", function (d, i) { return `t${i}`; })// 移除 "#" 符号
-//            .attr("fill", "black")
-//            .text(function (d) {
-//                if (d.depth == 0)
-//                    return d.r > 20 ? d.data.name : "";
-//                else
-//                    return "";
-//            });
     }
 
  window.onDrawBubbleReady = function(data) {

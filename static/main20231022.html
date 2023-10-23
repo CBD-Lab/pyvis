@@ -11,6 +11,7 @@
     <!--    引入绘图的js文件-->
     <script type="module" src="/static/components/drawTree.js"></script>
     <script type="module" src="/static/components/drawNet.js"></script>
+    <script type="module" src="/static/components/drawMatrix.js"></script>
     <script type="module" src="/static/components/drawBubble.js"></script>
     <script type="module" src="/static/components/drawCloud.js"></script>
     <!-- 使用 meta 标签设置移动端的显示参数，禁止缩放 -->
@@ -25,6 +26,11 @@
         a:active{color:black,text-decoration:none}
     </style>
     <style>
+        :root{
+        --topcolor:#AED2FF;
+        --leftsidecolor:#E4F1FF;
+        --buttonbgcolor:#FFFFFF;
+        }
         .node {
           stroke: #fff;
           stroke-width: 1px;
@@ -43,7 +49,7 @@
             text-align: left;
             color: black;
             border-width: 1px solid black;
-            background-color: 7FFF00;
+            background-color: AED2FF;
             border-radius: 3px;
         }
         .tooltip:after{
@@ -60,7 +66,7 @@
         }
        .custom-navbar {
             height: 100%;
-            background-color: #2196F3;
+            background-color: var(--topcolor);
             font-size:25px!important;
 
         }
@@ -74,28 +80,27 @@
         .custom-navbar .van-nav-bar__content {
             height: 100%!important;
         }
+
         .van-hairline--surround{
-            background-color:#2196F3;
-            opacity:0.9;
-        }
-        .graphpart{
-            background-color:#F1F0E8;
+            background-color:var(--leftsidecolor);
         }
         .searchbox{
-            border:2px solid #2196F3;
+            border:1px solid var(--topcolor);
             overflow:hidden;
-
         }
         .searchbox .searchtext{
-            background-color:#F1F0E8;
+            background-color:var(--buttonbgcolor);
             border-radius: 3px;
+            width:100%;
            }
         .searchbox .van-haptics-feedback {
-            background-color: #F1F0E8;
+            background-color: var(--buttonbgcolor);
+            border-radius: 3px;
             width:100%;
             }
         .viewset .van-haptics-feedback{
-            background-color: #F1F0E8;
+            background-color:var(--buttonbgcolor);
+            border:1px solid var(--topcolor);
             width:100%;
             margin: 0 auto;
             color:black;
@@ -144,7 +149,7 @@
                 <van-col span="6">
                     <van-button class="van-haptics-feedback" @click="bubblevis()" type="primary">Bubble</van-button>
                 </van-col>
-                      <van-col span="6">
+                <van-col span="6">
                     <van-button class="van-haptics-feedback" @click="cloudvis()" type="primary">Cloud</van-button>
                 </van-col>
             </van-row>
@@ -194,7 +199,7 @@
                         this.netvis();
                         break;
                     case "matrix":
-                        this.treevis();
+                        this.matrixvis();
                         break;
                     case "bubble":
                         this.bubblevis();
@@ -225,7 +230,8 @@
                     var that = this;
                     this.viewSelection="matrix";
                     axios.get("http://127.0.0.1:5006/module?wanted=" + this.keyword).then(res=>{
-                         onDrawNetReady(res.data);
+                    console.log(res.data);
+                         onDrawMatrixReady(res.data);
                     });
                     },
                 bubblevis(){
