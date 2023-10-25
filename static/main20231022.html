@@ -15,6 +15,8 @@
     <script type="module" src="/static/components/drawBubble.js"></script>
     <script type="module" src="/static/components/drawCloud.js"></script>
     <script type="module" src="/static/components/drawFileTree.js"></script>
+    <script type="module" src="/static/components/drawHiCircle.js"></script>
+    <script type="module" src="/static/components/drawBitree.js"></script>
     <!-- 使用 meta 标签设置移动端的显示参数，禁止缩放 -->
     <meta charset="UTF-8" name="viewport"
           content="width=device-width,user-scalable=no,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0"/>
@@ -156,6 +158,12 @@
                 <van-col span="6">
                     <van-button class="van-haptics-feedback" @click="filetreevis()" type="primary">FileTree</van-button>
                 </van-col>
+                <van-col span="6">
+                    <van-button class="van-haptics-feedback" @click="hicirclevis()" type="primary">HiCircle</van-button>
+                </van-col>
+                <van-col span="6">
+                    <van-button class="van-haptics-feedback" @click="bitreevis()" type="primary">Bitree</van-button>
+                </van-col>
             </van-row>
             <!--力导向图控制区-->
             <div  v-show="viewSelection === 'net'">
@@ -214,6 +222,12 @@
                     case "filetree":
                         this.filetreevis();
                         break;
+                    case "hicircle":
+                        this.hicirclevis();
+                        break;
+                    case "bitree":
+                        this.bitreevis();
+                        break;
                     default:
                         // 如果没有匹配的选项，可以选择执行默认的代码块
                         break;
@@ -262,7 +276,23 @@
                         console.log(res.data);
                         onDrawFileTreeReady(res.data);
                     });
-        },
+                },
+                hicirclevis(){
+                    var that = this;
+                    this.viewSelection="hicircle";
+                    axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
+                        console.log(res.data);
+                        onDrawHiCircleReady(res.data);
+                    });
+                },
+                bitreevis(){
+                    var that = this;
+                    this.viewSelection="bitree";
+                    axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
+                        console.log(res.data);
+                        onDrawBitreeReady(res.data);
+                    });
+                },
 mounted() {
     axios.get("http://127.0.0.1:5006/treevis").then(res => {
         console.log('Data received:', res.data);
