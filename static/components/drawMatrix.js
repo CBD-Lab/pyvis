@@ -2,6 +2,7 @@ function drawMatrixGraph(graph){
                 function trim(str){
                     return str.replace(/\s|\xA0/g,"");
                 }
+                console.log(graph);
                 var nodes=graph.nodes;
 				var links=graph.links;
 //                var svgbox = document.getElementById("graph").getBBox();
@@ -193,7 +194,7 @@ function drawMatrixGraph(graph){
 					  .attr("r", R)
 					  .attr("cx",function(d,i){return width/5+R*2+R*2*i})
 					  .attr("cy",R*2)
-					  .style("fill", function(d,i) {return color[i]; })
+					  .style("fill", function(d,i) {return color[i%10]; })
 					  .attr("stroke","black")
 					  .attr("stroke-width",0.5)
 					  .on("mouseover",function(d,i){    //加入提示框
@@ -278,7 +279,7 @@ function drawMatrixGraph(graph){
 					  .attr("r", R)
 					  .attr("cy",function(d,i){return R*4+R*2*i})
 					  .attr("cx",width/5)
-					  .style("fill", function(d,i) {return color[i]; })
+					  .style("fill", function(d,i) {return color[i%10]; })
 					  .attr("stroke","black")
 					  .attr("stroke-width",0.5)
 					  .on("mouseover",function(d,i){    //加入提示框
