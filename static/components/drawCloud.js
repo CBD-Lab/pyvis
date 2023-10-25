@@ -1,22 +1,13 @@
-function drawCloud(data){
-    d3.select('svg').selectAll('*').remove();
-    // 获取具有ID属性的div元素
-    var tooltip = document.getElementById("tip");
-    if (tooltip) {
-        tooltip.parentNode.removeChild(tooltip);
-    }
+function drawCloud(data,search){
       var arraycolor = new Array(10);
       for (var i = 0; i < 10; i++) {
         arraycolor[i] = color[i];
       }
       var hidata = d3.hierarchy(data);
-      console.log(hidata);
       var worddata = hidata.descendants();
-      console.log(worddata.length);
       var hiwords = new Array(worddata.length);
       for (var i = 0; i < worddata.length; i++) {
-          hiwords[i] = { text: worddata[i].data.name, size: Math.sqrt(worddata[i].value / 400) };
-          console.log(hiwords[i]);
+          hiwords[i] = { text: worddata[i].data.name, size:(worddata[i].height+1)*6 };
         }
 
       var wc = d3.layout.cloud()
@@ -26,14 +17,14 @@ function drawCloud(data){
           .rotate(0)
           .font("Impact")
           .fontSize(function (d) {
-            return d.size > 12 ? d.size : 12;
+            return d.size;
           })
           .on("end", draw)
           .start();
 
        function draw(words) {
           d3.select("#graph").append("svg")
-            .attr("id", "mysvg")
+            .attr("id", "cloudsvg")
             .attr("width", width)
             .attr("height", height)
             .append("g")
@@ -51,7 +42,11 @@ function drawCloud(data){
               return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
             })
             .attr("opacity", 0.8)
-            .text(function (d) { return d.text; });
+            .text(function (d) { return d.text; })
+            .on("click",function(d,i)
+            {
+            search(i.text)
+            console.log(d,i);});
 
           var colorrec = d3.select("svg").selectAll('rect')
             .data(arraycolor)
@@ -73,10 +68,9 @@ function drawCloud(data){
             .text("Totally " + worddata.length+" Nodes");
         }
 }
-            //end drawWordCloud
 
-window.onDrawCloudReady = function(data) {
+window.onDrawCloudReady = function(data,search) {
     console.log('drawTree.js is ready');
     // 执行绘图逻辑
-    drawCloud(data);
+    drawCloud(data,search);
 }

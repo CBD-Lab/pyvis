@@ -1,3 +1,5 @@
+import urllib.parse
+
 from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
 from types import *
@@ -7,6 +9,8 @@ import subprocess
 import torch.nn
 import ast
 import inspect
+import json
+import importlib
 
 
 app = Flask(__name__)
@@ -65,6 +69,41 @@ def treevis():
     jsonfile="treejson/"+wanted+".json"
     #print(jsonfile)
     return app.send_static_file(jsonfile)
+
+
+@app.route("/treeLeaf", methods=["GET"])
+def treeLeaf():
+    wanted = request.args.get("wanted", type=str)
+
+    if (wanted == None)or(wanted=="undefined")or(wanted==""):
+        wanted = 'torch.nn.modules.transformer'
+    print(wanted)
+
+    wanted = urllib.parse.quote(wanted)
+    try:
+        class_object = importlib.import_module(wanted)
+        print(class_object)
+        jsonfile = inspect.getmembers(class_object, inspect.isclass or inspect.ismodule or inspect.ismethod())
+        jsonstr = ""
+        for item in jsonfile:
+            class_str = str(item[1])
+            print(item)
+            start_index = class_str.find("'") + 1  # 找到第一个单引号的位置
+            end_index = class_str.rfind("'")  # 找到最后一个单引号的位置
+            class_name = class_str[start_index:end_index]
+            jsonstr = jsonstr + (class_name) + "\n"
+        jsonfile = json.dumps(jsonstr, default=str)
+        print(jsonfile, type(jsonfile))
+    except:
+        print("error")
+        jsonfile=None
+    # jsonfile+="\n"
+    # 将二维数组转换为一维数组
+    # flattened_data = [item for sublist in jsonfile for item in sublist]
+    # 将一维数组转换为逗号分隔的字符串
+    # result = ', '.join(flattened_data)
+    # print(result)
+    return jsonify(jsonfile)
 
 
 @app.route("/localModule")

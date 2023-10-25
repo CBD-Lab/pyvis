@@ -1,14 +1,9 @@
 function drawBitree(data){
-    d3.select('svg').selectAll('*').remove();
     var svg = d3.select("#graph")
 				.append("svg")
 				.attr("width", width)
 				.attr("height", height);
     // 获取具有ID属性的div元素
-    var tooltip = document.getElementById("tip");
-    if (tooltip) {
-        tooltip.parentNode.removeChild(tooltip);
-    }
 		var colorrec=svg.selectAll('rect')
 						.data(color)
 						.enter()

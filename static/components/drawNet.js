@@ -7,11 +7,6 @@ function drawNet(data){
     var svg = d3.select("#graph")
             .attr("width", width*0.85)
             .attr("height", height);
-    d3.select('svg').selectAll('*').remove();
-       var tooltip = document.getElementById("tip");
-    if (tooltip) {
-        tooltip.parentNode.removeChild(tooltip);
-    }
     var module="pylibs.json"
     var nodes=data.nodes;
     var links=data.links;

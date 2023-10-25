@@ -1,10 +1,4 @@
 function drawMatrixGraph(graph){
-                d3.select('svg').selectAll('*').remove();
-                // 获取具有ID属性的div元素
-                var tooltip = document.getElementById("tip");
-                if (tooltip) {
-                    tooltip.parentNode.removeChild(tooltip);
-                }
                 function trim(str){
                     return str.replace(/\s|\xA0/g,"");
                 }

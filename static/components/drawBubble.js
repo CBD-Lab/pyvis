@@ -13,11 +13,7 @@ function drawBubble(data){
     var svg = d3.select("#graph")
         .attr("width", width)
         .attr("height", height);
-    d3.select('svg').selectAll('*').remove();
-//       var tooltip = document.getElementById("tip");
-//    if (tooltip) {
-//        tooltip.parentNode.removeChild(tooltip);
-//    }
+
     var colorrec = svg.selectAll('rect')
         .data(color)
         .enter()

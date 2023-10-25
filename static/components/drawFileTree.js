@@ -1,6 +1,5 @@
 console.log('drawFileTree.js is loaded');
 function drawFileTree(data){
-  d3.select('svg').selectAll('*').remove();
     var svg = d3.select("#graph")
                 .attr("width", width )
                 .attr("height", height )
@@ -10,11 +9,6 @@ function drawFileTree(data){
     
     console.log(width)
     console.log(height)
-    // 获取具有ID属性的div元素
-    var tooltip = document.getElementById("tip");
-    if (tooltip) {
-        tooltip.parentNode.removeChild(tooltip);
-    }
       //树状图布局
     var tree = d3.tree()
                 .size([2 * Math.PI, radius])
