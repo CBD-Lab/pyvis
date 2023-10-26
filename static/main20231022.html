@@ -164,6 +164,12 @@
                 <van-col span="6">
                     <van-button class="van-haptics-feedback" @click="bitreevis()" type="primary">Bitree</van-button>
                 </van-col>
+                <van-col span="6">
+                    <van-button class="van-haptics-feedback" @click="downloadPhoto()" type="primary">Download SVG</van-button>
+                </van-col>
+                <van-col span="6">
+                    <van-button class="van-haptics-feedback" @click="downloadPhoto('png')" type="primary">Download PNG</van-button>
+                </van-col>
             </van-row>
             <!--力导向图控制区-->
             <div  v-show="viewSelection === 'net'">
@@ -182,7 +188,11 @@
             </div>
         </van-col>
         <van-col class="graphpart" span="20">
-            <svg id="graph" width="100%" height="100%"></svg>
+            <div id="svgbox">
+                <svg id="graph" width="100%" height="100%"></svg>
+            </div>
+            <id id="svgdataurl" style="display: none;"></id>
+            <canvas style="display:none"></canvas>
         </van-col>
     </van-row>
 
@@ -293,6 +303,53 @@
                         onDrawBitreeReady(res.data);
                     });
                 },
+                downloadPhoto(form = "svg") {
+                    // 导出最基础的svg
+                    var html = d3.select("svg")
+                                .attr("version", 1.1)
+                                .attr("xmlns", "http://www.w3.org/2000/svg")
+                                .attr("id", "svgdemo")
+                                .node().parentNode.innerHTML;
+                    console.log("11");
+                    var imgsrc = 'data:image/svg+xml;base64,' + window.btoa(unescape(encodeURIComponent(html)));
+                    // 从 String 对象中创建一个 base-64 编码的 ASCII 字符串，其中字符串中的每个字符都被视为一个二进制数据字节。
+                    console.log(imgsrc);
+                    var image = new Image;
+                    image.src = imgsrc;
+                    if (form === "png") {
+                            var svg = d3.select("#svgbox").node()
+                            var img = '<img src="' + imgsrc + '">';
+                            d3.select("#svgdataurl").html(img);
+                            var boxWidth = svg.offsetWidth
+                            var boxHeight = svg.offsetHeight
+                            var canvas = document.querySelector("canvas");
+                            var context = canvas.getContext("2d");
+                            canvas.height = boxHeight; //canvas高度变化时清空画布
+                            canvas.width = boxWidth;
+                            image.onload = function () {
+                                context.drawImage(image, 0, 0);
+                                var canvasdata = canvas.toDataURL("image/png");
+                                var pngimg = '<img src="' + canvasdata + '">';
+                                d3.select("#pngdataurl").html(pngimg);
+                                var photo = document.createElement("a");
+                                photo.download = "直方图.png";
+                                photo.href = canvasdata;
+                                document.body.appendChild(photo);
+                                photo.click();
+                            }
+                    }else{
+                            console.log(form);
+                            
+                                var photo = document.createElement("a");
+                                console.log(photo);
+                                photo.download = "直方图.svg";
+                                photo.href = imgsrc;
+                                document.body.appendChild(photo);
+                                photo.click();
+                            
+                    }
+                    },
+                
 mounted() {
     axios.get("http://127.0.0.1:5006/treevis").then(res => {
         console.log('Data received:', res.data);
