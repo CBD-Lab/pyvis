@@ -83,7 +83,8 @@ def treeLeaf():
     try:
         class_object = importlib.import_module(wanted)
         print(class_object)
-        jsonfile = inspect.getmembers(class_object, inspect.isclass or inspect.ismodule or inspect.ismethod())
+        # jsonfile = inspect.getmembers(class_object, inspect.isclass or inspect.ismodule or inspect.ismethod())
+        jsonfile = inspect.getmembers(class_object, inspect.isclass)
         jsonstr = ""
         for item in jsonfile:
             class_str = str(item[1])
@@ -104,6 +105,22 @@ def treeLeaf():
     # result = ', '.join(flattened_data)
     # print(result)
     return jsonify(jsonfile)
+
+@app.route("/leafCode", methods=["GET"])
+def leafCode():
+    module_name = request.args.get("wanted", type=str)
+    print(module_name)
+    try:
+        # 尝试导入模块
+        module = __import__(module_name, fromlist=[''])
+        # 获取模块的源代码
+        source_code = open(module.__file__, 'r').read()
+        print(source_code)
+    except ImportError as e:
+        print(f"cannot load '{module_name}': {e}")
+    except Exception as e:
+        print(f"error happens: {e}")
+    return source_code
 
 
 @app.route("/localModule")

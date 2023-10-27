@@ -105,8 +105,9 @@
             background-color:var(--buttonbgcolor);
             border:1px solid var(--topcolor);
             width:100%;
-            margin: 0 auto;
+            margin-top: 5px;
             color:black;
+            font-size:12px;
         }
     </style>
 </head>
@@ -128,7 +129,7 @@
     </van-row>
 
 
-    <van-row>
+    <van-row style="height:90vh">
         <van-col offset="0" span="4" class="van-hairline--surround">
             <!--左侧搜索栏-->
             <van-row class="searchbox">
@@ -139,35 +140,35 @@
                     <van-button class="van-haptics-feedback" @click="search()">Search</van-button>
                 </van-col>
             </van-row>
-            <van-row class="viewset" style="margin-top:10px;">
-                <van-col span="6">
+            <van-row class="viewset" style="margin-top:5px;">
+                <van-col span="8">
                     <van-button class="van-haptics-feedback" @click="netvis()" type="primary">Net</van-button>
                 </van-col>
-                <van-col span="6">
+                <van-col span="8">
                     <van-button class="van-haptics-feedback" @click="treevis()" type="primary">Tree</van-button>
                 </van-col>
-                <van-col span="6">
+                <van-col span="8">
                     <van-button class="van-haptics-feedback" @click="matrixvis()" type="primary">Matrix</van-button>
                 </van-col>
-                <van-col span="6">
+                <van-col span="8">
                     <van-button class="van-haptics-feedback" @click="bubblevis()" type="primary">Bubble</van-button>
                 </van-col>
-                <van-col span="6">
+                <van-col span="8">
                     <van-button class="van-haptics-feedback" @click="cloudvis()" type="primary">Cloud</van-button>
                 </van-col>
-                <van-col span="6">
+                <van-col span="8">
                     <van-button class="van-haptics-feedback" @click="filetreevis()" type="primary">FileTree</van-button>
                 </van-col>
-                <van-col span="6">
+                <van-col span="8">
                     <van-button class="van-haptics-feedback" @click="hicirclevis()" type="primary">HiCircle</van-button>
                 </van-col>
-                <van-col span="6">
+                <van-col span="8">
                     <van-button class="van-haptics-feedback" @click="bitreevis()" type="primary">Bitree</van-button>
                 </van-col>
-                <van-col span="6">
+                <van-col span="8">
                     <van-button class="van-haptics-feedback" @click="downloadPhoto()" type="primary">Download SVG</van-button>
                 </van-col>
-                <van-col span="6">
+                <van-col span="8">
                     <van-button class="van-haptics-feedback" @click="downloadPhoto('png')" type="primary">Download PNG</van-button>
                 </van-col>
             </van-row>
@@ -212,7 +213,8 @@
             };
         },
         methods: {
-                search() {
+                search(key) {
+                this.clearPage();
                   switch (this.viewSelection) {
                     case "tree":
                         this.treevis();
@@ -227,6 +229,12 @@
                         this.bubblevis();
                         break;
                     case "cloud":
+<!--                    如果是在图中点击跳转搜索的话就把点击值赋值给查询关键词-->
+                        if(typeof(key) != "undefined")
+                            {
+                            this.keyword=key;
+                            }
+                        console.log(this.keyword)
                         this.cloudvis();
                         break;
                     case "filetree":
@@ -239,12 +247,24 @@
                         this.bitreevis();
                         break;
                     default:
-                        // 如果没有匹配的选项，可以选择执行默认的代码块
                         break;
+                }
+                },
+                clearPage()
+                {
+                    d3.select('svg').selectAll('*').remove();
+                    var tooltip = document.getElementById("tip");
+                    if (tooltip) {
+                        tooltip.parentNode.removeChild(tooltip);
+                }
+                 var tooltip = document.getElementById("tiptree");
+                    if (tooltip) {
+                        tooltip.parentNode.removeChild(tooltip);
                 }
                 },
                 treevis(){
                     var that = this;
+                    this.clearPage();
                     this.viewSelection="tree";
                     axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
                          onDrawTreeReady(res.data);
@@ -252,6 +272,7 @@
                 },
                 netvis(){
                     var that = this;
+                    this.clearPage();
                     this.viewSelection="net";
                     axios.get("http://127.0.0.1:5006/module?wanted=" + this.keyword).then(res=>{
                          onDrawNetReady(res.data);
@@ -259,6 +280,7 @@
                 },
                 matrixvis(){
                     var that = this;
+                    this.clearPage();
                     this.viewSelection="matrix";
                     axios.get("http://127.0.0.1:5006/module?wanted=" + this.keyword).then(res=>{
                     console.log(res.data);
@@ -267,6 +289,7 @@
                     },
                 bubblevis(){
                     var that = this;
+                    this.clearPage();
                     this.viewSelection="bubble";
                     axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
                          onDrawBubbleReady(res.data);
@@ -274,12 +297,14 @@
                 },
                 cloudvis(){
                     var that = this;
+                    this.clearPage();
                     this.viewSelection="cloud";
                     axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
-                         onDrawCloudReady(res.data);
+                         onDrawCloudReady(res.data,this.search);
                     });
                 },
                 filetreevis(){
+                    this.clearPage();
                     var that = this;
                     this.viewSelection="filetree";
                     axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
@@ -288,6 +313,7 @@
                     });
                 },
                 hicirclevis(){
+                    this.clearPage();
                     var that = this;
                     this.viewSelection="hicircle";
                     axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
@@ -296,6 +322,7 @@
                     });
                 },
                 bitreevis(){
+                    this.clearPage();
                     var that = this;
                     this.viewSelection="bitree";
                     axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
@@ -350,18 +377,19 @@
                     }
                     },
                 
-mounted() {
-    axios.get("http://127.0.0.1:5006/treevis").then(res => {
-        console.log('Data received:', res.data);
-        // 等待 onDrawTreeReady 函数变为可用
-        const checkInterval = setInterval(() => {
-            if (typeof onDrawTreeReady === 'function') {
-                clearInterval(checkInterval); // 停止轮询
-                onDrawTreeReady(res.data); // 调用回调函数
-            }
-        }, 100);
-    });
-}
+<!--        mounted() {-->
+<!--        console.log("mounted");-->
+<!--            axios.get("http://127.0.0.1:5006/treevis").then(res => {-->
+<!--                console.log('Data received:', res.data);-->
+<!--                const checkInterval = setInterval(() => {-->
+<!--                    if (typeof onDrawTreeReady === 'function') {-->
+<!--                        clearInterval(checkInterval); // 停止轮询-->
+<!--                        onDrawTreeReady(res.data); // 调用回调函数-->
+<!--                    }-->
+<!--                }, 100);-->
+<!--            });-->
+<!--        }-->
+
   },
     });
     app.use(vant);

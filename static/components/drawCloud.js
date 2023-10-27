@@ -4,12 +4,21 @@ function drawCloud(data,search){
         arraycolor[i] = color[i];
       }
       var hidata = d3.hierarchy(data);
-      var worddata = hidata.descendants();
-      var hiwords = new Array(worddata.length);
+//      var worddata = hidata.descendants();
+      var tree=d3.tree()
+               .size([height,width*0.7]);
+      var hiwords = new Array(hidata.length);
+      var root=tree(hidata);
+      var links=root.links();
+      var worddata=root.descendants();
+      console.log(worddata);
       for (var i = 0; i < worddata.length; i++) {
-          hiwords[i] = { text: worddata[i].data.name, size:(worddata[i].height+1)*6 };
+//          hiwords[i] = { text: worddata[i].data.name, size:(worddata[i].height+1)*6 };
+            if(worddata[i].children)
+            hiwords[i] = { text:worddata[i].data.name,size:(worddata[i].height+1)*6 ,leaf:"False",parent:worddata[i].parent,depth:worddata[i].depth};
+            else
+            hiwords[i] = { text: worddata[i].data.name, size:(worddata[i].height+1)*6 ,leaf:"True" ,parent:worddata[i].parent,depth:worddata[i].depth};
         }
-
       var wc = d3.layout.cloud()
           .size([width, height])
           .words(hiwords)
@@ -36,17 +45,49 @@ function drawCloud(data,search){
             .append("text")
             .style("font-size", d => d.size)
             .style("font-family", "Impact")
-            .style("fill", function (d, i) { return color[worddata[i].depth]; })
+            .style("fill", function (d, i) {
+             if(d.leaf=="True")
+                {
+                return "black";
+                }
+             else
+            return color[worddata[i].depth]; })
             .attr("text-anchor", "middle")
             .attr("transform", function (d) {
               return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
             })
             .attr("opacity", 0.8)
+            .attr("background-color",function(d)
+            {
+                if(d.leaf=="True")
+                {
+                return "grey";
+                }
+            })
             .text(function (d) { return d.text; })
             .on("click",function(d,i)
             {
-            search(i.text)
-            console.log(d,i);});
+              console.log(d,i)
+              var fullname = i.text.slice(0, -3);
+              var point=i;
+                while(point.depth>=0&& point.parent)
+                {
+                    point=point.parent;
+                    fullname = point.data.name +'.'+ fullname; // 使用 + 运算符连接字符串
+                }
+                fullname="torch."+fullname;
+            search(fullname)
+            console.log(d,i,fullname);
+            fetch('http://127.0.0.1:5006/leafCode?wanted=' + fullname)
+                    .then(response => response.text())
+                    .then(data => {
+                        console.log(data);
+                        })
+                    .catch(error => {
+                        console.error('Error executing Python script:', error);
+                        // 处理错误
+                    });
+            });
 
           var colorrec = d3.select("svg").selectAll('rect')
             .data(arraycolor)

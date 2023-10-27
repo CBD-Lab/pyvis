@@ -1,4 +1,3 @@
-console.log('drawTree.js is loaded');
 function drawTree(data){
      let tooltiptree = d3.select('body')
                             .append('div')
@@ -16,12 +15,13 @@ function drawTree(data){
     var svg = d3.select("#graph")
             .attr("width", width*0.85)
             .attr("height", height);
-    var tree=d3.tree()
-           .size([height,width*0.7]);
+       var tree=d3.tree()
+               .size([height,width*0.7]);
        var hi=d3.hierarchy(data);
        var root=tree(hi);
        var links=root.links();
        var nodes=root.descendants();
+       console.log(nodes);
     var gc=svg.append("g")
               .attr("transform","translate(" + (width/40) + "," + (height/100) + ")");
     var lines=gc.selectAll("path")
@@ -68,6 +68,7 @@ function drawTree(data){
                   .attr("fill", "red")
                   .attr("font-weight","bold");
                 var point=d;
+                console.log(d)
                 var fullname = d.data.name.slice(0, -3);
                 while(point.depth>=0&& point.parent)
                 {
@@ -135,6 +136,5 @@ function drawTree(data){
 
 window.onDrawTreeReady = function(data) {
     drawTree(data);
-
 }
 
