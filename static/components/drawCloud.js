@@ -81,6 +81,30 @@ function drawCloud(data,search){
             fetch('http://127.0.0.1:5006/leafCode?wanted=' + fullname)
                     .then(response => response.text())
                     .then(data => {
+                     const tips = d3.select("body")
+                                    .append("div")
+                                    .attr("class","popup")
+
+                    tips.append("span")
+                        .attr("class","close")
+                        .attr("color","red")
+                        .text("x")
+                        .on("click",function(){
+                        //tips.style("display","none");
+                        tips.remove();
+                       });
+
+                    tips.append("div")
+                        .attr("class","content")
+                        .text(data)
+
+
+    tips.style("position", "absolute")
+            .style("top", "50%")
+            .style("left", "50%")
+            .style("transform", "translate(-50%, -50%)")
+            .style("background-color", "white")
+            .style("border", "1px solid black");  
                         console.log(data);
                         })
                     .catch(error => {
