@@ -131,7 +131,7 @@ def localModule():
     wanted = request.args.get("wanted", type=str)
     if (wanted is None) or (wanted == "undefined") or (wanted == ""):
         wanted = 'pylibs2023'
-    jsonfile = "userjson/" + wanted + ".json"
+    jsonfile = "userjson_" + id + "/" + wanted + ".json"
     print(jsonfile)
     return app.send_static_file(jsonfile)
 
@@ -158,21 +158,31 @@ def userPath():
     global user_path
     user_path = global_paths[new_path]
     print("user_path:", user_path)
+    global id
+    id = str(new_path)
 
-    if not os.path.isfile('pylibs2023.txt'):
-        print("执行命令行操作")
+    try:
+        os.mkdir('static/userjson_' + id)
+        print(f'Folder created successfully.')
+    except FileExistsError:
+        print(f'Folder already exists.')
+    except FileNotFoundError:
+        print(f'Parent folder does not exist.')
+
+    if not os.path.isfile('pylibs2023_' + id + '.txt'):
+        print("Performs command line operations.")
         try:
-            subprocess.run(user_path + 'pip3 list >>pylibs2023.txt', shell=True, check=True)
+            subprocess.run(user_path + 'pip3 list >>pylibs2023_' + id + '.txt', shell=True, check=True)
         except subprocess.CalledProcessError as e:
             return jsonify({'error': f'Error running pip3 list: {str(e)}'}), 500
 
-    if not os.path.isfile('static/userjson/pylibs2023.json'):
+    if not os.path.isfile('static/userjson_' + id + '/pylibs2023.json'):
         try:
-            subprocess.run(["python", "extract/pylibs2023.py", "--path", user_path])
+            subprocess.run(["python", "extract/pylibs2023.py", "--path", user_path, "--id", id])
         except Exception as e:
             return jsonify({'error': f'Error executing pylibs2023.py: {str(e)}'}), 500
         try:
-            subprocess.run(["python", "extract/pyNet4Inspect2ClassFunction2023.py", "--path", user_path])
+            subprocess.run(["python", "extract/pyNet4Inspect2ClassFunction2023.py", "--path", user_path, "--id", id])
         except Exception as e:
             return jsonify({'error': f'Error executing pyNet4Inspect2ClassFunction2023.py: {str(e)}'}), 500
 

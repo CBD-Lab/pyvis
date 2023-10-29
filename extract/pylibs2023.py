@@ -1,7 +1,7 @@
 # !/usr/bin/env python
 # coding: utf-8
 # 变量没有清空，需要重新开始，否则容易重复写入pylibs
-# 先执行pip3 list >>pylibs2023.txt   所有的第三方包的名称和版本，再对每一个包提取它的require和required
+# 先执行pip3 list >>pylibs2023_X.txt   所有的第三方包的名称和版本，再对每一个包提取它的require和required
 # 将生成的pylibs2023.txt存到项目根目录，即PyVisVUE3
 # 继续执行pyNet4Inspect2ClassFunction2023.py
 
@@ -12,10 +12,12 @@ import argparse
 parser = argparse.ArgumentParser(description="My script")
 # 添加参数定义
 parser.add_argument("--path", type=str, help="python path")
+parser.add_argument("--id", type=str, help="file id")
 # 解析命令行参数
 args = parser.parse_args()
 # 访问参数值
 python_path = args.path
+id = args.id
 
 netjson = {"links": "", "nodes": ""}
 nodejson = []
@@ -29,10 +31,11 @@ def requires(libname):
     import os
     import subprocess
     try:
-        temp_output_file = "temp_output.txt"
+        temp_output_file = "static/userjson_" + id + "/temp_output.txt"
         # command = [r'D:\Anaconda\Anaconda3\Scripts\pip3', 'show', libname]
         command = [python_path + 'pip3', 'show', libname]
-        subprocess.run(command, stdout=open(temp_output_file, 'w', encoding='utf-8'), stderr=subprocess.PIPE, check=True)
+        subprocess.run(command, stdout=open(temp_output_file, 'w', encoding='utf-8'), stderr=subprocess.PIPE,
+                       check=True)
         # 从临时文件读取输出
         with open(temp_output_file, 'r', encoding='utf-8') as f:
             output = f.read()
@@ -52,7 +55,7 @@ def requires(libname):
 
 
 def readpylibs():
-    filename = 'pylibs2023.txt'
+    filename = 'pylibs2023_' + id + '.txt'
     i = 0
     with open(filename, 'r', encoding='utf-8') as f:
         line = f.readline()
@@ -107,7 +110,7 @@ def edges(pylibs):
 
 
 # 写入 Json 文件
-f = open('static/userjson/pylibs2023.json', 'w', encoding='utf-8')
+f = open('static/userjson_' + id + '/pylibs2023.json', 'w', encoding='utf-8')
 netjson = {"links": "", "nodes": ""}
 nodejson = []
 edgejson = []

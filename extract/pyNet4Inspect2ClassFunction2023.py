@@ -7,10 +7,12 @@ import argparse
 parser = argparse.ArgumentParser(description="My script")
 # 添加参数定义
 parser.add_argument("--path", type=str, help="python path")
+parser.add_argument("--id", type=str, help="file id")
 # 解析命令行参数
 args = parser.parse_args()
 # 访问参数值
 python_path = args.path
+id = args.id
 
 modules = []
 mnetjson = {'nodes': '', 'links': ''}
@@ -142,14 +144,14 @@ def netjson(filename):
     print("mnetjson:", mnetjson)
     print('-------End-------')
 
-    f = open('static/userjson/' + filename + '.json', 'w')
+    f = open('static/userjson_' + id + '/' + filename + '.json', 'w')
     f.write(json.dumps(mnetjson))
     f.close()
 
 
 def readpackages():
     packages = []
-    filename = 'pylibs2023.txt'
+    filename = 'pylibs2023_' + id + '.txt'
     i = 0
     with open(filename, 'r', encoding='utf-8') as f:
         line = f.readline()
