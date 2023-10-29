@@ -149,6 +149,7 @@ function drawMatrixGraph(graph){
 					  .on("mouseover",function(d,i){
                                 d3.select(this)
                                   .style("fill","#F00");
+//                                  .attr("stroke",null);
 
                                 nodeLeft.filter(function(t,m) { 	//过滤器
                                      //console.log(i,t,m)
@@ -169,7 +170,7 @@ function drawMatrixGraph(graph){
 				      })
 				      .on("mouseout",function(d,i){
                                 d3.select(this)
-                                  .style("fill","lightgray");
+                                  .style("fill","rgb(255,127,14)");
                                 nodeLeft.filter(function(t,m) { 	//过滤器
                                      return m== i.target;
                                 })
@@ -195,8 +196,8 @@ function drawMatrixGraph(graph){
 					  .attr("cx",function(d,i){return width/5+R*2+R*2*i})
 					  .attr("cy",R*2)
 					  .style("fill", function(d,i) {return color[i%10]; })
-					  .attr("stroke","black")
-					  .attr("stroke-width",0.5)
+					  .style("stroke", "black")
+					  .attr("stroke-width",2)
 					  .on("mouseover",function(d,i){    //加入提示框
                             d3.select(this)
                              .attr("r",R*1.5);

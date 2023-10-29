@@ -9,14 +9,14 @@
     <script src="/static/axios.min.js"></script>
     <script src="static/d3.layout.cloud.js"></script>
     <!--    引入绘图的js文件-->
-    <script type="text/plain" src="/static/components/drawTree.js"></script>
-    <script type="text/plain" src="/static/components/drawNet.js"></script>
-    <script type="text/plain" src="/static/components/drawMatrix.js"></script>
-    <script type="text/plain" src="/static/components/drawBubble.js"></script>
-    <script type="text/plain" src="/static/components/drawCloud.js"></script>
-    <script type="text/plain" src="/static/components/drawFileTree.js"></script>
-    <script type="text/plain" src="/static/components/drawHiCircle.js"></script>
-    <script type="text/plain" src="/static/components/drawBitree.js"></script>
+    <script type="module" src="/static/components/drawTree.js"></script>
+    <script type="module" src="/static/components/drawNet.js"></script>
+    <script type="module" src="/static/components/drawMatrix.js"></script>
+    <script type="module" src="/static/components/drawBubble.js"></script>
+    <script type="module" src="/static/components/drawCloud.js"></script>
+    <script type="module" src="/static/components/drawFileTree.js"></script>
+    <script type="module" src="/static/components/drawHiCircle.js"></script>
+    <script type="module" src="/static/components/drawBitree.js"></script>
     <!-- 使用 meta 标签设置移动端的显示参数，禁止缩放 -->
     <meta charset="UTF-8" name="viewport"
           content="width=device-width,user-scalable=no,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0"/>
@@ -267,10 +267,10 @@
                     this.clearPage();
                     this.viewSelection="tree";
                     axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
-<!--                         onDrawTreeReady(res.data);-->
-                        window.onload = function() {
-                            window.onDrawTreeReady(res.data);
-                        };
+                         onDrawTreeReady(res.data);
+<!--                        window.onload = function() {-->
+<!--                            window.onDrawTreeReady(res.data);-->
+<!--                        };-->
                     });
                 },
                 netvis(){
@@ -278,10 +278,10 @@
                     this.clearPage();
                     this.viewSelection="net";
                     axios.get("http://127.0.0.1:5006/module?wanted=" + this.keyword).then(res=>{
-<!--                         onDrawNetReady(res.data);-->
-                        window.onload = function() {
-                            window.onDrawNetReady(res.data);
-                        };
+                         onDrawNetReady(res.data);
+<!--                        window.onload = function() {-->
+<!--                            window.onDrawNetReady(res.data);-->
+<!--                        };-->
                     });
                 },
                 matrixvis(){
@@ -290,10 +290,10 @@
                     this.viewSelection="matrix";
                     axios.get("http://127.0.0.1:5006/module?wanted=" + this.keyword).then(res=>{
                         console.log(res.data);
-<!--                        onDrawMatrixReady(res.data);-->
-                        window.onload = function() {
-                            window.onDrawMatrixReady(res.data);
-                        };
+                        onDrawMatrixReady(res.data);
+<!--                        window.onload = function() {-->
+<!--                            window.onDrawMatrixReady(res.data);-->
+<!--                        };-->
                     });
                     },
                 bubblevis(){
@@ -301,10 +301,10 @@
                     this.clearPage();
                     this.viewSelection="bubble";
                     axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
-<!--                         onDrawBubbleReady(res.data);-->
-                        window.onload = function() {
-                            window.onDrawBubbleReady(res.data);
-                        };
+                         onDrawBubbleReady(res.data);
+<!--                        window.onload = function() {-->
+<!--                            window.onDrawBubbleReady(res.data);-->
+<!--                        };-->
                     });
                 },
                 cloudvis(){
@@ -312,10 +312,10 @@
                     this.clearPage();
                     this.viewSelection="cloud";
                     axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
-<!--                         onDrawCloudReady(res.data,this.search);-->
-                        window.onload = function() {
-                            window.onDrawCloudReady(res.data);
-                        };
+                         onDrawCloudReady(res.data,this.search);
+<!--                        window.onload = function() {-->
+<!--                            window.onDrawCloudReady(res.data);-->
+<!--                        };-->
                     });
                 },
                 filetreevis(){
@@ -324,10 +324,10 @@
                     this.viewSelection="filetree";
                     axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
                         console.log(res.data);
-<!--                        onDrawFileTreeReady(res.data);-->
-                        window.onload = function() {
-                            window.onDrawFileTreeReady(res.data);
-                        };
+                        onDrawFileTreeReady(res.data);
+<!--                        window.onload = function() {-->
+<!--                            window.onDrawFileTreeReady(res.data);-->
+<!--                        };-->
                     });
                 },
                 hicirclevis(){
@@ -336,10 +336,10 @@
                     this.viewSelection="hicircle";
                     axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
                         console.log(res.data);
-<!--                        onDrawHiCircleReady(res.data);-->
-                        window.onload = function() {
-                            window.onDrawHiCircleReady(res.data);
-                        };
+                        onDrawHiCircleReady(res.data);
+<!--                        window.onload = function() {-->
+<!--                            window.onDrawHiCircleReady(res.data);-->
+<!--                        };-->
                     });
                 },
                 bitreevis(){
@@ -348,10 +348,10 @@
                     this.viewSelection="bitree";
                     axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
                         console.log(res.data);
-<!--                        onDrawBitreeReady(res.data);-->
-                        window.onload = function() {
-                            window.onDrawBitreeReady(res.data);
-                        };
+                        onDrawBitreeReady(res.data);
+<!--                        window.onload = function() {-->
+<!--                            window.onDrawBitreeReady(res.data);-->
+<!--                        };-->
                     });
                 },
                 downloadPhoto(form = "svg") {

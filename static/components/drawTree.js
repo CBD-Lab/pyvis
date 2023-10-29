@@ -79,8 +79,10 @@ function drawTree(data){
                     if(data !== "null"){
                     var datain=data.jsoninside;
                     var dataout=data.jsonoutside;
+                    console.log(data,dataout);
 //                    draw outside class
                     const jsontree = toJson(fullname,dataout);
+                    console.log(jsontree);
                     drawOutTree(jsontree,event.pageX,event.pageY);
 //                    draw inside class
                     var formattedData = datain.replace(/"/g, '').replace(/\\n/g, '<br>').replace(/\\/g, '');
@@ -115,7 +117,7 @@ function drawTree(data){
 
 function buildJsonTree(fullname, data) {
   const tree = { name: fullname, children: [] };
-
+  console.log(data,fullname)
   for (const entry of data) {
     const parts = entry.split('.');
     let current = tree.children;
@@ -143,33 +145,23 @@ function toJson(fullname,data) {
 
 function drawOutTree(data,locX,locY)
 {
-    console.log(color,height,width);
-//    const miniTree = d3.select('#graph');
-           var treemini=d3.tree()
-                   .size([height*0.3,width*0.3]);
-           console.log(typeof(data));
-           var hiout=d3.hierarchy(data);
-           var rootout=treemini(hiout);
-           var linksout=rootout.links();
-           var nodesout=rootout.descendants();
-    console.log(linksout,nodesout);
-//    var gc=miniTree.append("g")
-//              .attr("id","miniTree")
-//              .attr("background-color","grey")
-//              .attr("transform","translate(" + locX + "," + locY+ ")");
+    var treemini=d3.tree()
+           .size([360, 100]);
+    console.log(locX,locY);
+    var hiout=d3.hierarchy(data);
+    var rootout=treemini(hiout);
+    var linksout=rootout.links();
+    var nodesout=rootout.descendants();
     var miniTree = d3.select('#graph')
         .append("g")
-        .attr("id", "miniTree");
-//        .attr("transform", "translate(" + locX + "," + locY + ")");
-// 选择主树状图的容器
+        .attr("id", "miniTree")
+        .attr("transform", "translate(" + locX + "," + locY + ")");
     var gc = d3.select("#miniTree")
-//    d3.select("#miniTree")
-//        .style("background-color", "grey")
-        .style("background-color", "yellow")
+               .style("background-color","#E4F1FF")
     gc.append("rect")
-    .attr("width", "100%") // 宽度占满整个 SVG
-    .attr("height", "100%") // 高度占满整个 SVG
-    .attr("fill", "grey"); // 设置背景颜色为灰色
+        .attr("width", "100%")
+        .attr("height", "100%")
+        .attr("fill", "#E4F1FF");
     var lines=gc.selectAll("path")
                 .data(linksout)
                 .enter()
@@ -178,14 +170,14 @@ function drawOutTree(data,locX,locY)
                 .attr("stroke-width",0.5)
                 .attr("opacity",0.5)
                 .attr("d",d3.linkHorizontal()          //d3.linkHorizontal()
-                            .x(d=>d.y)
-                            .y(d=>d.x)
+                            .x(d=>d.x)
+                            .y(d=>d.y)
                 );
     var mynode=gc.selectAll("circle")
             .data(nodesout)
             .join("circle")
-            .attr("cx",d=>d.y)
-            .attr("cy",d=>d.x)
+            .attr("cx",d=>d.x)
+            .attr("cy",d=>d.y)
             .attr("r",5)
             .attr("opacity",0.5)
             .attr("stroke","#555");
@@ -194,8 +186,8 @@ function drawOutTree(data,locX,locY)
             .data(nodesout)
             .enter()
             .append("text")
-            .attr("x",d=>d.y)
-            .attr("y",d=>d.x)
+            .attr("x",d=>d.x)
+            .attr("y",d=>d.y)
             .attr("dx",(d,i)=>d.height==0?"0em":"-1em")
             .attr("dy","0.5em")
             .attr("text-anchor",(d,i)=>d.height==0?"start":"end")
