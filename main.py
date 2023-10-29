@@ -12,7 +12,6 @@ import inspect
 import json
 import importlib
 
-
 app = Flask(__name__)
 CORS(app)
 
@@ -31,8 +30,8 @@ def mobileApp():
     cursor = db.cursor()
     print(cursor)
     try:
-        #sql="select * from map_enword limit 10"
-        sql = "select * from map_enword where english like '"+wanted+"%'"
+        # sql="select * from map_enword limit 10"
+        sql = "select * from map_enword where english like '" + wanted + "%'"
         cursor.execute(sql)
         rs = cursor.fetchall()
         words = list(rs)
@@ -40,8 +39,8 @@ def mobileApp():
         wcount = len(words)
     except:
         rs = 'db-error'
-    #return render_template("eng.html",words=words,wcount=wcount)
-    return jsonify({"result":words})
+    # return render_template("eng.html",words=words,wcount=wcount)
+    return jsonify({"result": words})
 
 
 @app.route("/net")
@@ -53,21 +52,21 @@ def netvis():
 def module():
     print("module")
     wanted = request.args.get("wanted", type=str)
-    if (wanted == None)or(wanted=="undefined")or(wanted==""):
+    if (wanted is None) or (wanted == "undefined") or (wanted == ""):
         wanted = 'pylibs'
-    jsonfile="netjson/"+wanted+".json"
+    jsonfile = "netjson/" + wanted + ".json"
     print(jsonfile)
     return app.send_static_file(jsonfile)
 
 
 @app.route("/treevis")
 def treevis():
-    #print("module")
+    # print("module")
     wanted = request.args.get("wanted", type=str)
-    if (wanted == None)or(wanted=="undefined")or(wanted==""):
+    if (wanted is None) or (wanted == "undefined") or (wanted == ""):
         wanted = 'nn'
-    jsonfile="treejson/"+wanted+".json"
-    #print(jsonfile)
+    jsonfile = "treejson/" + wanted + ".json"
+    # print(jsonfile)
     return app.send_static_file(jsonfile)
 
 
@@ -75,7 +74,7 @@ def treevis():
 def treeLeaf():
     wanted = request.args.get("wanted", type=str)
 
-    if (wanted == None)or(wanted=="undefined")or(wanted==""):
+    if (wanted is None) or (wanted == "undefined") or (wanted == ""):
         wanted = 'torch.nn.modules.transformer'
     wanted = urllib.parse.quote(wanted)
     print(wanted)
@@ -85,14 +84,14 @@ def treeLeaf():
         # jsonfile = inspect.getmembers(class_object, inspect.isclass or inspect.ismodule or inspect.ismethod())
         jsonfile = inspect.getmembers(class_object, inspect.isclass)
         jsonstrinside = ""
-        jsonstroutside=[]
+        jsonstroutside = []
         for item in jsonfile:
             class_str = str(item[1])
             start_index = class_str.find("'") + 1  # 找到第一个单引号的位置
             end_index = class_str.rfind("'")  # 找到最后一个单引号的位置
             class_name = class_str[start_index:end_index]
             print(class_name)
-            if(class_name.startswith(wanted)):
+            if (class_name.startswith(wanted)):
                 jsonstrinside = jsonstrinside + (class_name) + "\n"
             else:
                 jsonstroutside.append(class_name)
@@ -105,6 +104,7 @@ def treeLeaf():
     except:
         print("error")
         return jsonify({"error": "An error occurred"})
+
 
 @app.route("/leafCode", methods=["GET"])
 def leafCode():
@@ -129,7 +129,7 @@ def localModule():
     wanted = request.args.get("wanted", type=str)
     if wanted is None:
         wanted = 'pylibs2023'
-    jsonfile = "userjson/"+wanted+".json"
+    jsonfile = "userjson/" + wanted + ".json"
     print(jsonfile)
     return app.send_static_file(jsonfile)
 
@@ -165,7 +165,7 @@ def pylibs2023():
         import subprocess
         try:
             temp_output_file = "temp_output.txt"
-            command = [user_path+'pip3', 'show', libname]
+            command = [user_path + 'pip3', 'show', libname]
             subprocess.run(command, stdout=open(temp_output_file, 'w', encoding='utf-8'),
                            stderr=subprocess.PIPE, check=True)
             # 从临时文件读取输出
@@ -236,7 +236,6 @@ def pylibs2023():
                     i = i + 1
                 netjson['links'] = edgejson
         return len(edgejson)
-
 
     f = open('static/userjson/pylibs2023.json', 'w', encoding='utf-8')
     netjson = {"links": "", "nodes": ""}
@@ -371,14 +370,16 @@ def pyNet4Inspect2ClassFunction2023():
         return links
 
     def netjson(filename):
+        print("到这里了吗？")
         # 递归搜索模块Module节点
         mymodule = get_modules(eval(filename), filename, layer)
+        print("是这个语句的问题吗？")
         print("mymodule:", mymodule)
         print("----")
         print("len(nodes):", len(nodes))
 
         get_links(mymodule, filename)
-
+        print("link的问题？")
         mnetjson['nodes'] = nodes
         mnetjson['links'] = links
 
@@ -386,6 +387,7 @@ def pyNet4Inspect2ClassFunction2023():
         print('-------End-------')
 
         f = open('static/userjson/' + filename + '.json', 'w')
+        print("写入成功？")
         f.write(json.dumps(mnetjson))
         f.close()
 
@@ -415,12 +417,13 @@ def pyNet4Inspect2ClassFunction2023():
         try:
             # 检查模块是否存在，如果存在则导入
             if importlib.util.find_spec(filename):
+                print("模块存在")
                 import_statement = "import " + filename
                 print(import_statement)
                 exec(import_statement)
-                # importlib.import_module(filename)
                 netjson(filename)
         except Exception as e:
+            print("模块不存在")
             print(f"Error in package {filename}: {e}. Skipping...")
 
 
@@ -434,7 +437,7 @@ def userPath():
     if not os.path.isfile('pylibs2023.txt'):
         print("执行命令行操作")
         try:
-            subprocess.run('pip3 list >>pylibs2023.txt', shell=True, check=True)
+            subprocess.run(user_path + 'pip3 list >>pylibs2023.txt', shell=True, check=True)
         except subprocess.CalledProcessError as e:
             return jsonify({'error': f'Error running pip3 list: {str(e)}'}), 500
 
@@ -445,6 +448,7 @@ def userPath():
         except Exception as e:
             print("pylibs2023失败了")
             return jsonify({'error': f'Error executing pylibs2023: {str(e)}'}), 500
+    if os.path.isfile('static/userjson/pylibs2023.json'):
         try:
             print("在尝试调用pyNet4Inspect2ClassFunction2023文件")
             pyNet4Inspect2ClassFunction2023()
@@ -455,5 +459,5 @@ def userPath():
     return jsonify({'message': 'Tasks completed successfully'})
 
 
-if "__main__"==__name__:   # 程序入口
+if "__main__" == __name__:  # 程序入口
     app.run(port=5006)
