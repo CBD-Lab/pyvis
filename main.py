@@ -77,7 +77,6 @@ def treeLeaf():
     if (wanted is None) or (wanted == "undefined") or (wanted == ""):
         wanted = 'torch.nn.modules.transformer'
     wanted = urllib.parse.quote(wanted)
-    print(wanted)
     try:
         class_object = importlib.import_module(wanted)
         print(class_object)
@@ -87,12 +86,14 @@ def treeLeaf():
         jsonstroutside = []
         for item in jsonfile:
             class_str = str(item[1])
+            print(item)
             start_index = class_str.find("'") + 1  # 找到第一个单引号的位置
             end_index = class_str.rfind("'")  # 找到最后一个单引号的位置
             class_name = class_str[start_index:end_index]
             print(class_name)
             if (class_name.startswith(wanted)):
-                jsonstrinside = jsonstrinside + (class_name) + "\n"
+                class_name=class_name[len(wanted)+1:]
+                jsonstrinside = jsonstrinside + (class_name) + ","
             else:
                 jsonstroutside.append(class_name)
         response_data = {
@@ -101,8 +102,8 @@ def treeLeaf():
         }
         return jsonify(response_data)
         # print(jsonfile, type(jsonfile))
-    except:
-        print("error")
+    except Exception as e:
+        print("error",e)
         return jsonify({"error": "An error occurred"})
 
 
