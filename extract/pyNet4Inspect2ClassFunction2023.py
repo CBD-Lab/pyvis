@@ -132,7 +132,7 @@ def netjson(filename):
     print("mnetjson:", mnetjson)
     print('-------End-------')
 
-    f = open('../static/netjson/' + filename + '.json', 'w')
+    f = open('../static/userjson/' + filename + '.json', 'w')
     f.write(json.dumps(mnetjson))
     f.close()
 

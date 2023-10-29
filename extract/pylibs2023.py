@@ -98,7 +98,7 @@ def edges(pylibs):
 
 # 写入 Json 文件
 if __name__ == '__main__':
-    f = open('../static/netjson/pylibs2023.json', 'w', encoding='utf-8')
+    f = open('../static/userjson/pylibs2023.json', 'w', encoding='utf-8')
     netjson = {"links": "", "nodes": ""}
     nodejson = []
     edgejson = []
