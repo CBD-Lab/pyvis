@@ -6,6 +6,16 @@
 # 继续执行pyNet4Inspect2ClassFunction2023.py
 
 import json
+import argparse
+
+# 创建参数解析器
+parser = argparse.ArgumentParser(description="My script")
+# 添加参数定义
+parser.add_argument("--path", type=str, help="python path")
+# 解析命令行参数
+args = parser.parse_args()
+# 访问参数值
+python_path = args.path
 
 netjson = {"links": "", "nodes": ""}
 nodejson = []
@@ -21,7 +31,7 @@ def requires(libname):
     try:
         temp_output_file = "temp_output.txt"
         # command = [r'D:\Anaconda\Anaconda3\Scripts\pip3', 'show', libname]
-        command = [r'D:\python3.8.6\Scripts\pip3', 'show', libname]
+        command = [python_path + 'pip3', 'show', libname]
         subprocess.run(command, stdout=open(temp_output_file, 'w', encoding='utf-8'), stderr=subprocess.PIPE, check=True)
         # 从临时文件读取输出
         with open(temp_output_file, 'r', encoding='utf-8') as f:
@@ -42,7 +52,7 @@ def requires(libname):
 
 
 def readpylibs():
-    filename = '../pylibs2023.txt'
+    filename = 'pylibs2023.txt'
     i = 0
     with open(filename, 'r', encoding='utf-8') as f:
         line = f.readline()
@@ -97,15 +107,14 @@ def edges(pylibs):
 
 
 # 写入 Json 文件
-if __name__ == '__main__':
-    f = open('../static/userjson/pylibs2023.json', 'w', encoding='utf-8')
-    netjson = {"links": "", "nodes": ""}
-    nodejson = []
-    edgejson = []
-    pylibs = []
-    pylibs = readpylibs()
-    print("ptlibs after", pylibs)
-    edges(pylibs)
-    nodes(pylibs)
-    f.write(json.dumps(netjson))
-    f.close()
+f = open('static/userjson/pylibs2023.json', 'w', encoding='utf-8')
+netjson = {"links": "", "nodes": ""}
+nodejson = []
+edgejson = []
+pylibs = []
+pylibs = readpylibs()
+print("ptlibs after", pylibs)
+edges(pylibs)
+nodes(pylibs)
+f.write(json.dumps(netjson))
+f.close()

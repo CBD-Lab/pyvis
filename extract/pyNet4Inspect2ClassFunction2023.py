@@ -1,6 +1,16 @@
 import inspect
 import json
 import importlib
+import argparse
+
+# 创建参数解析器
+parser = argparse.ArgumentParser(description="My script")
+# 添加参数定义
+parser.add_argument("--path", type=str, help="python path")
+# 解析命令行参数
+args = parser.parse_args()
+# 访问参数值
+python_path = args.path
 
 modules = []
 mnetjson = {'nodes': '', 'links': ''}
@@ -132,14 +142,14 @@ def netjson(filename):
     print("mnetjson:", mnetjson)
     print('-------End-------')
 
-    f = open('../static/userjson/' + filename + '.json', 'w')
+    f = open('static/userjson/' + filename + '.json', 'w')
     f.write(json.dumps(mnetjson))
     f.close()
 
 
 def readpackages():
     packages = []
-    filename = '../pylibs2023.txt'
+    filename = 'pylibs2023.txt'
     i = 0
     with open(filename, 'r', encoding='utf-8') as f:
         line = f.readline()
@@ -154,7 +164,7 @@ def readpackages():
 
 
 # path = r'D:\Anaconda\Anaconda3\Lib\site-packages'
-path = r'D:\python3.8.6\Lib\site-packages'
+path = python_path[:-8] + 'Lib\site-packages'
 # filename = 'wordcloud'
 # netjson(filename)
 
