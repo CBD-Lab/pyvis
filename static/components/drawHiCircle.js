@@ -2,11 +2,8 @@
 function drawHiCircle(data) {
 
   var svg = d3.select("#graph")
-    .append("svg")
     .attr("width", width)
     .attr("height", height);
-
-
 
   // 获取具有ID属性的div元素
 
@@ -24,14 +21,12 @@ function drawHiCircle(data) {
 
   var radius = width / 4.8
   var tree = d3.cluster().size([2 * Math.PI, radius - 100]);
-  console.log(data);
-  //var root=tree(d3.hierarchy(data).sort((a, b) => d3.ascending(a.data.name, b.data.name)));
+
   var root = tree(d3.hierarchy(data));
-  console.log(root);
+
   var links = root.links();
-  console.log(links);
+
   var nodes = root.descendants()
-  console.log(nodes);
 
   svg.append("g")
     .attr("fill", "none")

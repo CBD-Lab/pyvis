@@ -1,7 +1,6 @@
 function drawBitree(data) {
 
 	var svg = d3.select("#graph")
-		.append("svg")
 		.attr("width", width)
 		.attr("height", height);
 	// 获取具有ID属性的div元素
@@ -16,17 +15,12 @@ function drawBitree(data) {
 		.attr("fill", (d, i) => color[i])
 		.attr("opacity", 0.7);
 
-
-	//console.log(dataraw);
 	var data = d3.hierarchy(data)
 		.sort((a, b) => d3.ascending(a.data.depth, b.data.depth));
-	//.sort((a, b) => b.value - a.value);
-	console.log(data);
-	console.log(data.children.length);
 
 	var info = svg.append("text")
 		.attr("x", width * 0.1)
-		.attr("y", 20)
+		.attr("y", 40)
 		.attr("font-size", "20px")
 		.attr("font-weight", "bold")
 		.attr("fill", color[2])
@@ -40,7 +34,7 @@ function drawBitree(data) {
 	var angle = Math.PI;
 	var labelchange = 1;
 
-	d3.select("input[id=scale]").on("change", function () {
+	d3.select("input[id=lengthscale]").on("change", function () {
 		length = this.value;
 		d3.selectAll("line").remove();
 		d3.selectAll("text").remove();
@@ -50,7 +44,7 @@ function drawBitree(data) {
 		d3.selectAll("text")
 			.attr("fill", "black");
 	});
-	d3.select("input[id=angle]").on("change", function () {
+	d3.select("input[id=anglescale]").on("change", function () {
 		angle = this.value;
 		d3.selectAll("line").remove();
 		d3.selectAll("text").remove();
@@ -69,8 +63,7 @@ function drawBitree(data) {
 			labelchange = 0;
 	});
 	function show(data, x0, y0, length, rate, a, count) {
-		//console.log(data);
-		//console.log(count);
+
 		id++;
 		var x1 = x0;
 		var y1 = y0;
@@ -85,15 +78,6 @@ function drawBitree(data) {
 			.attr("stroke", color[data.depth])
 			.attr("stroke-width", data.height * 2 + 1)
 			.attr("opacity", 0.7);
-		/*
-		.on("mouseover",function(d){
-			d3.select(this)
-				.attr("stroke-width",data.height*2+1);
-		})
-		.on("mouseout",function(d){
-			d3.select(this)
-				.attr("stroke-width",data.height+1);
-		});*/
 
 		svg.append("circle")
 			.attr("cx", x2)
@@ -102,7 +86,6 @@ function drawBitree(data) {
 			.attr("fill", color[data.depth])
 			.attr("stroke", "white")
 			.attr("opacity", 0.7);
-
 
 		svg.append("text")
 			.attr("x", x2 + 20)
@@ -113,17 +96,13 @@ function drawBitree(data) {
 			.attr("font-weight", "bold")
 			.attr("fill", color[data.depth])
 			.attr("opacity", d => count > 0 ? 1 : 0)
-			// .text(d=>(count>-1)&&((id%3==1)||(id>400))?data.data.name+"-"+id:"");
 			.text(d => (count > -1) && ((id % 43 == 1)) ? data.data.name + "-" + id : "");
 
 		if (count > 0) {
 			for (var i = 0; i < count; i++) {
 				data = data.children[i];
-				//console.log(data.data.name,data.data.children);
-				//var a=Math.PI*i/(count)+angle*Math.PI/180;
-				//var a=angle*i/(count)-Math.PI+angle*Math.random()/count;   Great
 				var a = Math.PI * i / (count) - Math.PI + Math.PI * Math.random() / count;
-				//console.log(count,i,data);
+
 				if (data.height > 0)    //no children
 				{
 					var subcount = data.children.length;
@@ -141,16 +120,11 @@ function drawBitree(data) {
 			}
 		}
 		else {
-			//console.log(data);
 			data = data.parent;
-			//show(data,x2,y2,length*rate,rate,a,data.children.length);
-			//console.log(data);
 		}
 	}
 
-
 	show(data, x0, y0, length, rate, -Math.PI / 2, data.children.length);
-
 
 	d3.selectAll("text")
 		.attr("fill", "yellow")

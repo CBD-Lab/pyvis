@@ -173,7 +173,7 @@
                 </van-col>
             </van-row>
             <!--力导向图控制区-->
-            <div  v-show="viewSelection === 'net'||viewSelection === 'filetree'">
+            <div  v-show="viewSelection === 'net'">
             <van-row style="margin-top:20px">Node Radius</van-row>
             <van-row><input style="position:relative;top:3px;" type="range" id="nodescale" min="0.5" max="10" value="1">
             </van-row>
@@ -186,6 +186,19 @@
             <van-row style="margin-top:30px"><input type="radio" name="flush" value="重绘" id="flush"
                                                     onclick="javascript:location.reload()">Repaint</input></van-row>
 
+            </div>
+            <div  v-show="viewSelection === 'bitree'">
+                <van-row style="margin-top:20px;margin-left: 5px;">Length</van-row>
+                <van-row>
+                    <input style="position:relative;top:3px;margin-left: 5px;" type="range" id="lengthscale" min="30" max="1000" value="200">
+                </van-row>
+                <van-row style="margin-top:20px;margin-left: 5px;">Angel</van-row>
+                <van-row>
+                    <input style="position:relative;top:3px;margin-left: 5px;" type="range" id="anglescale" min="Math.PI" max="Math.PI*2" value="0">
+                </van-row>
+                <van-row style="margin-top:30px;">
+                    <input type="checkbox" name="label" value="showOn" id="showLabel" checked onclick="javascript:selectit()">Label</input>
+                </van-row>
             </div>
         </van-col>
         <van-col class="graphpart" span="20">
@@ -359,13 +372,12 @@
                     var html = d3.select("svg")
                                 .attr("version", 1.1)
                                 .attr("xmlns", "http://www.w3.org/2000/svg")
-                                .attr("id", "svgdemo")
                                 .node().parentNode.innerHTML;
                     var imgsrc = 'data:image/svg+xml;base64,' + window.btoa(unescape(encodeURIComponent(html)));
                     // 从 String 对象中创建一个 base-64 编码的 ASCII 字符串，其中字符串中的每个字符都被视为一个二进制数据字节。
-                    console.log(imgsrc);
                     var image = new Image;
                     image.src = imgsrc;
+                    var self = this;
                     if (form === "png") {
                             var svg = d3.select("#svgbox").node()
                             var img = '<img src="' + imgsrc + '">';
@@ -382,20 +394,17 @@
                                 var pngimg = '<img src="' + canvasdata + '">';
                                 d3.select("#pngdataurl").html(pngimg);
                                 var photo = document.createElement("a");
-                                photo.download = "png图.png";
+                                photo.download =self.viewSelection+"图.png";
                                 photo.href = canvasdata;
                                 document.body.appendChild(photo);
                                 photo.click();
                             }
                     }else{
-                            console.log(form);
-                            
-                                var photo = document.createElement("a");
-                                console.log(photo);
-                                photo.download = "svg图.svg";
-                                photo.href = imgsrc;
-                                document.body.appendChild(photo);
-                                photo.click();
+                            var photo = document.createElement("a");
+                            photo.download =self.viewSelection+"图.svg";
+                            photo.href = imgsrc;
+                            document.body.appendChild(photo);
+                            photo.click();
                             
                     }
                     },
