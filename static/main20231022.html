@@ -9,14 +9,14 @@
     <script src="/static/axios.min.js"></script>
     <script src="static/d3.layout.cloud.js"></script>
     <!--    引入绘图的js文件-->
-    <script type="module" src="/static/components/drawTree.js"></script>
-    <script type="module" src="/static/components/drawNet.js"></script>
-    <script type="module" src="/static/components/drawMatrix.js"></script>
-    <script type="module" src="/static/components/drawBubble.js"></script>
-    <script type="module" src="/static/components/drawCloud.js"></script>
-    <script type="module" src="/static/components/drawFileTree.js"></script>
-    <script type="module" src="/static/components/drawHiCircle.js"></script>
-    <script type="module" src="/static/components/drawBitree.js"></script>
+    <script type="text/javascript" src="/static/components/drawTree.js"></script>
+    <script type="text/javascript" src="/static/components/drawNet.js"></script>
+    <script type="text/javascript" src="/static/components/drawMatrix.js"></script>
+    <script type="text/javascript" src="/static/components/drawBubble.js"></script>
+    <script type="text/javascript" src="/static/components/drawCloud.js"></script>
+    <script type="text/javascript" src="/static/components/drawFileTree.js"></script>
+    <script type="text/javascript" src="/static/components/drawHiCircle.js"></script>
+    <script type="text/javascript" src="/static/components/drawBitree.js"></script>
     <!-- 使用 meta 标签设置移动端的显示参数，禁止缩放 -->
     <meta charset="UTF-8" name="viewport"
           content="width=device-width,user-scalable=no,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0"/>
@@ -173,7 +173,7 @@
                 </van-col>
             </van-row>
             <!--力导向图控制区-->
-            <div  v-show="viewSelection === 'net'">
+            <div  v-show="viewSelection === 'net'||viewSelection === 'filetree'">
             <van-row style="margin-top:20px">Node Radius</van-row>
             <van-row><input style="position:relative;top:3px;" type="range" id="nodescale" min="0.5" max="10" value="1">
             </van-row>
@@ -361,7 +361,6 @@
                                 .attr("xmlns", "http://www.w3.org/2000/svg")
                                 .attr("id", "svgdemo")
                                 .node().parentNode.innerHTML;
-                    console.log("11");
                     var imgsrc = 'data:image/svg+xml;base64,' + window.btoa(unescape(encodeURIComponent(html)));
                     // 从 String 对象中创建一个 base-64 编码的 ASCII 字符串，其中字符串中的每个字符都被视为一个二进制数据字节。
                     console.log(imgsrc);
@@ -383,7 +382,7 @@
                                 var pngimg = '<img src="' + canvasdata + '">';
                                 d3.select("#pngdataurl").html(pngimg);
                                 var photo = document.createElement("a");
-                                photo.download = "直方图.png";
+                                photo.download = "png图.png";
                                 photo.href = canvasdata;
                                 document.body.appendChild(photo);
                                 photo.click();
@@ -393,7 +392,7 @@
                             
                                 var photo = document.createElement("a");
                                 console.log(photo);
-                                photo.download = "直方图.svg";
+                                photo.download = "svg图.svg";
                                 photo.href = imgsrc;
                                 document.body.appendChild(photo);
                                 photo.click();

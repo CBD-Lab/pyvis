@@ -64,7 +64,7 @@ function drawFileTree(data) {
 
     //获取节点的update部分,个数相同
     var nodeUpdate = svg.selectAll(".node")
-      .data(nodes, d => d.name); 
+      .data(nodes, d => d.name);
 
     //获取节点的enter部分
     var nodeEnter = nodeUpdate.enter();
@@ -79,7 +79,7 @@ function drawFileTree(data) {
                       rotate(${d.x * 180 / Math.PI - 90})
                       translate(${d.y},0)
                       `)
-      .on("click", function (evenet,d) {
+      .on("click", function (evenet, d) {
         //console.log("你点击的是="+d.data.name);
         if (d.data.name == 'd3') {
           toggle(data0);
