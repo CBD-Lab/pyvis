@@ -469,14 +469,14 @@ select() {
                                 var pngimg = '<img src="' + canvasdata + '">';
                                 d3.select("#pngdataurl").html(pngimg);
                                 var photo = document.createElement("a");
-                                photo.download =self.viewSelection+"图.png";
+                                photo.download =self.viewSelection+".png";
                                 photo.href = canvasdata;
                                 document.body.appendChild(photo);
                                 photo.click();
                             }
                     }else{
                             var photo = document.createElement("a");
-                            photo.download =self.viewSelection+"图.svg";
+                            photo.download =self.viewSelection+".svg";
                             photo.href = imgsrc;
                             document.body.appendChild(photo);
                             photo.click();
