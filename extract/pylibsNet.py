@@ -114,7 +114,7 @@ nodejson = []
 edgejson = []
 pylibsNet = []
 pylibsNet = readpylibsNet()
-print("ptlibs after", pylibsNet)
+print("pylibsNet after", pylibsNet)
 edges(pylibsNet)
 nodes(pylibsNet)
 f.write(json.dumps(netjson))
