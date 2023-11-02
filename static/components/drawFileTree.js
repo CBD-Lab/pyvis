@@ -27,7 +27,7 @@ function drawFileTree(data) {
 
     /*
     （1） 计算节点和连线的位置
-    */  
+    */
     var root = tree(d3.hierarchy(source))
     //应用布局，计算节点和连线
     var nodes = root.descendants();
@@ -110,14 +110,18 @@ function drawFileTree(data) {
     enterNodes.append("circle")
       .attr("r", d => d.height * 4 + 3)
       .style("fill", function (d) {
-        return d.height != 0 ? "green" : "#FFF";
+        return d.height != 0 ? "green" : "black";
       });
     enterNodes.append("text")
       .attr("x", function (d) { return d.children || d._children ? -14 : 14; })
       .attr("text-anchor", function (d) {
         return (d.children || d._children) ? "end" : "start";
       })
-      .text(function (d) { return d.data.name; });
+      .attr("stroke-width", 0.5)
+      .attr("stroke", "#555")
+      .text(function (d) { return d.data.name; })
+      .style("font-family", "Consolas")// 设置字体样式为Consolas;
+      
 
     //2. 节点的 Update 部分的处理办法
     var updateNodes = nodeUpdate.transition()
@@ -170,7 +174,7 @@ function drawFileTree(data) {
         .angle(d => d.x)
         .radius(d => d.y))
       .attr("fill", "none");
-      
+
     //2. 连线的 Update 部分的处理办法
     linkUpdate.transition()
       .duration(500)
@@ -181,7 +185,7 @@ function drawFileTree(data) {
     //3. 连线的 Exit 部分的处理办法
     linkExit.transition()
       .duration(500)
-      .attr("d", 
+      .attr("d",
         d3.linkRadial()
           .angle(d => d.x)
           .radius(d => d.y))
@@ -194,7 +198,15 @@ function drawFileTree(data) {
       d.x0 = d.x;
       d.y0 = d.y;
     });
-
+    // 更新节点的文本颜色
+    updateTextColors();
+  }
+  function updateTextColors() {
+    // 选择所有的文本元素，并根据是否具有子节点设置文本颜色
+    svg.selectAll("text")
+      .style("fill", function (d) {
+        return (d.children || d._children) ? "green" : "#000"; // 具有子节点的文本颜色设置为绿色，否则为黑色
+      });
   }
 
   //切换开关，d 为被点击的节点
