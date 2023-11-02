@@ -1,18 +1,30 @@
-import inspect
-import json
-import importlib
+#剔除了Open3D里的没有文件对应问题（Nodes）
+#剔除了NLTK里别名和重定向问题（Nodes）
 import argparse
+import importlib
+import inspect
+import basicFunction
+import json
+import pathlib
+import os
+import collections
+import math
+import builtins
+import ctypes
+import glob
+import platform
+import textwrap
+import sys
+#------------------do not delete the import above,using while runtime.----------------------------------
 
 # 创建参数解析器
 parser = argparse.ArgumentParser(description="My script")
 # 添加参数定义
 parser.add_argument("--path", type=str, help="python path")
-parser.add_argument("--id", type=str, help="file id")
 # 解析命令行参数
 args = parser.parse_args()
 # 访问参数值
 python_path = args.path
-id = args.id
 
 modules = []
 mnetjson = {'nodes': '', 'links': ''}
@@ -21,137 +33,119 @@ links = []
 myclass = ""
 myfunction = ""
 
-layer = 0
+layer=0
+def get_modules(pname,initpname,layer):
+    arg=eval(pname)
+    if arg.__name__ ==initpname:
+        modules.append(arg.__name__)
+        myclass= basicFunction.in_out_classes_bymodulename(eval(arg.__name__))
+        classcount=len(myclass)
 
-
-def get_modules(arg, str, layer):
-    try:
-        if arg.__name__ == filename:
-            modules.append(arg.__name__)
-            # 获取当前模块中类和函数的信息
-            hasclass = inspect.getmembers(arg, inspect.isclass)
-            hasfunction = inspect.getmembers(arg, inspect.isfunction)
-            print("\n-------Function-------")
-            print("hasclass:", hasclass)
-            print("hasfunction:", hasfunction)
-            myclass = ""
-            classcount = 0
-            for h in hasclass:
-                if h[1].__module__ == arg.__name__:
-                    # myclass = myclass + h[1].__module__ + "." + h[1].__name__ + ";"
-                    myclass = myclass + h[1].__name__ + ";"
-                    classcount = classcount + 1;
-
-            myfunction = ""
-            functioncount = 0
-            for f in hasfunction:
-                if f[1].__module__ == arg.__name__:
-                    myfunction = myfunction + f[1].__name__ + ";"
-                    functioncount = functioncount + 1;
-            nodes.append(
-                {'name': arg.__name__, 'file': arg.__file__, 'layer': layer, 'hasclass': classcount, 'myclass': myclass,
-                 'hasfunction': functioncount, 'myfunction': myfunction})
-    except Exception as e:
-        print(f"Error in module {filename}: {e}. Skipping...")
-
-    # 获取当前模块中的子模块信息
-    mmembers = inspect.getmembers(arg, inspect.ismodule)
-    layer = layer + 1
-    print("mmembers:", mmembers)
-    print('--------------------------')
-    for (name, moduleurl) in mmembers:
-        try:
-            # print("name=" + name)
-            # print(moduleurl.__name__)
-            if str in moduleurl.__name__ and not (moduleurl.__name__ in modules):
-                modules.append(moduleurl.__name__)
-                mname = arg.__name__ + "." + name
-                # modules.append(mname)
-                # print(modules)
-
-                # print(mname)
-                if ('__file__' in dir(eval(moduleurl.__name__))) or (
-                        len(inspect.getmembers(arg, inspect.ismodule)) > 0):
-                    # print(eval(mname).__file__)
-                    hasclass = inspect.getmembers(eval(moduleurl.__name__), inspect.isclass)
-                    hasfunction = inspect.getmembers(eval(moduleurl.__name__), inspect.isfunction)
-                    # print(mname + "=---Function--------------")
-                    # print(hasfunction)
-                    myclass = ""
-                    classcount = 0
-                    for h in hasclass:
-                        if h[1].__module__ == mname:
-                            # myclass = myclass + h[1].__module__ + "." + h[1].__name__ + ";"
-                            myclass = myclass + h[1].__name__ + ";"
-                            classcount = classcount + 1;
-
-                    myfunction = ""
-                    functioncount = 0
-                    for f in hasfunction:
-                        if f[1].__module__ == mname:
-                            myfunction = myfunction + f[1].__name__ + ";"
-                            functioncount = functioncount + 1;
-                    if ('__file__' in dir(eval(moduleurl.__name__))):
-                        nodes.append(
-                            {'name': moduleurl.__name__, 'file': eval(moduleurl.__name__).__file__, 'layer': layer,
-                             'hasclass': classcount, 'myclass': myclass, "hasfunction": functioncount,
-                             "myfunction": myfunction})
-                    else:
-                        nodes.append({'name': moduleurl.__name__, 'file': 'null', 'layer': layer,
+        myfunction= basicFunction.get_functions(eval(arg.__name__))
+        functioncount=len(myfunction)
+        if("__file__" in dir(eval(arg.__name__))):
+            nodes.append({'name': arg.__name__, 'file': arg.__file__,'ftype':'.py','layer':layer,'hasclass':classcount,'myclass':myclass,"hasfunction":functioncount,"myfunction":myfunction})
+        else:
+            nodes.append({'name': arg.__name__, 'file': 'none', 'ftype':'none','layer': layer,
                                       'hasclass': classcount, 'myclass': myclass, "hasfunction": functioncount,
                                       "myfunction": myfunction})
-                    # print('\n-----------')
-                    # print(mname)
-                    get_modules(eval(moduleurl.__name__), filename, layer)
-        except Exception as e:
-            print(f"Error in module {moduleurl.__name__}: {e}. Skipping...")
+#     count=count+1
+
+    layer=layer+1
+    mem=inspect.getmembers(eval(pname),inspect.ismodule)
+    for m,m_info in mem:
+        if (pname in m_info.__name__) and not(m_info.__name__ in modules):   #Filter calling external modules
+            if("__file__" in dir(eval(m_info.__name__))):
+                if(pathlib.Path(m_info.__file__).suffix==".py"):
+                    #print("1---.py=",m,m_info.__name__,m_info.__file__)
+                    modules.append(m_info.__name__)
+
+                    myclass = basicFunction.in_out_classes_bymodulename(eval(m_info.__name__))
+                    classcount = len(myclass)
+
+                    myfunction =basicFunction.get_functions(eval(m_info.__name__))
+                    functioncount = len(myfunction)
+                    nodes.append({'name': m_info.__name__, 'file': eval(m_info.__name__).__file__, 'layer': layer,
+                                      'hasclass': classcount, 'myclass': myclass, "hasfunction": functioncount,
+                                      "myfunction": myfunction})
+
+                    __import__(m_info.__name__)
+
+                else:
+                    #print("2---Not.py(.pyd,.pyi,.pyc)",m,m_info.__name__,m_info.__file__)
+                    modules.append(m_info.__name__)
+                    ex=os.path.splitext(m_info.__file__)[1]
+                    #print(ex)
+                    myclass = basicFunction.in_out_classes_bymodulename(eval(m_info.__name__))
+                    classcount = len(myclass)
+
+                    myfunction = basicFunction.get_functions(eval(m_info.__name__))
+                    functioncount = len(myfunction)
+                    nodes.append({'name': m_info.__name__, 'file': eval(m_info.__name__).__file__, 'ftype':ex,'layer': layer,
+                                      'hasclass': classcount, 'myclass': myclass, "hasfunction": functioncount,
+                                      "myfunction": myfunction})
+
+            else:
+                #print("3---NoFile",m,m_info.__name__)
+                modules.append(m_info.__name__)
+
+                myclass = basicFunction.in_out_classes_bymodulename(eval(m_info.__name__))
+                classcount = len(myclass)
+
+                myfunction = basicFunction.get_functions(eval(m_info.__name__))
+                functioncount = len(myfunction)
+                nodes.append({'name': m_info.__name__, 'file': 'none', 'ftype':'none','layer': layer,
+                                  'hasclass': classcount, 'myclass': myclass, "hasfunction": functioncount,
+                                  "myfunction": myfunction})
+            if ("__file__" in dir(eval(m_info.__name__))):
+                get_modules(m_info.__name__, initpname, layer)
     return modules
 
 
-def get_links(mymodule, str):
+def get_links(mymodule,pname):
+    i=0
     for m in mymodule:
         nextmodules = []
-        print("m:", m)
-        try:
-            # 获取当前模块m中的子模块信息
+        print(i,"=",m)
+        i=i+1
+        try:   #torch.classes can not use inspect.getmembers(torch.classes)
             mm = inspect.getmembers(eval(m), inspect.ismodule)
-            print("mm:", mm)
-            print('--------------------------')
+
             for (name, moduleurl) in mm:
-                if str in moduleurl.__name__:
+                if pname in moduleurl.__name__:
                     nextmodules.append(moduleurl.__name__)
             for n in nextmodules:
-                links.append({'source': mymodule.index(m), 'target': mymodule.index(n)})
-        except Exception as e:
-            print(f"Error in module {m}: {e}. Skipping...")
-    print("links:", links)
+                # print("target=",n)
+                if n in mymodule:
+                    links.append({'source': mymodule.index(m), 'target': mymodule.index(n)})
+        except:
+            print("May inspect.getMembers(object) error, the object is not iterable, such as torch.classes")
+    print(links)
+
     return links
 
 
 
 def netjson(filename):
-    # 递归搜索模块Module节点
-    mymodule = get_modules(eval(filename), filename, layer)
-    print("mymodule:", mymodule)
-    print("----")
-    print("len(nodes):", len(nodes))
+    #递归搜索模块Module节点
 
-    get_links(mymodule, filename)
+    mymodule = get_modules(filename,initpname,layer)
+
+    print(len(nodes))
+    get_links(mymodule,initpname)
 
     mnetjson['nodes'] = nodes
     mnetjson['links'] = links
-
-    print("mnetjson:", mnetjson)
-    print('-------End-------')
-
-    f = open('static/userjson_' + id + '/' + filename + '.json', 'w')
+#------------------------ single test using the 137th line --------------------------
+    # f = open('../static/netjson/'+filename+'.json', 'w')
+    f = open('static/netjson/' + filename + '.json', 'w')
     f.write(json.dumps(mnetjson))
     f.close()
 
 
 def readpackages():
     packages = []
-    filename = 'pylibs2023_' + id + '.txt'
+    filename = 'pylibsNet.txt'
     i = 0
     with open(filename, 'r', encoding='utf-8') as f:
         line = f.readline()
@@ -161,7 +155,7 @@ def readpackages():
             line = f.readline()
             i = i + 1
         print("i", i)
-    print("pylibs before", packages)
+    print("pylibsNet before", packages)
     return packages[2:]
 
 
@@ -175,10 +169,12 @@ package_names = readpackages()
 print("package_names", package_names)
 for package_name in package_names:
     filename = package_name.replace(".py", "")
+    initpname = filename
     print("filename:", filename)
     try:
         # 检查模块是否存在，如果存在则导入
         if importlib.util.find_spec(filename):
+            # 导入包的路径 ？？？  软件的虚拟环境得改  os.chdir()？
             import_statement = "import " + filename
             print(import_statement)
             exec(import_statement)
