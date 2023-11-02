@@ -198,15 +198,15 @@ function drawMatrixGraph(graph){
 					  .style("fill", function(d,i) {return color[i%10]; })
 					  .style("stroke", "black")
 					  .attr("stroke-width",2)
-					  .on("mouseover",function(d,i){    //加入提示框
+					  .on("mouseover",function(d,i){
                             d3.select(this)
                              .attr("r",R*1.5);
-                            nodeLeft.filter(function(t) { 	//过滤器
+                            nodeLeft.filter(function(t) {
                                      return t.name== i.name;
                                 })
                                .attr("r",R*1.5);
 
-				            textlist.filter( function(m) { 	//过滤器
+				            textlist.filter( function(m) {
                                      return m.name == i.name;
                                 })
 				                .style("fill","#F00")
@@ -216,12 +216,12 @@ function drawMatrixGraph(graph){
 					  .on("mouseout",function(d,i){
 					        d3.select(this)
                               .attr("r",R);
-                            nodeLeft.filter(function(t) { 	//过滤器
+                            nodeLeft.filter(function(t) {
                                      return t.name== i.name;
                                 })
                                .attr("r",R);
 
-                            textlist.filter(function(m) { 	//过滤器
+                            textlist.filter(function(m) {
                                      return m.name == i.name;
                                 })
 				                .style("fill","#000")
@@ -229,28 +229,28 @@ function drawMatrixGraph(graph){
 				                .attr("dx",0);
 				      })
 				      .on("mousedown",function(d,i){
-				            textlist.filter( function(t) { 	//过滤器
+				            textlist.filter( function(t) {
                                     return(t.name!=i.name)
                                 })
 				                .style("fill","#000")
 				                .attr("dx",0);
-				            link.filter( function(l) { 	//过滤器
-				                     textlist.filter(function(t,m) { 	//过滤器
+				            link.filter( function(l) {
+				                     textlist.filter(function(t,m) {
 				                            //console.log(i,t,m,n);
 				                            if (i.name == t.name){
 				                                iid = m;
 				                            }
                                             return (m==l.target)&&(l.source == iid);
                                      })
-                                     .style("fill","rgb(255, 127, 14)") //当前节点为头变橙色
+                                     .style("fill","rgb(255, 127, 14)")
                                      .style("font-size",""+R*2+"px")
                                      .attr("dx",20);
                                      return l.source == iid;
                                 })
-				                .style("fill","#F00")   //橙色rgb(255,127,14)（依赖其他的.py模块）
+				                .style("fill","#F00")
 				                .style("stroke-width",1);
-				            link.filter( function(l) { 	//过滤器
-				                     textlist.filter(function(t,m) { 	//过滤器
+				            link.filter( function(l) {
+				                     textlist.filter(function(t,m) {
                                             return (m==l.source)&&(l.target == iid);
                                      })
                                      .style("fill","rgb(44,160,44)")
@@ -258,14 +258,14 @@ function drawMatrixGraph(graph){
                                      .attr("dx",20);
                                      return l.target == iid;
                                 })
-				                .style("fill","rgb(44,160,44)")   //绿色（被其他.py模块依赖）
+				                .style("fill","rgb(44,160,44)")
 				                .style("stroke-width",1);
-                            link.filter( function(l) { 	//过滤器
+                            link.filter( function(l) {
                                      return l.source != iid && l.target != iid;
                                 })
 				                .style("fill","lightgray")
 				                .style("stroke-width",1);
-				            textlist.filter( function(t,m) { 	//过滤器
+				            textlist.filter( function(t,m) {
                                     return(m==iid)
                                 })
 				                .style("fill","#F00")

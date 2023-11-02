@@ -46,11 +46,11 @@ function drawCloud(data,search){
             .style("font-size", d => d.size)
             .style("font-family", "Impact")
             .style("fill", function (d, i) {
-             if(d.leaf=="True")
-                {
-                return "black";
-                }
-             else
+          //   if(d.leaf=="True")
+            //    {
+              //  return "black";
+               // }
+             //else
             return color[worddata[i].depth]; })
             .attr("text-anchor", "middle")
             .attr("transform", function (d) {
@@ -75,15 +75,25 @@ function drawCloud(data,search){
                     point=point.parent;
                     fullname = point.data.name +'.'+ fullname; // 使用 + 运算符连接字符串
                 }
+                if(point.data.name=="nn")
                 fullname="torch."+fullname;
+                else
+                fullname=fullname;
             search(fullname)
             console.log(d,i,fullname);
             fetch('http://127.0.0.1:5006/leafCode?wanted=' + fullname)
                     .then(response => response.text())
                     .then(data => {
+                    const language = 'python';
+
+// 使用 Prism.highlight 方法高亮代码字符串
+                     const highlightedCode = Prism.highlight(data, Prism.languages[language], language);
                      const tips = d3.select("body")
                                     .append("div")
                                     .attr("class","popup")
+                    // 将字符串分割成行
+                    //var lines = highlightedCode.split('\n');
+
 
                     tips.append("span")
                         .attr("class","close")
@@ -96,15 +106,25 @@ function drawCloud(data,search){
 
                     tips.append("div")
                         .attr("class","content")
-                        .text(data)
+                        .attr("class", "language-python")
+                        //.html('<pre><code class="language-python">'+lines.join("<br>")+'</code></pre>');
+                        .html('<pre><code class="language-python">'+highlightedCode+'</code></pre>');
 
 
-    tips.style("position", "absolute")
-            .style("top", "50%")
-            .style("left", "50%")
-            .style("transform", "translate(-50%, -50%)")
-            .style("background-color", "white")
-            .style("border", "1px solid black");  
+                tips.style("position", "absolute")
+                    .style("top", "50%")
+                    .style("left", "100%")
+                    .style("height", "300px")
+                    .style("width","1000px")
+                    .style("transform", "translate(-100%, -50%)")
+                    .style("background-color", "white")
+                    .style("padding", "10px")
+                    .style("overflow-y", "auto")
+                    .style("border", "1px solid black")
+                    .style("font-family","Consolas");
+
+
+
                         console.log(data);
                         })
                     .catch(error => {

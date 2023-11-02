@@ -1,4 +1,4 @@
-function drawTree(data){
+function drawTree(data,search){
      let tooltiptree = d3.select('body')
                             .append('div')
                             .attr("id", "tiptree") // 添加ID属性
@@ -17,13 +17,12 @@ function drawTree(data){
             .attr("height", height);
        var tree=d3.tree()
                .size([height,width*0.7]);
-       console.log(data,typeof(data));
        var hi=d3.hierarchy(data);
        var root=tree(hi);
        var links=root.links();
        var nodes=root.descendants();
-       console.log(nodes);
     var gc=svg.append("g")
+              .attr("id","mainsvg")
               .attr("transform","translate(" + (width/40) + "," + (height/100) + ")");
     var lines=gc.selectAll("path")
                 .data(links)
@@ -60,17 +59,24 @@ function drawTree(data){
             .attr("text-anchor",(d,i)=>d.height==0?"start":"end")
             .attr("font-size","12")
             .attr("fill",(d,i)=>i%2==0?"green":"orange")
-            .text(d=>d.data.name)
+            .datum(function(d, i) {
+                return { data: d, index: i };
+                })
+            .text(d=>d.data.data.name)
             .on('mouseover',function(event,d){
+             d3.select("#miniTree")
+                .remove();
+                d3.select(".rectout").remove();
                 d3.select(this)
                   .attr("fill", "red")
                   .attr("font-weight","bold");
-                var point=d;
-                var fullname = d.data.name.slice(0, d.data.name.lastIndexOf("."));
+                if(!d.data.children){
+                var point=d.data;
+                var fullname = d.data.data.name.slice(0, d.data.data.name.lastIndexOf("."));
                 while(point.depth>=0&& point.parent)
                 {
                     point=point.parent;
-                    fullname = point.data.name +'.'+ fullname; // 使用 + 运算符连接字符串
+                    fullname = point.data.name +'.'+ fullname;
                 }
                 fullname="torch."+fullname;
                 fetch('http://127.0.0.1:5006/treeLeaf?wanted=' + fullname)
@@ -79,30 +85,23 @@ function drawTree(data){
                     if(data !== "null"){
                     var datain=data.jsoninside;
                     var dataout=data.jsonoutside;
-                    console.log(data,dataout);
-//                    draw outside class
+
                     const jsontree = toJson(fullname,dataout);
-                    console.log(jsontree);
-                    drawOutTree(jsontree,event.pageX,event.pageY);
-//                    draw inside class
-                    var formattedData = datain.replace(/"/g, '').replace(/\\n/g, '<br>').replace(/\\/g, '');
-                    tooltiptree.html(formattedData)
-					   .style("left", event.pageX + "px")  // 设置X位置为鼠标事件的X坐标
-					   .style("top", event.pageY + "px");  // 设置Y位置为鼠标事件的Y坐标
+
+                    drawOutTree(nodes,links,datain,jsontree,event.pageX,event.pageY,search);
                    } })
                     .catch(error => {
                         console.error('Error executing Python script:', error);
                         // 处理错误
                     });
+                    }
             })
-            .on('mouseout',function(d,i){
+            .on('mouseleave',function(event,d){
                 d3.select(this)
-                  .attr("fill", (d,i)=>i%2==0?"green":"orange")
+                  .attr("fill", d.index%2==0?"green":"orange")
                   .attr("font-weight","none");
                 tooltiptree.style("visibility",'false');
 
-                d3.select("#miniTree")
-                .remove();
             })
 
     var rect=gc.selectAll("rect")
@@ -117,7 +116,6 @@ function drawTree(data){
 
 function buildJsonTree(fullname, data) {
   const tree = { name: fullname, children: [] };
-  console.log(data,fullname)
   for (const entry of data) {
     const parts = entry.split('.');
     let current = tree.children;
@@ -143,25 +141,81 @@ function toJson(fullname,data) {
   return treeStructure;
 }
 
-function drawOutTree(data,locX,locY)
+function drawOutTree(nodes,links,datain,dataout,locX,locY,search)
 {
     var treemini=d3.tree()
-           .size([360, 100]);
-    console.log(locX,locY);
-    var hiout=d3.hierarchy(data);
+           .size([300, 300]);
+    var hiout=d3.hierarchy(dataout);
     var rootout=treemini(hiout);
     var linksout=rootout.links();
     var nodesout=rootout.descendants();
+    // 创建一个数组用于存储具有重叠路径的叶子节点
+    var overlappingLeafNodes = [];
+    var overlappingminiNodes=[]
+    for (var i = 0; i < nodesout.length; i++) {
+        if(nodesout[i].height==1)
+        {
+            overlappingminiNodes.push(nodesout[i]);
+        }
+    }
+    for (var t =0;t<overlappingminiNodes.length;t++){
+       for (var j = 0; j < nodes.length; j++) {
+        if(nodes[j].height==0){
+        if (nodes[j].data.name.substring(0, nodes[j].data.name.lastIndexOf(".")) === overlappingminiNodes[t].data.name &&nodes[j].depth-overlappingminiNodes[t].depth==-2) {
+        var pointNode=nodes[j];
+        var pointminiNode=overlappingminiNodes[t]
+        while(pointNode.parent)
+        {
+        pointNode=pointNode.parent;
+        pointminiNode=pointminiNode.parent;
+        if(pointminiNode.data.name!=pointNode.data.name)
+        {
+            break;
+        }
+        }
+            overlappingLeafNodes.push(nodes[j]);
+            break;
+          }
+        }
+        }
+    }
+    var outRect=d3.select("#mainsvg").selectAll(".rectout")
+       .data(overlappingLeafNodes)
+       .enter()
+       .append("rect")
+       .attr("class","rectout")
+       .attr("x",d=>d.y-5)
+       .attr("y",d=>d.x-5)
+       .attr("width", 10) // 设置矩形宽度
+       .attr("height", 10) // 设置矩形高度
+       .attr("stroke", "blue")
+       .attr("stroke-width", 2)
+       .attr("fill", "none");
     var miniTree = d3.select('#graph')
         .append("g")
         .attr("id", "miniTree")
-        .attr("transform", "translate(" + locX + "," + locY + ")");
+
     var gc = d3.select("#miniTree")
-               .style("background-color","#E4F1FF")
+               .attr("transform", "translate(" + locX/4 + "," + locY/2 + ")");
+
     gc.append("rect")
-        .attr("width", "100%")
-        .attr("height", "100%")
-        .attr("fill", "#E4F1FF");
+        .attr("id","bgrect")
+        .attr("width", "620px")
+        .attr("height", "300px")
+        .attr("fill", "#E4F1FF")
+        .attr("opacity","0.9")
+
+    var datain=gc.selectAll(".textin")
+        .data(datain)
+        .enter()
+        .append("text")
+        .attr("class","textin")
+        .attr("y",function(d,i)
+        {
+        return (i+1)*15;
+        })
+        .attr("font-size","12px")
+        .text(d=>d)
     var lines=gc.selectAll("path")
                 .data(linksout)
                 .enter()
@@ -169,34 +223,105 @@ function drawOutTree(data,locX,locY)
                 .attr("stroke","#555")
                 .attr("stroke-width",0.5)
                 .attr("opacity",0.5)
-                .attr("d",d3.linkHorizontal()          //d3.linkHorizontal()
-                            .x(d=>d.x)
+                .attr("d",d3.linkVertical()          //d3.linkHorizontal()
+                            .x(d=>d.x+300)
                             .y(d=>d.y)
-                );
+                )
+                .attr("fill","none");
     var mynode=gc.selectAll("circle")
             .data(nodesout)
             .join("circle")
-            .attr("cx",d=>d.x)
+            .attr("cx",d=>d.x+300)
             .attr("cy",d=>d.y)
             .attr("r",5)
             .attr("opacity",0.5)
             .attr("stroke","#555");
 
-    var nodetxt=gc.selectAll("text")
+    var nodetxt=gc.selectAll(".textout")
             .data(nodesout)
             .enter()
             .append("text")
-            .attr("x",d=>d.x)
+            .attr("class","textout")
+            .attr("x",d=>d.x+300)
             .attr("y",d=>d.y)
             .attr("dx",(d,i)=>d.height==0?"0em":"-1em")
             .attr("dy","0.5em")
             .attr("text-anchor",(d,i)=>d.height==0?"start":"end")
             .attr("font-size","12px")
             .text(d=>d.data.name)
-}
+            .on("mouseover",function(d,i)
+            {  d3.select(this)
+                .attr("fill", "red")
+                .attr("font-weight","bold");
+            })
+            .on("mouseleave",function(d,i)
+            {  d3.select(this)
+                .attr("fill", "black")
+                .attr("font-weight","none");
+            })
+            .on("click",function(d,i)
+              {
+
+              if(i.height==0){
+               var fullname = i.parent.data.name;
+               var point=i.parent;
+              }
+               else
+               {
+                var fullname = i.data.name;
+                var point=i;
+               }
+                  while(point.depth>=2&& point.parent)
+                  {
+                      point=point.parent;
+                      fullname = point.data.name +'.'+ fullname; // 使用 + 运算符连接字符串
+                  }
+              //   fullname="torch."+fullname;
+              search(fullname)
+              fetch('http://127.0.0.1:5006/leafCode?wanted=' + fullname)
+                      .then(response => response.text())
+                      .then(data => {
+                       const tips = d3.select("body")
+                                      .append("div")
+                                      .attr("class","popup")
+                      // 将字符串分割成行
+                      var lines = data.split('\n');
+
+                      tips.append("span")
+                          .attr("class","close")
+                          .attr("color","red")
+                          .text("x")
+                          .on("click",function(){
+                          //tips.style("display","none");
+                          tips.remove();
+                         });
+
+                      tips.append("div")
+                          .attr("class","content")
+                          .html(lines.join("<br>"));
+
+
+                  tips.style("position", "absolute")
+                      .style("top", "50%")
+                      .style("left", "50%")
+                      .style("height", "300px")
+                      .style("transform", "translate(-50%, -50%)")
+                      .style("background-color", "white")
+                      .style("padding", "10px")
+                      .style("overflow-y", "auto")
+                      .style("border", "1px solid black")
+                      .style("font-family","Consolas");
+                          })
+                      .catch(error => {
+                          console.error('Error executing Python script:', error);
+                          // 处理错误
+                      });
+            });
+
+            }
 }
 
-window.onDrawTreeReady = function(data) {
-    drawTree(data);
+window.onDrawTreeReady = function(data,search) {
+    drawTree(data,search);
 }
 
