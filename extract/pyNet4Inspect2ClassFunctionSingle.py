@@ -15,6 +15,7 @@ import platform
 import textwrap
 import sys
 #------------------do not delete the import above,using while runtime.----------------------------------
+
 # 创建参数解析器
 parser = argparse.ArgumentParser(description="My script")
 # 添加参数定义
@@ -23,6 +24,7 @@ parser.add_argument("--module", type=str, help="single module name")
 args = parser.parse_args()
 # 访问参数值
 filename = args.module
+
 modules = []
 mnetjson = {'nodes': '', 'links': ''}
 nodes = []
