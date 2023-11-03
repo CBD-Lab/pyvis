@@ -1,5 +1,6 @@
 import os
 import subprocess
+import sys
 import urllib.parse
 import shutil
 from flask import Flask, request, jsonify
@@ -7,6 +8,7 @@ from flask_cors import CORS
 import inspect
 import importlib
 from extract import pylibsNet, pyNet4Inspect2ClassFunctionAll, pyNet4Inspect2ClassFunctionSingle
+from extract import pyTreeSimple4Size
 
 app = Flask(__name__)
 CORS(app)
@@ -105,12 +107,12 @@ def bubbleCode():
     except Exception as e:
         print(f"error happens: {e}")
     return source_code
-    
+
 
 @app.route("/moduletxt")
 def moduletxt():
     wanted = request.args.get("wanted", type=str)
-    if wanted == None:
+    if wanted is None:
         wanted = 'inspect'
     wanted = wanted[0:wanted.find(".py")]
     wanted = "torch.nn.modules." + wanted
@@ -139,10 +141,15 @@ def localModule():
 @app.route('/localPath', methods=['GET'])
 def localPath():
     try:
+        # paths = sys.executable
+        # paths = paths.strip()
+        # paths = [paths[:-10] if paths.endswith("python.exe") else paths]
+        # print("paths", paths)
         output = subprocess.check_output('where pip3', shell=True)
         paths = output.decode('utf-8').split('\n')
         paths = [path.strip() for path in paths if path.strip() != '']
         paths = [path[:-8] if path.endswith("pip3.exe") else path for path in paths]
+
         result = {'result': paths}
         return jsonify(result)
     except Exception as e:
@@ -158,8 +165,14 @@ def single():
     if os.path.isfile('static/netjson/' + single_module + '.json'):
         os.remove('static/netjson/' + single_module + '.json')
     pyNet4Inspect2ClassFunctionSingle.pyNet(single_module)
-    return jsonify({'message': 'Tasks completed successfully'})
 
+    if os.path.isfile('static/treejson/' + single_module + '.json'):
+        os.remove('static/treejson/' + single_module + '.json')
+    # 改成自己的Python路径
+    path=r'D:\python3.8.6\Lib\site-packages'
+    pyTreeSimple4Size.pyTree(path, single_module)
+
+    return jsonify({'message': 'Tasks completed successfully'})
 
 @app.route('/userPath', methods=['GET'])
 def userPath():
