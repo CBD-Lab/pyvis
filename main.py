@@ -6,6 +6,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import inspect
 import importlib
+from extract import pyNet4Inspect2ClassFunctionSingle
 
 app = Flask(__name__)
 CORS(app)
@@ -139,11 +140,7 @@ def single():
 
     if os.path.isfile('static/netjson/' + single_module + '.json'):
         os.remove('static/netjson/' + single_module + '.json')
-    try:
-        subprocess.run(["python", "extract/pyNet4Inspect2ClassFunctionSingle.py", "--module", single_module])
-    except Exception as e:
-        return jsonify({'error': f'Error executing pyNet4Inspect2ClassFunctionSingle.py: {str(e)}'}), 500
-
+    pyNet4Inspect2ClassFunctionSingle.pyNet(single_module)
     return jsonify({'message': 'Tasks completed successfully'})
 
 

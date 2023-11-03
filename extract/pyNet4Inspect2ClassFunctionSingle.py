@@ -2,8 +2,7 @@
 # 剔除了NLTK里别名和重定向问题（Nodes）
 import argparse
 import inspect
-# from . import basicFunction
-import basicFunction
+from . import basicFunction
 import json
 import pathlib
 import os
@@ -15,7 +14,7 @@ import glob
 import platform
 import textwrap
 import sys
-# import importlib
+import importlib
 # ------------------do not delete the import above,using while runtime.----------------------------------
 import flask
 import torch
@@ -23,14 +22,6 @@ import networkx
 import matplotlib
 from matplotlib import pyplot
 
-# 创建参数解析器
-parser = argparse.ArgumentParser(description="My script")
-# 添加参数定义
-parser.add_argument("--module", type=str, help="single module name")
-# 解析命令行参数
-args = parser.parse_args()
-# 访问参数值
-filename = args.module
 
 modules = []
 mnetjson = {'nodes': '', 'links': ''}
@@ -149,14 +140,14 @@ def netjson(filename, initpname):
 
     mnetjson['nodes'] = nodes
     mnetjson['links'] = links
-    # ------------------------ single test using the 153th line --------------------------
+    # ------------------------ single test using the 144th line --------------------------
     # f = open('../static/netjson/'+filename+'.json', 'w')
     f = open('static/netjson/' + filename + '.json', 'w')
     f.write(json.dumps(mnetjson))
     f.close()
 
 
-# #-------------------------------filename = '' is triggered in html page, if test in this .py use 162th line--------------------------------------------
+# #-------------------------------filename = '' is triggered in html page, if test in this .py use 153th line--------------------------------------------
 # #path = r'D:\ProgramData\Anaconda3\Lib\site-packages'
 # # path=r'H:\PyVisVue3D3V7\venv\Lib\site-packages'
 # filename = 'networkx'
@@ -171,11 +162,11 @@ def netjson(filename, initpname):
 # netjson(filename)
 
 
-moduleName = filename
-import_statement = "import " + moduleName
-initpname = moduleName
-print(import_statement)
-exec(import_statement)
-# __import__(moduleName)
-# importlib.import_module(moduleName)
-netjson(moduleName, initpname)
+def pyNet(moduleName):
+    import_statement = "import " + moduleName
+    initpname = moduleName
+    print(import_statement)
+    exec(import_statement)
+    __import__(moduleName)
+    importlib.import_module(moduleName)
+    netjson(moduleName, initpname)
