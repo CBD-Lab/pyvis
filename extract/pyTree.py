@@ -56,8 +56,8 @@ def print_files(path,tree):
     # print("---------------")
     # print(dirs)
     if dirs:
-        for i in dirs:
-            subtree={"name":"","children":""}
+        for i in dirs:           
+            subtree={"name":"","children":""}            
 
             for t in tree['children']:
                 if t['name']==i:

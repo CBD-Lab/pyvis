@@ -215,15 +215,20 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,search)
         .attr("x2", "290px")  // 终点 x 坐标
         .attr("y2", "300px")  // 终点 y 坐标
         .attr("stroke", "#AED2FF");  // 分割线颜色
-
+    gc.append("line")
+        .attr("x1", "0")  // 起始点 x 坐标
+        .attr("y1", "30px")      // 起始点 y 坐标
+        .attr("x2", "620px")  // 终点 x 坐标
+        .attr("y2", "30px")  // 终点 y 坐标
+        .attr("stroke", "#AED2FF");  // 分割线颜色
     gc.append("text")
         .attr("x", "0px")
-        .attr("y", "10px")
+        .attr("y", "20px")
         .attr("font-size", "15px")
         .text("build-in classes");
     gc.append("text")
         .attr("x", "300px")
-        .attr("y", "10px")
+        .attr("y", "20px")
         .attr("font-size", "15px")
         .text("build-out classes");
     var datain=gc.selectAll(".textin")
@@ -233,10 +238,61 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,search)
         .attr("class","textin")
         .attr("y",function(d,i)
         {
-        return (i+1)*15+20;
+        return (i+1)*15+30;
         })
         .attr("font-size","12px")
         .text(d=>d)
+        .on("mouseover",function(d,i)
+            {  d3.select(this)
+                .attr("fill", "red")
+                .attr("font-weight","bold");
+            })
+        .on("mouseleave",function(d,i)
+            {  d3.select(this)
+                .attr("fill", "black")
+                .attr("font-weight","none");
+            })
+        .on("click",function(d,i)
+        {
+        console.log(d,i)
+          fetch('http://127.0.0.1:5006/classVariable?wanted=' + i)
+                    .then(response => response.json())
+                    .then(data => {
+                    var tips = d3.select("body")
+                                      .append("div")
+                                      .attr("class","popup")
+                                      .style("width", "300px")
+
+                    tips.append("span")
+                          .attr("class","close")
+                          .attr("color","red")
+                          .text("x")
+                          .on("click",function(){
+                          tips.remove();
+                         });
+                    data['fun'].forEach(function(item) {
+                        tips.append("div")
+                            .attr("class", "contentFun")
+                            .html(item + "<br>")
+                            .style("color","blue");
+
+                    })
+                    data['var'].forEach(function(item) {
+                    tips.append("div")
+                            .attr("class", "contentVar")
+                            .html(item + "<br>")
+                            .style("color","green");})
+//                      tips.append("div")
+//                                    .attr("class","content")
+//                                    .html(data);
+//                                    })
+})
+                    .catch(error => {
+                        console.error('Error executing Python script:', error);
+                        // 处理错误
+                    });
+
+                    });
     var lines=gc.selectAll("path")
                 .data(linksout)
                 .enter()

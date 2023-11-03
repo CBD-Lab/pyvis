@@ -7,8 +7,8 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import inspect
 import importlib
-from extract import pylibsNet, pyNet4Inspect2ClassFunctionAll, pyNet4Inspect2ClassFunctionSingle
-from extract import pyTreeSimple4Size
+from extract import pylibsNet, pyNetAll, pyNetSingle
+from extract import pyTree
 
 app = Flask(__name__)
 CORS(app)
@@ -91,6 +91,31 @@ def leafCode():
         source_code=f"error happens: {e}"
     return source_code
 
+@app.route("/classVariable", methods=["GET"])
+def classVariable():
+    my_class = request.args.get("wanted", type=str)
+    varAll=[]
+    funcAll=[]
+    print("myclass",my_class)
+    # 获取类的所有变量
+    variables=inspect.getmembers(my_class, predicate=inspect.isfunction)
+    for name, function in variables:
+        print(name,"hello")
+    variables = [attr for attr in dir(my_class) if not callable(getattr(my_class, attr)) and not attr.startswith("__")]
+    print("Class variables:")
+    for var in variables:
+        varAll.append(var)
+    # 获取类的所有函数
+    functions = [attr for attr in dir(my_class) if callable(getattr(my_class, attr)) and not attr.startswith("__")]
+    for func in functions:
+        funcAll.append(func)
+    # 打包为 JSON 对象并返回
+    result = {
+        "var": varAll,
+        "fun": funcAll
+    }
+
+    return jsonify(result)
 
 @app.route("/bubbleCode", methods=["GET"])
 def bubbleCode():
@@ -164,13 +189,13 @@ def single():
 
     if os.path.isfile('static/netjson/' + single_module + '.json'):
         os.remove('static/netjson/' + single_module + '.json')
-    pyNet4Inspect2ClassFunctionSingle.pyNet(single_module)
+    pyNetSingle.pyNet(single_module)
 
     if os.path.isfile('static/treejson/' + single_module + '.json'):
         os.remove('static/treejson/' + single_module + '.json')
     # 改成自己的Python路径
-    path=r'D:\python3.8.6\Lib\site-packages'
-    pyTreeSimple4Size.pyTree(path, single_module)
+    path=r'D:\ProgramFiles\Anaconda3\envs\newtorch\Lib\site-packages'
+    pyTree.pyTree(path, single_module)
 
     return jsonify({'message': 'Tasks completed successfully'})
 
@@ -196,7 +221,7 @@ def userPath():
             print(f"An error occurred while emptying the folder：{e}")
 
         pylibsNet.pylibs(user_path)
-        pyNet4Inspect2ClassFunctionAll.pyNetAll(user_path)
+        pyNetAll.pyNetAll(user_path)
 
     return jsonify({'message': 'Tasks completed successfully'})
 
