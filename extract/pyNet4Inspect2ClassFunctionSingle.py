@@ -149,7 +149,7 @@ def netjson(filename, initpname):
 
     mnetjson['nodes'] = nodes
     mnetjson['links'] = links
-    # ------------------------ single test using the 152th line --------------------------
+    # ------------------------ single test using the 153th line --------------------------
     # f = open('../static/netjson/'+filename+'.json', 'w')
     f = open('static/netjson/' + filename + '.json', 'w')
     f.write(json.dumps(mnetjson))
