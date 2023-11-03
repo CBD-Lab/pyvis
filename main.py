@@ -90,6 +90,23 @@ def leafCode():
     return source_code
 
 
+@app.route("/bubbleCode", methods=["GET"])
+def bubbleCode():
+    module_name = request.args.get("wanted", type=str)
+    print(module_name)
+    try:
+        # 尝试导入模块
+        module = __import__(module_name, fromlist=[''])
+        # 获取模块的源代码
+        source_code = open(module.__file__, 'r').read()
+        print(source_code)
+    except ImportError as e:
+        print(f"cannot load '{module_name}': {e}")
+    except Exception as e:
+        print(f"error happens: {e}")
+    return source_code
+    
+
 @app.route("/moduletxt")
 def moduletxt():
     wanted = request.args.get("wanted", type=str)
