@@ -1,4 +1,5 @@
 function drawCloud(data,search){
+
       var arraycolor = new Array(10);
       for (var i = 0; i < 10; i++) {
         arraycolor[i] = color[i];
@@ -20,7 +21,7 @@ function drawCloud(data,search){
             hiwords[i] = { text: worddata[i].data.name, size:(worddata[i].height+1)*6 ,leaf:"True" ,parent:worddata[i].parent,depth:worddata[i].depth};
         }
       var wc = d3.layout.cloud()
-          .size([width, height])
+          .size([width*0.85, height])
           .words(hiwords)
           .padding(0)
           .rotate(0)
@@ -30,15 +31,15 @@ function drawCloud(data,search){
           })
           .on("end", draw)
           .start();
-
        function draw(words) {
-          d3.select("#graph").append("svg")
+  var svg=d3.select("#graph").append("svg")
             .attr("id", "cloudsvg")
             .attr("width", width)
             .attr("height", height)
             .append("g")
             .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
-            .selectAll("text")
+
+         svg.selectAll("text")
             .data(hiwords)
             .enter()
             .append("a")
@@ -66,78 +67,59 @@ function drawCloud(data,search){
             })
             .text(function (d) { return d.text; })
             .on("click",function(d,i)
-            {
-              console.log(d,i)
-              var fullname = i.text.slice(0, -3);
-              var point=i;
-                while(point.depth>=0&& point.parent)
-                {
-                    point=point.parent;
-                    fullname = point.data.name +'.'+ fullname; // 使用 + 运算符连接字符串
-                }
-                if(point.data.name=="nn")
-                fullname="torch."+fullname;
-                else
-                fullname=fullname;
-            search(fullname)
-            console.log(d,i,fullname);
-            fetch('http://127.0.0.1:5006/leafCode?wanted=' + fullname)
-                    .then(response => response.text())
-                    .then(data => {
-                    const language = 'python';
+                        {
+                          console.log(d,i)
+                          var fullname = i.text.slice(0, -3);;
+                          var point=i;
+                            while(point.depth>=0&& point.parent)
+                            {
+                                point=point.parent;
+                                fullname = point.data.name +'.'+ fullname; // 使用 + 运算符连接字符串
+                            }
 
-// 使用 Prism.highlight 方法高亮代码字符串
-                     const highlightedCode = Prism.highlight(data, Prism.languages[language], language);
-                     const tips = d3.select("body")
-                                    .append("div")
-                                    .attr("class","popup")
-                    // 将字符串分割成行
-                    //var lines = highlightedCode.split('\n');
+                                if(point.data.name=="nn")
+                                fullname="torch."+fullname;
+                                else
+                                fullname=fullname;
 
+                        console.log(d,i,fullname);
+                        fetch('http://127.0.0.1:5006/bubbleCode?wanted=' + fullname)
+                                .then(response => response.text())
+                                .then(data => {
+                                 const language = 'python';
+                             // 使用 Prism.highlight 方法高亮代码字符串
+                                 const highlightedCode = Prism.highlight(data, Prism.languages[language], language);
+                                 var tips = d3.select("body")
+                                                .append("div")
+                                                .attr("class","popup");
 
-                    tips.append("span")
-                        .attr("class","close")
-                        .attr("color","red")
-                        .text("x")
-                        .on("click",function(){
-                        //tips.style("display","none");
-                        tips.remove();
-                       });
+                                tips.append("span")
+                                    .attr("class","close")
+                                    .attr("color","red")
+                                    .text("x")
+                                    .on("click",function(){
+                                   tips.remove();
 
-                    tips.append("div")
-                        .attr("class","content")
-                        .attr("class", "language-python")
-                        //.html('<pre><code class="language-python">'+lines.join("<br>")+'</code></pre>');
-                        .html('<pre><code class="language-python">'+highlightedCode+'</code></pre>');
+                                   });
 
+                                tips.append("div")
+                                    .attr("class","content")
+                                    .html('<pre><code class="language-python">'+highlightedCode+'</code></pre>');
 
-                tips.style("position", "absolute")
-                    .style("top", "50%")
-                    .style("left", "100%")
-                    .style("height", "300px")
-                    .style("width","1000px")
-                    .style("transform", "translate(-100%, -50%)")
-                    .style("background-color", "white")
-                    .style("padding", "10px")
-                    .style("overflow-y", "auto")
-                    .style("border", "1px solid black")
-                    .style("font-family","Consolas");
+                                    console.log(data);
+                                    })
+                                .catch(error => {
+                                    console.error('Error executing Python script:', error);
+                                    // 处理错误
+                                });
+                        });
 
-
-
-                        console.log(data);
-                        })
-                    .catch(error => {
-                        console.error('Error executing Python script:', error);
-                        // 处理错误
-                    });
-            });
 
           var colorrec = d3.select("svg").selectAll('rect')
             .data(arraycolor)
             .enter()
             .append("rect")
-            .attr("x", (d, i) => (i * 20 + width * 0.86))
+            .attr("x", (d, i) => (i * 20 + width * 0.8))
             .attr("y", 20)
             .attr("width", 18)
             .attr("height", 18)
@@ -150,7 +132,8 @@ function drawCloud(data,search){
             .attr("font-size", "20px")
             .attr("font-weight", "bold")
             .attr("fill", color[2])
-            .text("Totally " + worddata.length+" Nodes");
+            .text("Totally " + worddata.length+" Nodes")
+
         }
 }
 
