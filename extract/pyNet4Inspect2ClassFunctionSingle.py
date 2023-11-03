@@ -156,10 +156,10 @@ def netjson(filename, initpname):
     f.close()
 
 
-# #-------------------------------filename = '' is triggered in html page, if test in this .py use 146th line--------------------------------------------
+# #-------------------------------filename = '' is triggered in html page, if test in this .py use 162th line--------------------------------------------
 # #path = r'D:\ProgramData\Anaconda3\Lib\site-packages'
 # # path=r'H:\PyVisVue3D3V7\venv\Lib\site-packages'
-# #filename = 'networkx'
+# filename = 'networkx'
 # initpname=filename
 # from matplotlib import pyplot
 # import_statement = "import " + filename
