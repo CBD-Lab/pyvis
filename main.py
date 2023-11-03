@@ -35,7 +35,7 @@ def treevis():
     # print("module")
     wanted = request.args.get("wanted", type=str)
     if (wanted is None) or (wanted == "undefined") or (wanted == ""):
-        wanted = 'nn'
+        wanted = 'bs4'
     jsonfile = "treejson/" + wanted + ".json"
     # print(jsonfile)
     return app.send_static_file(jsonfile)
@@ -202,4 +202,4 @@ def userPath():
 
 
 if "__main__" == __name__:  # 程序入口
-    app.run(port=5006)
+    app.run(port=5006,debug=True)

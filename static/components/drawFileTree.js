@@ -108,19 +108,23 @@ function drawFileTree(data) {
       });
 
     enterNodes.append("circle")
-      .attr("r", d => d.height * 4 + 3)
+      .attr("r", d => d.height * 4 + 2)
       .style("fill", function (d) {
         return d.height != 0 ? "green" : "black";
       });
+
     enterNodes.append("text")
-      .attr("x", function (d) { return d.children || d._children ? -14 : 14; })
-      .attr("text-anchor", function (d) {
-        return (d.children || d._children) ? "end" : "start";
-      })
+      .attr("x", d => d.x < Math.PI === !d.children ? 14 : -14)
+      .attr("text-anchor", d => d.x < Math.PI === !d.children ? "start" : "end")
       .attr("stroke-width", 0.5)
       .attr("stroke", "#555")
       .text(function (d) { return d.data.name; })
-      .style("font-family", "Consolas")// 设置字体样式为Consolas;
+      .attr("font-family", "Consolas")// 设置字体样式为Consolas;
+      .attr("transform", d => `
+            rotate(${d.x >= Math.PI ? 180 : 0})
+          `)
+
+      .attr("font-weight", "bold")
       
 
     //2. 节点的 Update 部分的处理办法
