@@ -78,7 +78,10 @@ function drawTree(data,search){
                     point=point.parent;
                     fullname = point.data.name +'.'+ fullname;
                 }
+                if(fullname.substring(0,2)=='nn')
+                {
                 fullname="torch."+fullname;
+                }
                 fetch('http://127.0.0.1:5006/treeLeaf?wanted=' + fullname)
                     .then(response => response.json())
                     .then(data => {
@@ -137,6 +140,7 @@ function buildJsonTree(fullname, data) {
 
 
 function toJson(fullname,data) {
+console.log(fullname,data);
   const treeStructure = buildJsonTree(fullname,data);
   return treeStructure;
 }
@@ -144,7 +148,7 @@ function toJson(fullname,data) {
 function drawOutTree(nodes,links,datain,dataout,locX,locY,search)
 {
     var treemini=d3.tree()
-           .size([300, 300]);
+           .size([300, 250]);
     var hiout=d3.hierarchy(dataout);
     var rootout=treemini(hiout);
     var linksout=rootout.links();
@@ -204,7 +208,24 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,search)
         .attr("height", "300px")
         .attr("fill", "#E4F1FF")
         .attr("opacity","0.9")
+    // 添加竖直分割线
+    gc.append("line")
+        .attr("x1", "290px")  // 起始点 x 坐标
+        .attr("y1", "0")      // 起始点 y 坐标
+        .attr("x2", "290px")  // 终点 x 坐标
+        .attr("y2", "300px")  // 终点 y 坐标
+        .attr("stroke", "#AED2FF");  // 分割线颜色
 
+    gc.append("text")
+        .attr("x", "0px")
+        .attr("y", "10px")
+        .attr("font-size", "15px")
+        .text("build-in classes");
+    gc.append("text")
+        .attr("x", "300px")
+        .attr("y", "10px")
+        .attr("font-size", "15px")
+        .text("build-out classes");
     var datain=gc.selectAll(".textin")
         .data(datain)
         .enter()
@@ -212,7 +233,7 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,search)
         .attr("class","textin")
         .attr("y",function(d,i)
         {
-        return (i+1)*15;
+        return (i+1)*15+20;
         })
         .attr("font-size","12px")
         .text(d=>d)
@@ -225,14 +246,14 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,search)
                 .attr("opacity",0.5)
                 .attr("d",d3.linkVertical()          //d3.linkHorizontal()
                             .x(d=>d.x+300)
-                            .y(d=>d.y)
+                            .y(d=>d.y+35)
                 )
                 .attr("fill","none");
     var mynode=gc.selectAll("circle")
             .data(nodesout)
             .join("circle")
             .attr("cx",d=>d.x+300)
-            .attr("cy",d=>d.y)
+            .attr("cy",d=>d.y+35)
             .attr("r",5)
             .attr("opacity",0.5)
             .attr("stroke","#555");
@@ -243,7 +264,7 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,search)
             .append("text")
             .attr("class","textout")
             .attr("x",d=>d.x+300)
-            .attr("y",d=>d.y)
+            .attr("y",d=>d.y+35)
             .attr("dx",(d,i)=>d.height==0?"0em":"-1em")
             .attr("dy","0.5em")
             .attr("text-anchor",(d,i)=>d.height==0?"start":"end")
@@ -261,7 +282,6 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,search)
             })
             .on("click",function(d,i)
               {
-
               if(i.height==0){
                var fullname = i.parent.data.name;
                var point=i.parent;
@@ -277,15 +297,17 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,search)
                       fullname = point.data.name +'.'+ fullname; // 使用 + 运算符连接字符串
                   }
               //   fullname="torch."+fullname;
-              search(fullname)
-              fetch('http://127.0.0.1:5006/leafCode?wanted=' + fullname)
+              console.log(fullname);
+              fetch('http://127.0.0.1:5006/bubbleCode?wanted=' + fullname)
                       .then(response => response.text())
                       .then(data => {
-                       const tips = d3.select("body")
+                       const language = 'python';
+                             // 使用 Prism.highlight 方法高亮代码字符串
+                       const highlightedCode = Prism.highlight(data, Prism.languages[language], language);
+
+                       var tips = d3.select("body")
                                       .append("div")
                                       .attr("class","popup")
-                      // 将字符串分割成行
-                      var lines = data.split('\n');
 
                       tips.append("span")
                           .attr("class","close")
@@ -297,21 +319,10 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,search)
                          });
 
                       tips.append("div")
-                          .attr("class","content")
-                          .html(lines.join("<br>"));
+                                    .attr("class","content")
+                                    .html('<pre><code class="language-python">'+highlightedCode+'</code></pre>');
+                                    })
 
-
-                  tips.style("position", "absolute")
-                      .style("top", "50%")
-                      .style("left", "50%")
-                      .style("height", "300px")
-                      .style("transform", "translate(-50%, -50%)")
-                      .style("background-color", "white")
-                      .style("padding", "10px")
-                      .style("overflow-y", "auto")
-                      .style("border", "1px solid black")
-                      .style("font-family","Consolas");
-                          })
                       .catch(error => {
                           console.error('Error executing Python script:', error);
                           // 处理错误

@@ -59,9 +59,7 @@ def treeLeaf():
             end_index = class_str.rfind("'")  # 找到最后一个单引号的位置
             class_name = class_str[start_index:end_index]
             if (class_name.startswith(wanted)):
-                # class_name=class_name[len(wanted)+1:]
                 jsonstrinside.append(class_name)
-                # jsonstrinside = jsonstrinside + (class_name) + "\n"
             else:
                 jsonstroutside.append(class_name)
         response_data = {
@@ -87,8 +85,10 @@ def leafCode():
         print(source_code)
     except ImportError as e:
         print(f"cannot load '{module_name}': {e}")
+        source_code=f"Cannot load '{module_name}': {e}"
     except Exception as e:
         print(f"error happens: {e}")
+        source_code=f"error happens: {e}"
     return source_code
 
 
