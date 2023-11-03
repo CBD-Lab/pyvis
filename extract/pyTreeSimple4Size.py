@@ -6,7 +6,7 @@
 import os
 import json
 import pathlib
-import basicFunction
+from . import basicFunction
 import torch
 
 
@@ -56,8 +56,8 @@ def print_files(path,tree):
     # print("---------------")
     # print(dirs)
     if dirs:
-        for i in dirs:           
-            subtree={"name":"","children":""}            
+        for i in dirs:
+            subtree={"name":"","children":""}
 
             for t in tree['children']:
                 if t['name']==i:
@@ -68,28 +68,31 @@ def print_files(path,tree):
     for f in files:
         print(os.path.join(path, f))
 
+#
+# path=r'H:\PyVisVue3D3V7\venv\Lib\site-packages\flask'
+# filename=path[path.rindex('\\')+1:len(path)]
+#
+# import_statement = "import " + filename
+# print(import_statement)
+# exec(import_statement)
+#
+# pytree={"name":filename,"children":""}
+# print(path)
+# print(pytree)
+# print_files(path,pytree)
+# #写入Json文件
+# f = open('../static/treejson/'+filename+'.json', 'w')
+# f.write(json.dumps(pytree))
+# f.close()
 
 
-#path=r'D:\ProgramData\Anaconda3\Lib\site-packages\torch'
-#path=r'C:\Python310\Lib\site-packages\torchtext'
-#path=r'D:\ProgramData\Anaconda3\Lib\site-packages\pylint\pyreverse'
-#path=r'H:\PyCinemetrics20230913\src'
-path=r'H:\PyVisVue3D3V7\venv\Lib\site-packages\jinja2'
-filename=path[path.rindex('\\')+1:len(path)]
-
-import_statement = "import " + filename
-print(import_statement)
-exec(import_statement)
-
-pytree={"name":filename,"children":""}
-print(path)
-print(pytree)
-print_files(path,pytree)
-#写入Json文件
-f = open('../static/treejson/'+filename+'.json', 'w')
-f.write(json.dumps(pytree))
-f.close()
-
-
-
-
+def pyTree(path,moduleName):
+    pytree = {"name": moduleName, "children": ""}
+    import_statement = "import " + moduleName
+    print(import_statement)
+    exec(import_statement)
+    path = path+"\\"+moduleName
+    print_files(path, pytree)
+    f = open('static/treejson/' + moduleName + '.json', 'w')
+    f.write(json.dumps(pytree))
+    f.close()
