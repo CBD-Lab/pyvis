@@ -1,10 +1,8 @@
 # 剔除了Open3D里的没有文件对应问题（Nodes）
 # 剔除了NLTK里别名和重定向问题（Nodes）
 import argparse
-import importlib
 import inspect
-# from . import basicFunction
-import basicFunction
+from . import basicFunction
 import json
 import pathlib
 import os
@@ -16,6 +14,7 @@ import glob
 import platform
 import textwrap
 import sys
+import importlib
 # ------------------do not delete the import above,using while runtime.----------------------------------
 import flask
 import torch
@@ -23,14 +22,6 @@ import networkx
 import matplotlib
 from matplotlib import pyplot
 
-# 创建参数解析器
-parser = argparse.ArgumentParser(description="My script")
-# 添加参数定义
-parser.add_argument("--path", type=str, help="python path")
-# 解析命令行参数
-args = parser.parse_args()
-# 访问参数值
-python_path = args.path
 
 modules = []
 mnetjson = {'nodes': '', 'links': ''}
@@ -172,24 +163,25 @@ def readpackages():
     return packages[2:]
 
 
-# path = r'D:\Anaconda\Anaconda3\Lib\site-packages'
-path = python_path[:-8] + 'Lib\site-packages'
-# filename = 'wordcloud'
-# netjson(filename)
+def pyNetAll(path):
+    # path = r'D:\Anaconda\Anaconda3\Lib\site-packages'
+    path = path[:-8] + 'Lib\site-packages'
+    # filename = 'wordcloud'
+    # netjson(filename)
 
-package_names = []
-package_names = readpackages()
-print("package_names", package_names)
-for package_name in package_names:
-    filename = package_name.replace(".py", "")
-    initpname = filename
-    print("filename:", filename)
-    try:
-        # 检查模块是否存在，如果存在则导入
-        if importlib.util.find_spec(filename):
-            import_statement = "import " + filename
-            print(import_statement)
-            exec(import_statement)
-            netjson(filename, initpname)
-    except Exception as e:
-        print(f"Error in package {filename}: {e}. Skipping...")
+    package_names = []
+    package_names = readpackages()
+    print("package_names", package_names)
+    for package_name in package_names:
+        filename = package_name.replace(".py", "")
+        initpname = filename
+        print("filename:", filename)
+        try:
+            # 检查模块是否存在，如果存在则导入
+            if importlib.util.find_spec(filename):
+                import_statement = "import " + filename
+                print(import_statement)
+                exec(import_statement)
+                netjson(filename, initpname)
+        except Exception as e:
+            print(f"Error in package {filename}: {e}. Skipping...")

@@ -6,7 +6,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import inspect
 import importlib
-from extract import pyNet4Inspect2ClassFunctionSingle
+from extract import pylibsNet, pyNet4Inspect2ClassFunctionAll, pyNet4Inspect2ClassFunctionSingle
 
 app = Flask(__name__)
 CORS(app)
@@ -165,14 +165,12 @@ def userPath():
         except Exception as e:
             print(f"An error occurred while emptying the folder：{e}")
 
-        try:
-            subprocess.run(["python", "extract/pylibsNet.py", "--path", user_path])
-        except Exception as e:
-            return jsonify({'error': f'Error executing pylibsNet.py: {str(e)}'}), 500
-        try:
-            subprocess.run(["python", "extract/pyNet4Inspect2ClassFunctionAll.py", "--path", user_path])
-        except Exception as e:
-            return jsonify({'error': f'Error executing pyNet4Inspect2ClassFunctionAll.py: {str(e)}'}), 500
+        pylibsNet.pylibs(user_path)
+        pyNet4Inspect2ClassFunctionAll.pyNetAll(user_path)
+        # try:
+        #     subprocess.run(["python", "extract/pyNet4Inspect2ClassFunctionAll.py", "--path", user_path])
+        # except Exception as e:
+        #     return jsonify({'error': f'Error executing pyNet4Inspect2ClassFunctionAll.py: {str(e)}'}), 500
 
     return jsonify({'message': 'Tasks completed successfully'})
 

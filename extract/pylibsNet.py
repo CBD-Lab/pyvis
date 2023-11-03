@@ -6,16 +6,7 @@
 # 继续执行pyNet4Inspect2ClassFunction2023.py
 
 import json
-import argparse
 
-# 创建参数解析器
-parser = argparse.ArgumentParser(description="My script")
-# 添加参数定义
-parser.add_argument("--path", type=str, help="python path")
-# 解析命令行参数
-args = parser.parse_args()
-# 访问参数值
-python_path = args.path
 
 netjson = {"links": "", "nodes": ""}
 nodejson = []
@@ -25,13 +16,13 @@ pylibsNet = []
 e = {"source": -1, "target": -1}
 
 
-def requires(libname):
+def requires(libname, path):
     import os
     import subprocess
     try:
         temp_output_file = "static/netjson/temp_output.txt"
         # command = [r'D:\Anaconda\Anaconda3\Scripts\pip3', 'show', libname]
-        command = [python_path + 'pip3', 'show', libname]
+        command = [path + 'pip3', 'show', libname]
         subprocess.run(command, stdout=open(temp_output_file, 'w', encoding='utf-8'), stderr=subprocess.PIPE,
                        check=True)
         # 从临时文件读取输出
@@ -52,24 +43,6 @@ def requires(libname):
         print(f"Error: {e}")
 
 
-def readpylibsNet():
-    filename = 'pylibsNet.txt'
-    i = 0
-    with open(filename, 'r', encoding='utf-8') as f:
-        line = f.readline()
-        while line:
-            # print("line", line)
-            pylibsNet.append(line.split(" ")[0])
-            line = f.readline()
-            i = i + 1
-        print("i", i)
-    print("pylibsNet before", pylibsNet)
-    # pylibsNet.pop()
-    # pylibsNet = pylibsNet
-    # print("pylibsNet after", pylibsNet)
-    return pylibsNet[2:]
-
-
 # 节点
 def nodes(pylibsNet):
     for n in pylibsNet:
@@ -83,12 +56,12 @@ def nodes(pylibsNet):
 
 
 # 边的关系
-def edges(pylibsNet):
+def edges(pylibsNet, path):
     # print("edges pylibsNet", pylibsNet)
     for n in pylibsNet:
         print('--------------------------------------------')
         print(n)
-        requirelist, requiredlist = requires(n)
+        requirelist, requiredlist = requires(n, path)
 
         print("requirelist", requirelist)
         print("requiredlist", requiredlist)
@@ -107,15 +80,34 @@ def edges(pylibsNet):
     return len(edgejson)
 
 
-# 写入 Json 文件
-f = open('static/netjson/pylibsNet.json', 'w', encoding='utf-8')
-netjson = {"links": "", "nodes": ""}
-nodejson = []
-edgejson = []
-pylibsNet = []
-pylibsNet = readpylibsNet()
-print("pylibsNet after", pylibsNet)
-edges(pylibsNet)
-nodes(pylibsNet)
-f.write(json.dumps(netjson))
-f.close()
+def readpylibsNet():
+    filename = 'pylibsNet.txt'
+    i = 0
+    with open(filename, 'r', encoding='utf-8') as f:
+        line = f.readline()
+        while line:
+            # print("line", line)
+            pylibsNet.append(line.split(" ")[0])
+            line = f.readline()
+            i = i + 1
+        print("i", i)
+    print("pylibsNet before", pylibsNet)
+    # pylibsNet.pop()
+    # pylibsNet = pylibsNet
+    # print("pylibsNet after", pylibsNet)
+    return pylibsNet[2:]
+
+
+def pylibs(path):
+    # 写入 Json 文件
+    f = open('static/netjson/pylibsNet.json', 'w', encoding='utf-8')
+    netjson = {"links": "", "nodes": ""}
+    nodejson = []
+    edgejson = []
+    pylibsNet = []
+    pylibsNet = readpylibsNet()
+    print("pylibsNet after", pylibsNet)
+    edges(pylibsNet, path)
+    nodes(pylibsNet)
+    f.write(json.dumps(netjson))
+    f.close()
