@@ -5,10 +5,10 @@ function drawBubble(data){
                         .style('position', 'absolute')
                         .style('z-index', '25')
                         .style('color', 'black')
-                        .style('font-size', '20px')
+                        .style('font-size', '12px')
                         .style("background-color","white")
                         .style("opacity",1.0)
-                        .style("stroke-width",2)
+                        .style("stroke-width",0.5)
                         .style("border-radius", "10px");
     var svg = d3.select("#graph")
         .attr("width", width*0.85)
@@ -78,7 +78,7 @@ function drawBubble(data){
                                  const highlightedCode = Prism.highlight(data, Prism.languages[language], language);
                                  var tips = d3.select("body")
                                                 .append("div")
-                                                .attr("class","popup")
+                                                .attr("class","popup");
                         
 
                                 tips.append("span")
