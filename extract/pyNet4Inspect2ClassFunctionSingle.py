@@ -34,6 +34,7 @@ layer = 0
 
 
 def get_modules(pname, initpname, layer):
+    exec("import " + pname)
     arg = eval(pname)
     if arg.__name__ == initpname:
         modules.append(arg.__name__)
@@ -108,6 +109,8 @@ def get_modules(pname, initpname, layer):
 
 
 def get_links(mymodule, pname):
+    exec("import " + pname)
+
     i = 0
     for m in mymodule:
         nextmodules = []
@@ -140,7 +143,7 @@ def netjson(filename, initpname):
 
     mnetjson['nodes'] = nodes
     mnetjson['links'] = links
-    # ------------------------ single test using the 144th line --------------------------
+    # ------------------------ single test using the 147th line --------------------------
     # f = open('../static/netjson/'+filename+'.json', 'w')
     f = open('static/netjson/' + filename + '.json', 'w')
     f.write(json.dumps(mnetjson))
@@ -163,10 +166,10 @@ def netjson(filename, initpname):
 
 
 def pyNet(moduleName):
-    import_statement = "import " + moduleName
     initpname = moduleName
-    print(import_statement)
-    exec(import_statement)
-    __import__(moduleName)
-    importlib.import_module(moduleName)
+    # import_statement = "import " + moduleName
+    # print(import_statement)
+    # exec(import_statement)
+    # __import__(moduleName)
+    # importlib.import_module(moduleName)
     netjson(moduleName, initpname)

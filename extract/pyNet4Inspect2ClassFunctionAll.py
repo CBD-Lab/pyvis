@@ -34,6 +34,7 @@ layer = 0
 
 
 def get_modules(pname, initpname, layer):
+    exec("import " + pname)
     arg = eval(pname)
     if arg.__name__ == initpname:
         modules.append(arg.__name__)
@@ -108,6 +109,7 @@ def get_modules(pname, initpname, layer):
 
 
 def get_links(mymodule, pname):
+    exec("import " + pname)
     i = 0
     for m in mymodule:
         nextmodules = []
@@ -140,7 +142,7 @@ def netjson(filename, initpname):
 
     mnetjson['nodes'] = nodes
     mnetjson['links'] = links
-    # ------------------------ single test using the 153th line --------------------------
+    # ------------------------ single test using the 146th line --------------------------
     # f = open('../static/netjson/'+filename+'.json', 'w')
     f = open('static/netjson/' + filename + '.json', 'w')
     f.write(json.dumps(mnetjson))
@@ -179,9 +181,9 @@ def pyNetAll(path):
         try:
             # 检查模块是否存在，如果存在则导入
             if importlib.util.find_spec(filename):
-                import_statement = "import " + filename
-                print(import_statement)
-                exec(import_statement)
+                # import_statement = "import " + filename
+                # print(import_statement)
+                # exec(import_statement)
                 netjson(filename, initpname)
         except Exception as e:
             print(f"Error in package {filename}: {e}. Skipping...")

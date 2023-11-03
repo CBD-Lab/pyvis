@@ -184,10 +184,6 @@ def userPath():
 
         pylibsNet.pylibs(user_path)
         pyNet4Inspect2ClassFunctionAll.pyNetAll(user_path)
-        # try:
-        #     subprocess.run(["python", "extract/pyNet4Inspect2ClassFunctionAll.py", "--path", user_path])
-        # except Exception as e:
-        #     return jsonify({'error': f'Error executing pyNet4Inspect2ClassFunctionAll.py: {str(e)}'}), 500
 
     return jsonify({'message': 'Tasks completed successfully'})
 

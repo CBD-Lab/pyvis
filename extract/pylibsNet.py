@@ -92,19 +92,12 @@ def readpylibsNet():
             i = i + 1
         print("i", i)
     print("pylibsNet before", pylibsNet)
-    # pylibsNet.pop()
-    # pylibsNet = pylibsNet
-    # print("pylibsNet after", pylibsNet)
     return pylibsNet[2:]
 
 
 def pylibs(path):
     # 写入 Json 文件
     f = open('static/netjson/pylibsNet.json', 'w', encoding='utf-8')
-    netjson = {"links": "", "nodes": ""}
-    nodejson = []
-    edgejson = []
-    pylibsNet = []
     pylibsNet = readpylibsNet()
     print("pylibsNet after", pylibsNet)
     edges(pylibsNet, path)
