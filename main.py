@@ -8,7 +8,8 @@ from flask_cors import CORS
 import inspect
 import importlib
 from extract import pylibsNet, pyNetAll, pyNetSingle
-from extract import pyTree
+from extract import pyTree,basicFunction
+import importlib
 
 app = Flask(__name__)
 CORS(app)
@@ -96,20 +97,23 @@ def classVariable():
     my_class = request.args.get("wanted", type=str)
     varAll=[]
     funcAll=[]
-    print("myclass",my_class)
+    print("myclass:",my_class)
+    class_name=my_class.rsplit('.',1)[1]
+    module_name=my_class.rsplit('.',1)[0]
+    print(module_name,class_name)
+    module = importlib.import_module(module_name)
+    # 获取模块中的类
+    class_obj = getattr(module, class_name)
+    # class_instance=class_obj()
     # 获取类的所有变量
-    variables=inspect.getmembers(my_class, predicate=inspect.isfunction)
-    for name, function in variables:
-        print(name,"hello")
-    variables = [attr for attr in dir(my_class) if not callable(getattr(my_class, attr)) and not attr.startswith("__")]
-    print("Class variables:")
-    for var in variables:
+    class_variables = [attr for attr in dir(class_obj) if
+                       not callable(getattr(class_obj, attr))]
+
+    # 输出类的自定义属性
+    print("Custom Class variables:", class_variables)
+    for var in class_variables:
         varAll.append(var)
-    # 获取类的所有函数
-    functions = [attr for attr in dir(my_class) if callable(getattr(my_class, attr)) and not attr.startswith("__")]
-    for func in functions:
-        funcAll.append(func)
-    # 打包为 JSON 对象并返回
+    funcAll=basicFunction.get_class_method(class_obj)
     result = {
         "var": varAll,
         "fun": funcAll

@@ -203,9 +203,14 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,search)
                .attr("transform", "translate(" + locX/4 + "," + locY/2 + ")");
 
     gc.append("rect")
-        .attr("id","bgrect")
         .attr("width", "620px")
-        .attr("height", "300px")
+        .attr("height", "30px")
+        .attr("fill", "grey")
+        .attr("opacity","0.9")
+    gc.append("rect")
+        .attr("width", "620px")
+        .attr("height", "270px")
+        .attr("y","31px")
         .attr("fill", "#E4F1FF")
         .attr("opacity","0.9")
     // 添加竖直分割线
@@ -254,7 +259,6 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,search)
             })
         .on("click",function(d,i)
         {
-        console.log(d,i)
           fetch('http://127.0.0.1:5006/classVariable?wanted=' + i)
                     .then(response => response.json())
                     .then(data => {
@@ -263,29 +267,29 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,search)
                                       .attr("class","popup")
                                       .style("width", "300px")
 
-                    tips.append("span")
+                    var closeButton=tips.append("span")
                           .attr("class","close")
                           .attr("color","red")
                           .text("x")
                           .on("click",function(){
-                          tips.remove();
+                          d3.select(".popup").remove();
                          });
+                        // 设置关闭按钮位置
+                    closeButton.style("position", "fixed")
+                          .style("top", "0")
+                          .style("left", "0");
                     data['fun'].forEach(function(item) {
-                        tips.append("div")
+                         tips.append("div")
                             .attr("class", "contentFun")
                             .html(item + "<br>")
                             .style("color","blue");
-
                     })
                     data['var'].forEach(function(item) {
                     tips.append("div")
                             .attr("class", "contentVar")
                             .html(item + "<br>")
                             .style("color","green");})
-//                      tips.append("div")
-//                                    .attr("class","content")
-//                                    .html(data);
-//                                    })
+
 })
                     .catch(error => {
                         console.error('Error executing Python script:', error);

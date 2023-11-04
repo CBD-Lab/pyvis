@@ -70,9 +70,10 @@ def in_out_classes_bymodulename(wanted):
         outclasses=[]
         for m in mos:
             if(m[1].__module__ == wanted.__name__):
-                inclasses.append(m[1].__module__)
+                #inclasses.append(m[1].__module__+'.'+m[0])
+                inclasses.append(m[0])
             else:
-                outclasses.append(m[1].__module__)
+                outclasses.append(m[1].__module__+'.'+m[0])
     except:
         print(wanted.__name__ +" may not be iterable!")
         inclasses = []

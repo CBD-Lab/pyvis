@@ -1,5 +1,3 @@
-#剔除了Open3D里的没有文件对应问题（Nodes）
-#剔除了NLTK里别名和重定向问题（Nodes）
 import argparse
 import inspect
 from . import basicFunction
@@ -16,22 +14,7 @@ import textwrap
 import sys
 import importlib
 #------------------do not delete the import above,using while runtime.----------------------------------
-import flask
-# 创建参数解析器
-# import numpy
-# import torchcam
-# import networkx
-# import matplotlib
-# from matplotlib import pyplot
-# import requests
-# import torchdata
-# parser = argparse.ArgumentParser(description="My script")
-# # 添加参数定义
-# parser.add_argument("--module", type=str, help="single module name")
-# # 解析命令行参数
-# args = parser.parse_args()
-# # 访问参数值
-# filename = args.module
+
 
 modules = []
 mnetjson = {'nodes': '', 'links': ''}
@@ -67,9 +50,6 @@ def get_modules(pname,initpname,layer):
     mem=inspect.getmembers(eval(pname),inspect.ismodule)
     for m,m_info in mem:
         if (pname in m_info.__name__) and not(m_info.__name__ in modules):   #Filter calling external modules
-            print(m_info)
-            print(dir(eval(m_info.__name__)))
-            print(eval(m_info.__name__).__file__)
             if("__file__" in dir(eval(m_info.__name__)) and (eval(m_info.__name__).__file__ is not None)):
                 if(pathlib.Path(eval(m_info.__name__).__file__).suffix==".py"):
                     #print("1---.py=",m,m_info.__name__,m_info.__file__)
@@ -83,8 +63,6 @@ def get_modules(pname,initpname,layer):
                     nodes.append({'name': m_info.__name__, 'file': eval(m_info.__name__).__file__, 'layer': layer,
                                       'hasclass': classcount, 'myclass': myclass, "hasfunction": functioncount,
                                       "myfunction": myfunction})
-
-                    #__import__(m_info.__name__)
 
                 else:
                     #print("2---Not.py(.pyd,.pyi,.pyc)",m,m_info.__name__,m_info.__file__)
@@ -150,14 +128,6 @@ def get_links(mymodule,pname):
 
 def netjson(filename,initpname):
 
-    #递归搜索模块Module节点
-    # modules = []
-    # mnetjson = {'nodes': '', 'links': ''}
-    # nodes = []
-    # links = []
-    # myclass = ""
-    # myfunction = ""
-
     mymodule = get_modules(filename,initpname,layer)
 
     print(len(nodes))
@@ -165,25 +135,11 @@ def netjson(filename,initpname):
 
     mnetjson['nodes'] = nodes
     mnetjson['links'] = links
-#------------------------ single test using the 139th line --------------------------
-    # f = open('../static/netjson/'+filename+'.json', 'w')
+
     f = open('static/netjson/' + filename + '.json', 'w')
     f.write(json.dumps(mnetjson))
     f.close()
 
-# #-------------------------------filename = '' is triggered in html page, if test in this .py use 146th line--------------------------------------------
-# #path = r'D:\ProgramData\Anaconda3\Lib\site-packages'
-# # path=r'H:\PyVisVue3D3V7\venv\Lib\site-packages'
-# #filename = 'networkx'
-# initpname=filename
-# from matplotlib import pyplot
-# import_statement = "import " + filename
-# print(import_statement)
-# exec(import_statement)
-#
-# #__import__(filename)
-# # #
-# netjson(filename)
 
 def pyNet(moduleName):
     import_statement = "import " + moduleName
