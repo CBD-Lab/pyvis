@@ -19,7 +19,7 @@
     <script type="text/javascript" src="/static/components/drawCloud.js"></script>
     <script type="text/javascript" src="/static/components/drawFileTree.js"></script>
     <script type="text/javascript" src="/static/components/drawHiCircle.js"></script>
-    <script type="text/javascript" src="/static/components/drawBitree.js"></script>
+    <script type="text/javascript" src="/static/components/drawPineTree.js"></script>
     <script type="text/javascript" src="/static/components/drawTreeMap.js"></script>
     <!-- 使用 meta 标签设置移动端的显示参数，禁止缩放 -->
     <meta charset="UTF-8" name="viewport"
@@ -195,7 +195,7 @@
                     <van-button class="van-haptics-feedback" @click="treevis()" type="primary">Tree</van-button>
                 </van-col>
                 <van-col span="8">
-                    <van-button class="van-haptics-feedback" @click="bitreevis()" type="primary">Bitree</van-button>
+                    <van-button class="van-haptics-feedback" @click="pinetreevis()" type="primary">PineTree</van-button>
                 </van-col>
                 <van-col span="8">
                     <van-button class="van-haptics-feedback" @click="filetreevis()" type="primary">FileTree</van-button>
@@ -234,7 +234,7 @@
                 <van-row style="margin-top:30px"><input type="radio" name="flush" value="重绘" id="flush"
                                                         onclick="javascript:location.reload()">Repaint</input></van-row>
             </div>
-            <div v-show="viewSelection === 'bitree'">
+            <div v-show="viewSelection === 'pinetree'">
                 <van-row style="margin-top:20px;margin-left: 5px;">Length</van-row>
                 <van-row>
                     <input style="position:relative;top:3px;margin-left: 5px;" type="range" id="lengthscale" min="30"
@@ -349,8 +349,8 @@
                     case "treemap":
                         this.treemapvis();
                         break;
-                    case "bitree":
-                        this.bitreevis();
+                    case "pinetree":
+                        this.pinetreevis();
                         break;
                     default:
                         break;
@@ -459,13 +459,13 @@
                     onDrawTreeMapReady(res.data);
                 });
             },
-            bitreevis() {
+            pinetreevis() {
                 this.clearPage();
                 var that = this;
-                this.viewSelection="bitree";
+                this.viewSelection="pinetree";
                 axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
                     console.log(res.data);
-                    onDrawBitreeReady(res.data);
+                    onDrawPineTreeReady(res.data);
                 });
             },
 

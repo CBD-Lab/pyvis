@@ -25,9 +25,7 @@ function drawFileTree(data) {
   //重绘函数
   function redraw(source) {
 
-    /*
-    （1） 计算节点和连线的位置
-    */
+    //（1） 计算节点和连线的位置
     var root = tree(d3.hierarchy(source).sort((a, b) => d3.ascending(a.data.name, b.data.name)));
     //应用布局，计算节点和连线
     var nodes = root.descendants();
@@ -193,9 +191,9 @@ function drawFileTree(data) {
   function updateTextColors() {
     // 选择所有的文本元素，并根据是否具有子节点设置文本颜色
     svg.selectAll("text")
-      .style("fill", function (d) {
-        return (d.children || d._children) ? "green" : "#000"; // 具有子节点的文本颜色设置为绿色，否则为黑色
-      });
+      .style("fill", 
+        d => (d.children || d._children) ? "green" : "#000" // 具有子节点的文本颜色设置为绿色，否则为黑色
+      );
   }
 
   //切换开关，d 为被点击的节点

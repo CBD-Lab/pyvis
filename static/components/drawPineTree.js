@@ -1,4 +1,4 @@
-function drawBitree(data) {
+function drawPineTree(data) {
 
 	var svg = d3.select("#graph")
 		.attr("width", width)
@@ -125,8 +125,9 @@ function drawBitree(data) {
 	}
 
 	show(data, x0, y0, length, rate, -Math.PI / 2, data.children.length);
+
 }
-window.onDrawBitreeReady = function (data) {
+window.onDrawPineTreeReady = function (data) {
 	// 执行绘图逻辑
-	drawBitree(data);
+	drawPineTree(data);
 }

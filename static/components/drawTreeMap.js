@@ -2,7 +2,6 @@ function drawTreeMap(data) {
     console.log("drawTreeMap");
     var color = d3.scaleOrdinal(d3.schemeCategory10);
     var svg = d3.select("#graph")
-        .append("svg")
         .attr("width", width)
         .attr("height", height);
 
