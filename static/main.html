@@ -258,7 +258,8 @@
                     <van-field v-model="localValue" readonly></van-field>
                 </van-col>
                 <van-col span="8">
-                    <van-button class="van-haptics-feedback" @click="select()">Search All</van-button>
+                    <van-button class="van-haptics-feedback" @click="select()"
+                                :loading="isLoading" loading-text="loading...">SearchAll</van-button>
                 </van-col>
             </van-row>
 
@@ -294,6 +295,7 @@
                 nodes:'',
                 links:'',
                 keyword:'',
+                isLoading: false,
                 localValue: '',
                 singleModule: '',
             };
@@ -349,11 +351,13 @@
                 const message = 'Confirm reloading folder data?';
 
                 if (window.confirm(message)) {
+                    this.isLoading = true;
                     console.log('confirm');
                     console.log("selected Path: " + this.localValue);
                     // 发送路径给后端
                     fetch("/userPath?new_path=" + this.localValue).then(res => {
                         if (res.ok) {
+                            this.isLoading = false;
                             return res.json();
                         }
                         throw new Error("Network response was not ok.");
@@ -363,6 +367,7 @@
                         this.netvis();
                     })
                     .catch(error => {
+                        this.isLoading = false;
                         console.error("Error:", error);
                     });
                 } else {
