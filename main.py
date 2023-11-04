@@ -168,16 +168,17 @@ def localModule():
 @app.route('/localPath', methods=['GET'])
 def localPath():
     try:
-        # paths = sys.executable
-        # paths = paths.strip()
-        # paths = [paths[:-10] if paths.endswith("python.exe") else paths]
-        # print("paths", paths)
-        output = subprocess.check_output('where pip3', shell=True)
-        paths = output.decode('utf-8').split('\n')
-        paths = [path.strip() for path in paths if path.strip() != '']
-        paths = [path[:-8] if path.endswith("pip3.exe") else path for path in paths]
+        global python_path
+        python_path = sys.executable
+        python_path = python_path.strip()
+        python_path = [python_path[:-10] if python_path.endswith("python.exe") else python_path]
+        print("python_path：", python_path)
+        # output = subprocess.check_output('where pip3', shell=True)  暂时勿删！
+        # paths = output.decode('utf-8').split('\n')
+        # paths = [path.strip() for path in paths if path.strip() != '']
+        # paths = [path[:-8] if path.endswith("pip3.exe") else path for path in paths]
 
-        result = {'result': paths}
+        result = {'result': python_path}
         return jsonify(result)
     except Exception as e:
         print(f'Error executing the command: {str(e)}')
@@ -195,8 +196,7 @@ def single():
 
     if os.path.isfile('static/treejson/' + single_module + '.json'):
         os.remove('static/treejson/' + single_module + '.json')
-    # 改成自己的Python路径
-    path=r'D:\python3.8.6\Lib\site-packages'
+    path = os.path.join(python_path[0], 'Lib', 'site-packages')
     pyTree.pyTree(path, single_module)
 
     return jsonify({'message': 'Tasks completed successfully'})
@@ -204,6 +204,8 @@ def single():
 @app.route('/userPath', methods=['GET'])
 def userPath():
     user_path = request.args.get('new_path', type=str)
+    if not user_path.lower().endswith("scripts\\"):
+        user_path = os.path.join(user_path, "Scripts\\")
     print("user_path:", user_path)
 
     if os.path.isfile('pylibsNet.txt'):
@@ -211,13 +213,6 @@ def userPath():
     try:
         print("Performs command line operations.")
         subprocess.run(user_path + 'pip3 list >>pylibsNet.txt', shell=True, check=True)
-        # # 使用 subprocess.run 执行命令，并将输出重定向到文件  （勿删！有用！）
-        # result = subprocess.run(user_path + 'pip3 list', shell=True, text=True, capture_output=True, check=True)
-        # # 将命令的标准输出保存到文件 pylibsNet.txt
-        # print("result", result)
-        # with open('pylibsNet.txt', 'w') as output_file:
-        #     output_file.write(result.stdout)
-        # print("运行结束")
     except subprocess.CalledProcessError as e:
         return jsonify({'error': f'Error running pip3 list: {str(e)}'}), 500
 
