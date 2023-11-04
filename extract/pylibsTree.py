@@ -25,7 +25,7 @@ def main():
         process_data(item)
 
     root_data = {
-        "name": "root",
+        "name": "package",
         "children": data
     }
     with open('static/treejson/pylibsTree.json', 'w') as f:
