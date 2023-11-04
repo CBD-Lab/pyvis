@@ -1,8 +1,8 @@
 function drawFileTree(data) {
-  var padding = {left: 80, right:50, top: 20, bottom: 20 };
+
   var svg = d3.select("#graph")
-    .attr("width", width + padding.left + padding.right)
-    .attr("height", height + padding.top + padding.bottom)
+    .attr("width", width)
+    .attr("height", height)
     .append("g")
     .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
@@ -11,7 +11,7 @@ function drawFileTree(data) {
     .size([2 * Math.PI, radius])
     .separation((a, b) => (a.parent == b.parent ? 1 : 2) / a.depth)
 
-  var radius = width / 9;
+  var radius = width / 40;
 
   //给第一个节点添加初始坐标x0和y0
   data.x0 = 0;
@@ -28,13 +28,24 @@ function drawFileTree(data) {
     /*
     （1） 计算节点和连线的位置
     */
-    var root = tree(d3.hierarchy(source).sort((a, b) => d3.ascending(a.data.name, b.data.name)));
+    var root = tree(d3.hierarchy(source))
     //应用布局，计算节点和连线
     var nodes = root.descendants();
     var links = root.links();
 
+    var colorrec = svg.selectAll('rect')
+      .data(color)
+      .enter()
+      .append("rect")
+      .attr("x", (d, i) => (i * 16 + width * 0.65))
+      .attr("y", 20)
+      .attr("width", 14)
+      .attr("height", 14)
+      .attr("fill", (d, i) => color[i])
+      .attr("opacity", 0.7);
+
     //重新计算节点的y坐标
-    nodes.forEach(function (d) { d.y = d.depth * 120; });
+    nodes.forEach(function (d) { d.y = d.depth * 90; });
 
     /*
     （2） 节点的处理
@@ -57,7 +68,7 @@ function drawFileTree(data) {
                       rotate(${d.x * 180 / Math.PI - 90})
                       translate(${d.y},0)
                       `)
-      .on("click", function (event, d) {
+      .on("click", function (evenet, d) {
         if (d.data.name == 'd3') {
           toggle(data0);
           redraw(data0);
@@ -97,26 +108,28 @@ function drawFileTree(data) {
       });
 
     enterNodes.append("circle")
-      .attr("r", d => d.height * 4 + 3)
-      .attr("fill", d=> d.height != 0 ? "green" : "#fff");
+      .attr("r", d => d.height * 4 + 2)
+      .style("fill", function (d) {
+        return d.height != 0 ? "green" : "black";
+      });
 
     enterNodes.append("text")
       .attr("x", d => d.x < Math.PI === !d.children ? 14 : -14)
       .attr("text-anchor", d => d.x < Math.PI === !d.children ? "start" : "end")
       .attr("stroke-width", 0.5)
       .attr("stroke", "#555")
-      .attr("font-size", 12)
-      .text(d => d.data.name)
+      .text(function (d) { return d.data.name; })
       .attr("font-family", "Consolas")// 设置字体样式为Consolas;
       .attr("transform", d => `
             rotate(${d.x >= Math.PI ? 180 : 0})
           `)
-      .attr("font-weight", "bold")
 
+      .attr("font-weight", "bold")
+      
 
     //2. 节点的 Update 部分的处理办法
     var updateNodes = nodeUpdate.transition()
-      .duration(2)
+      .duration(500)
       .attr("transform", d => `
                 rotate(${d.x * 180 / Math.PI - 90})
                 translate(${d.y},0)
@@ -124,11 +137,13 @@ function drawFileTree(data) {
 
     updateNodes.select("circle")
       .attr("r", 6)
-      .attr("fill", d => d._children ? "orange" : "#fff");
+      .style("fill", function (d) {
+        return d._children ? "orange" : "#fff";
+      });
 
     //3. 节点的 Exit 部分的处理办法
     var exitNodes = nodeExit.transition()
-      .duration(2)
+      .duration(500)
       .attr("transform", d => `
                     rotate(${d.x * 180 / Math.PI - 90})
                     translate(${d.y},0)
@@ -142,7 +157,7 @@ function drawFileTree(data) {
     */
     //获取连线的update部分
     var linkUpdate = svg.selectAll(".link")
-      .data(links, d=> d.target.name);
+      .data(links, function (d) { return d.target.name; });
 
     //获取连线的enter部分
     var linkEnter = linkUpdate.enter();
@@ -158,7 +173,7 @@ function drawFileTree(data) {
           .angle(d => d.x)
           .radius(d => d.y))
       .transition()
-      .duration(2)
+      .duration(500)
       .attr("d", d3.linkRadial()
         .angle(d => d.x)
         .radius(d => d.y))
@@ -166,14 +181,14 @@ function drawFileTree(data) {
 
     //2. 连线的 Update 部分的处理办法
     linkUpdate.transition()
-      .duration(2)
+      .duration(500)
       .attr("d", d3.linkRadial()
         .angle(d => d.x)
         .radius(d => d.y));
 
     //3. 连线的 Exit 部分的处理办法
     linkExit.transition()
-      .duration(2)
+      .duration(500)
       .attr("d",
         d3.linkRadial()
           .angle(d => d.x)

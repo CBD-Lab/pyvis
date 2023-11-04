@@ -125,6 +125,11 @@ function drawBitree(data) {
 	}
 
 	show(data, x0, y0, length, rate, -Math.PI / 2, data.children.length);
+
+//	d3.selectAll("text")
+//		.attr("fill", "yellow")
+//		.attr("font-size", "30px");
+
 }
 window.onDrawBitreeReady = function (data) {
 	// 执行绘图逻辑
