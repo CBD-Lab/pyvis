@@ -239,34 +239,20 @@
                 <van-row style="margin-top:30px"><input type="radio" name="flush" value="重绘" id="flush"
                                                         onclick="javascript:location.reload()">Repaint</input></van-row>
             </div>
-            <van-row class="searchbox" style="margin-top:10vh;">
+
+            <van-row style="margin: 10vh 0 1vh 1vh; font-size: 16px;">
+                <div>Current Environment Path:</div>
+            </van-row>
+            <van-row class="searchbox" >
                 <van-col offset="0" span="16">
-                    <van-field v-model="localValue" placeholder="Running Environment Path"></van-field>
+                    <van-field v-model="localValue" readonly></van-field>
                 </van-col>
                 <van-col span="8">
-                    <van-button class="van-haptics-feedback" @click="select()">SearchALL</van-button>
+                    <van-button class="van-haptics-feedback" @click="select()">Search All</van-button>
                 </van-col>
             </van-row>
 
-            <van-row class="optionbox">
-                <van-col span="24">
-                    <van-radio-group v-model="localValue">
-                        <van-cell-group inset>
-                            <van-cell v-for="(path, index) in localPath" :key="path" clickable @click="changePath(path)"
-                                      style="display: flex; justify-content: space-between; align-items: center;
-                          overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                                <div style="flex: 1; text-align: left;">{{ path }}</div>
-                                <template #right-icon>
-                                    <van-radio :name="path"/>
-                                </template>
-                            </van-cell>
-                        </van-cell-group>
-                    </van-radio-group>
-                </van-col>
-            </van-row>
-
-
-            <van-row class="searchbox" style="margin-top:10px;">
+            <van-row class="searchbox" style="margin-top:0.5vh;">
                 <van-col offset="0" span="16">
                     <van-field v-model="singleModule" placeholder="Single Module Name"></van-field>
                 </van-col>
@@ -274,6 +260,7 @@
                     <van-button class="van-haptics-feedback" @click="searchSingle()">SearchSingle</van-button>
                 </van-col>
             </van-row>
+
         </van-col>
         <van-col class="graphpart" span="20">
             <div id="svgbox">
@@ -297,8 +284,7 @@
                 nodes:'',
                 links:'',
                 keyword:'',
-                localPath: [],
-                localValue: null,
+                localValue: '',
                 singleModule: '',
             };
         },
@@ -513,12 +499,12 @@
 <!--            });-->
             axios.get("http://127.0.0.1:5006/localPath")
                 .then((response) => {
-                    this.localPath = response.data.result;
-                    console.log(this.localPath);
+                    this.localValue = response.data.result[0];
+                    console.log(this.localValue);
                 })
                 .catch((error) => {
-                    console.error("An error occurred while fetching localPath:", error);
-                    this.localPath = "An error occurred.";
+                    console.error("An error occurred while fetching localValue:", error);
+                    this.localValue = "An error occurred.";
                 });
         },
     });
