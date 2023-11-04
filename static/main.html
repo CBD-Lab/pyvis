@@ -20,6 +20,7 @@
     <script type="text/javascript" src="/static/components/drawFileTree.js"></script>
     <script type="text/javascript" src="/static/components/drawHiCircle.js"></script>
     <script type="text/javascript" src="/static/components/drawBitree.js"></script>
+    <script type="text/javascript" src="/static/components/drawTreeMap.js"></script>
     <!-- 使用 meta 标签设置移动端的显示参数，禁止缩放 -->
     <meta charset="UTF-8" name="viewport"
           content="width=device-width,user-scalable=no,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0"/>
@@ -41,6 +42,15 @@
           stroke: #fff;
           stroke-width: 1px;
           opacity: 0.7;
+        }
+        .node circle {
+            cursor: pointer;
+            stroke: orange;
+            stroke-width: 1.5px;
+        }
+
+        .node text {
+            font-size: 12px;
         }
         .link {
           stroke: #999;
@@ -197,7 +207,7 @@
                     <van-button class="van-haptics-feedback" @click="cloudvis()" type="primary">Cloud</van-button>
                 </van-col>
                 <van-col span="8">
-                    <van-button class="van-haptics-feedback" @click="hicirclevis()" type="primary">HiCircle</van-button>
+                    <van-button class="van-haptics-feedback" @click="treemapvis()" type="primary">TreeMap</van-button>
                 </van-col>
                 <van-col span="12">
                     <van-button icon="down" class="van-haptics-feedback" @click="downloadPhoto()" type="primary">SVG
@@ -336,8 +346,8 @@
                     case "filetree":
                         this.filetreevis();
                         break;
-                    case "hicircle":
-                        this.hicirclevis();
+                    case "treemap":
+                        this.treemapvis();
                         break;
                     case "bitree":
                         this.bitreevis();
@@ -441,12 +451,12 @@
                     onDrawFileTreeReady(res.data);
                 });
             },
-            hicirclevis() {
+            treemapvis() {
                 this.clearPage();
                 var that = this;
-                this.viewSelection="hicircle";
+                this.viewSelection="treemap";
                 axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
-                    onDrawHiCircleReady(res.data);
+                    onDrawTreeMapReady(res.data);
                 });
             },
             bitreevis() {
