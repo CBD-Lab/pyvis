@@ -49,12 +49,13 @@ function drawNet(data){
                      .append("text")
                      .attr("class","forceText")
                      .attr("text-anchor","middle")
-                     .attr("stroke", "#336666")
-                     .attr("stroke-family","仿宋")
-                     .style("font-size","10px")
+                     .attr("fill", "#555")
+                     //.attr("stroke-family","仿宋")
+                     .style("font-size","12px")
                      //.attr("dx","-1.5em")
                      .attr("dy","1.5em")
-                     .text(function(d){return d.name;});
+                     //.text(function(d){return d.name;});
+                     .text(function(d){return d.name.substr(d.name.lastIndexOf(".")+1,d.name.length) });
 
     forceSimulation.on("tick", () => {
         link
