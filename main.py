@@ -8,8 +8,9 @@ from flask_cors import CORS
 import inspect
 import importlib
 from extract import pylibsNet, pyNetAll, pyNetSingle
-from extract import pyTree,basicFunction
-import importlib
+from extract import pyTree, basicFunction
+from extract import pylibsTree
+
 
 app = Flask(__name__)
 CORS(app)
@@ -198,7 +199,7 @@ def single():
     if os.path.isfile('static/treejson/' + single_module + '.json'):
         os.remove('static/treejson/' + single_module + '.json')
     # 改成自己的Python路径
-    path=r'D:\ProgramFiles\Anaconda3\envs\newtorch\Lib\site-packages'
+    path=r'D:\python3.8.6\Lib\site-packages'
     pyTree.pyTree(path, single_module)
 
     return jsonify({'message': 'Tasks completed successfully'})
@@ -213,8 +214,24 @@ def userPath():
     try:
         print("Performs command line operations.")
         subprocess.run(user_path + 'pip3 list >>pylibsNet.txt', shell=True, check=True)
+        # # 使用 subprocess.run 执行命令，并将输出重定向到文件  （勿删！有用！）
+        # result = subprocess.run(user_path + 'pip3 list', shell=True, text=True, capture_output=True, check=True)
+        # # 将命令的标准输出保存到文件 pylibsNet.txt
+        # print("result", result)
+        # with open('pylibsNet.txt', 'w') as output_file:
+        #     output_file.write(result.stdout)
+        # print("运行结束")
     except subprocess.CalledProcessError as e:
         return jsonify({'error': f'Error running pip3 list: {str(e)}'}), 500
+
+    if os.path.isfile('pipdeptree.json'):
+        os.remove('pipdeptree.json')
+    try:
+        print("Performs command line operations.")
+        subprocess.run(user_path + 'pipdeptree --json-tree > pipdeptree.json', shell=True, check=True)
+    except subprocess.CalledProcessError as e:
+        return jsonify({'error': f'Error running pipdeptree: {str(e)}'}), 500
+    pylibsTree.main()
 
     if os.path.isfile('pylibsNet.txt'):
         try:
