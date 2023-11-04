@@ -262,10 +262,11 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,search)
           fetch('http://127.0.0.1:5006/classVariable?wanted=' + i)
                     .then(response => response.json())
                     .then(data => {
+                    console.log(data['doc'])
                     var tips = d3.select("body")
                                       .append("div")
                                       .attr("class","popup")
-                                      .style("width", "300px")
+                                      .style("width", "500px")
 
                     var closeButton=tips.append("span")
                           .attr("class","close")
@@ -278,18 +279,28 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,search)
                     closeButton.style("position", "fixed")
                           .style("top", "0")
                           .style("left", "0");
+                    data['var'].forEach(function(item) {
+                    tips.append("div")
+                            .attr("class", "contentVar")
+                            .html(item + "<br>")
+                            .style("color","green");})
                     data['fun'].forEach(function(item) {
                          tips.append("div")
                             .attr("class", "contentFun")
                             .html(item + "<br>")
                             .style("color","blue");
                     })
-                    data['var'].forEach(function(item) {
-                    tips.append("div")
-                            .attr("class", "contentVar")
-                            .html(item + "<br>")
-                            .style("color","green");})
+                    var textWithLinks = data['doc'];
+                    var linkRegex = /(\bhttps?:\/\/\S+\b)/g;
+                    var textWithFormattedLinks = textWithLinks.replace(linkRegex, '<a href="$1" target="_blank">$1</a>');
 
+                    tips.append("div")
+                            .attr("class","contentDoc")
+                            .style("white-space", "pre-line")
+                            .html(textWithFormattedLinks)
+                    tips.append("div")
+                            .attr("class","contentPdf")
+                            .html(data['pdf']+"<br>")
 })
                     .catch(error => {
                         console.error('Error executing Python script:', error);

@@ -97,29 +97,26 @@ def leafCode():
 def classVariable():
     my_class = request.args.get("wanted", type=str)
     varAll=[]
-    funcAll=[]
-    print("myclass:",my_class)
     class_name=my_class.rsplit('.',1)[1]
     module_name=my_class.rsplit('.',1)[0]
-    print(module_name,class_name)
+
     module = importlib.import_module(module_name)
-    # 获取模块中的类
     class_obj = getattr(module, class_name)
-    # class_instance=class_obj()
-    # 获取类的所有变量
+
     class_variables = [attr for attr in dir(class_obj) if
                        not callable(getattr(class_obj, attr))]
-
-    # 输出类的自定义属性
-    print("Custom Class variables:", class_variables)
     for var in class_variables:
         varAll.append(var)
+
     funcAll=basicFunction.get_class_method(class_obj)
+
+    docs,pdf=basicFunction.get_class_pdf(class_obj)
     result = {
         "var": varAll,
-        "fun": funcAll
+        "fun": funcAll,
+        "doc":docs,
+        "pdf":pdf
     }
-
     return jsonify(result)
 
 @app.route("/bubbleCode", methods=["GET"])

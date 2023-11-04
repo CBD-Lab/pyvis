@@ -94,6 +94,23 @@ def get_class_method(wanted):
         cmethod.append(item)
     return cmethod
 
+# get a class's pdf in docs
+def get_class_pdf(class_obj):
+    print(class_obj)
+    pdfurl = len("https://arxiv.org/abs/1810.04805")
+    docs = ""
+    classPdf = []
+
+    if inspect.isclass(class_obj):
+        docs = inspect.getdoc(class_obj)
+        if docs:
+            arxiv_index = docs.find("https://arxiv.org")
+            if arxiv_index != -1:
+                pdf = docs[arxiv_index:arxiv_index + pdfurl]
+                classPdf.append(pdf)
+
+    return docs, classPdf
+
 #print(get_class_method(torch.nn.modules.transformer.Transformer)) 得到__init__.py内python的内置函数，import的包和模块，form .xxx的xxx,前面带'_'的参数，以及在同一级目录下的其他模块（包和py文件）
 
 def get_class_attributes(wanted):
