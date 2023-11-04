@@ -173,10 +173,6 @@ def localPath():
         python_path = python_path.strip()
         python_path = [python_path[:-10] if python_path.endswith("python.exe") else python_path]
         print("python_path：", python_path)
-        # output = subprocess.check_output('where pip3', shell=True)  暂时勿删！
-        # paths = output.decode('utf-8').split('\n')
-        # paths = [path.strip() for path in paths if path.strip() != '']
-        # paths = [path[:-8] if path.endswith("pip3.exe") else path for path in paths]
 
         result = {'result': python_path}
         return jsonify(result)
@@ -188,12 +184,9 @@ def localPath():
 @app.route('/single', methods=['GET'])
 def single():
     single_module = request.args.get('wanted', type=str)
-    print("Single module name:", single_module)
-
     if os.path.isfile('static/netjson/' + single_module + '.json'):
         os.remove('static/netjson/' + single_module + '.json')
     pyNetSingle.pyNet(single_module)
-
     if os.path.isfile('static/treejson/' + single_module + '.json'):
         os.remove('static/treejson/' + single_module + '.json')
     path = os.path.join(python_path[0], 'Lib', 'site-packages')
@@ -203,7 +196,7 @@ def single():
 
 @app.route('/userPath', methods=['GET'])
 def userPath():
-    user_path = request.args.get('new_path', type=str)
+    user_path = python_path[0]
     if not user_path.lower().endswith("scripts\\"):
         user_path = os.path.join(user_path, "Scripts\\")
     print("user_path:", user_path)
@@ -233,7 +226,6 @@ def userPath():
             print(f"Folder static/netjson successfully cleared.")
         except Exception as e:
             print(f"An error occurred while emptying the folder：{e}")
-
         pylibsNet.pylibs(user_path)
         pyNetAll.pyNetAll(user_path)
 

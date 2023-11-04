@@ -364,8 +364,7 @@
                     this.isLoading = true;
                     console.log('confirm');
                     console.log("selected Path: " + this.localValue);
-                    // 发送路径给后端
-                    fetch("/userPath?new_path=" + this.localValue).then(res => {
+                    fetch("/userPath").then(res => {
                         if (res.ok) {
                             this.isLoading = false;
                             return res.json();
@@ -386,7 +385,6 @@
             },
             searchSingle() {
                 var that = this;
-                // 发送模块名给后端
                 fetch("/single?wanted=" + this.singleModule).then(res => {
                         if (res.ok) {
                             return res.json();
