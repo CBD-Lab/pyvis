@@ -70,13 +70,13 @@
             border-right: 12px solid transparent;
             border-left: 12px solid transparent;
         }
-       .custom-navbar {
+        .custom-navbar {
             height: 100%;
             background-color: var(--topcolor);
             font-size:20px!important;
             width:100%!important;
         }
-       .custom-navbar .van-nav-bar__title {
+        .custom-navbar .van-nav-bar__title {
             font-size:1em;
             display: flex;
             align-items: center;
@@ -119,7 +119,7 @@
             width:99%;
             color:black;
             font-size:12px;
-}
+        }
         .popup {
             position:absolute;
             top: 50%;
@@ -132,7 +132,7 @@
             overflow-y: auto;
             border: 1px solid black;
             font-family: Consolas;
- }
+        }
     </style>
 </head>
 <body>
@@ -213,7 +213,6 @@
                                 value="600"></van-row>
                 <van-row style="margin-top:30px"><input type="radio" name="flush" value="重绘" id="flush"
                                                         onclick="javascript:location.reload()">Repaint</input></van-row>
-
             </div>
             <div v-show="viewSelection === 'bitree'">
                 <van-row style="margin-top:20px;margin-left: 5px;">Length</van-row>
@@ -230,15 +229,15 @@
                     <input type="checkbox" name="label" value="showOn" id="showLabel" checked>Label</input>
                 </van-row>
                 <van-row style="margin-top:30px"><input type="radio" name="flush" value="重绘" id="flush"
-                    onclick="javascript:location.reload()">Repaint</input></van-row>
+                                                        onclick="javascript:location.reload()">Repaint</input></van-row>
             </div>
             <div v-show="viewSelection === 'filetree'">
                 <van-row style="margin-top:30px"><input type="radio" name="flush" value="重绘" id="flush"
-                    onclick="javascript:location.reload()">Repaint</input></van-row>
+                                                        onclick="javascript:location.reload()">Repaint</input></van-row>
             </div>
             <div v-show="viewSelection === 'hicircle'">
                 <van-row style="margin-top:30px"><input type="radio" name="flush" value="重绘" id="flush"
-                    onclick="javascript:location.reload()">Repaint</input></van-row>
+                                                        onclick="javascript:location.reload()">Repaint</input></van-row>
             </div>
             <van-row class="searchbox" style="margin-top:10vh;">
                 <van-col offset="0" span="16">
@@ -304,57 +303,56 @@
             };
         },
         methods: {
+            searchSingle() {
+                var that = this;
+                // 发送模块名给后端
+                fetch("/single?wanted=" + this.singleModule).then(res => {
+                        if (res.ok) {
+                            return res.json();
+                        }
+                        throw new Error("Network response was not ok.");
+                    })
+                    .then(data => {
+                        console.log("Response from server:", data);
+                        this.keyword = this.singleModule;
+                        this.netvis();
+                    })
+                    .catch(error => {
+                        console.error("Error:", error);
+                    });
+            },
 
-searchSingle() {
-    var that = this;
-    // 发送模块名给后端
-    fetch("/single?wanted=" + this.singleModule).then(res => {
-            if (res.ok) {
-                return res.json();
-            }
-            throw new Error("Network response was not ok.");
-        })
-        .then(data => {
-            console.log("Response from server:", data);
-            this.keyword = this.singleModule;
-            this.netvis();
-        })
-        .catch(error => {
-            console.error("Error:", error);
-        });
-},
+            changePath(selectedPath) {
+                this.localValue = selectedPath;
+            },
+            select() {
+                const message = 'Confirm reloading folder data?';
 
-changePath(selectedPath) {
-    this.localValue = selectedPath;
-},
-select() {
-    const message = 'Confirm reloading folder data?';
+                if (window.confirm(message)) {
+                    console.log('confirm');
+                    console.log("selected Path: " + this.localValue);
+                    // 发送路径给后端
+                    fetch("/userPath?new_path=" + this.localValue).then(res => {
+                        if (res.ok) {
+                            return res.json();
+                        }
+                        throw new Error("Network response was not ok.");
+                    })
+                    .then(data => {
+                        console.log("Response from server:", data);
+                        this.netvis();
+                    })
+                    .catch(error => {
+                        console.error("Error:", error);
+                    });
+                } else {
+                    console.log('cancel');
+                }
+            },
 
-    if (window.confirm(message)) {
-        console.log('confirm');
-        console.log("selected Path: " + this.localValue);
-        // 发送路径给后端
-        fetch("/userPath?new_path=" + this.localValue).then(res => {
-            if (res.ok) {
-                return res.json();
-            }
-            throw new Error("Network response was not ok.");
-        })
-        .then(data => {
-            console.log("Response from server:", data);
-            this.netvis();
-        })
-        .catch(error => {
-            console.error("Error:", error);
-        });
-    } else {
-        console.log('cancel');
-    }
-},
-
-                search(key) {
+            search(key) {
                 this.clearPage();
-                  switch (this.viewSelection) {
+                switch (this.viewSelection) {
                     case "tree":
                         this.treevis();
                         break;
@@ -368,10 +366,9 @@ select() {
                         this.bubblevis();
                         break;
                     case "cloud":
-                        if(typeof(key) != "undefined")
-                            {
+                        if(typeof(key) != "undefined") {
                             this.keyword=key;
-                            }
+                        }
                         this.cloudvis();
                         break;
                     case "filetree":
@@ -386,145 +383,146 @@ select() {
                     default:
                         break;
                 }
-                },
-                clearPage()
-                {
-                    d3.select('svg').selectAll('*').remove();
-                    var tooltip = document.getElementById("tip");
-                    if (tooltip) {
-                        tooltip.parentNode.removeChild(tooltip);
+            },
+            clearPage() {
+                d3.select('svg').selectAll('*').remove();
+                var tooltip = document.getElementById("tip");
+                if (tooltip) {
+                    tooltip.parentNode.removeChild(tooltip);
                 }
-                 var tooltip = document.getElementById("tiptree");
-                    if (tooltip) {
-                        tooltip.parentNode.removeChild(tooltip);
+                var tooltip = document.getElementById("tiptree");
+                if (tooltip) {
+                    tooltip.parentNode.removeChild(tooltip);
                 }
-                },
-                treevis(){
-                    var that = this;
-                    this.clearPage();
-                    this.viewSelection="tree";
-                    axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
-                         onDrawTreeReady(res.data,this.search);
-                    });
-                },
-                netvis(){
-                    var that = this;
-                    this.clearPage();
-                    this.viewSelection="net";
-                    axios.get("http://127.0.0.1:5006/module?wanted=" + this.keyword).then(res=>{
-                         onDrawNetReady(res.data);
-                    });
-                },
-                matrixvis(){
-                    var that = this;
-                    this.clearPage();
-                    this.viewSelection="matrix";
-                    axios.get("http://127.0.0.1:5006/module?wanted=" + this.keyword).then(res=>{
-                        onDrawMatrixReady(res.data);
-                    });
-                    },
-                bubblevis(){
-                    var that = this;
-                    this.clearPage();
-                    this.viewSelection="bubble";
-                    axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
-                         onDrawBubbleReady(res.data);
-                    });
-                },
-                cloudvis(){
-                    var that = this;
-                    this.clearPage();
-                    this.viewSelection="cloud";
-                    axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
-                         onDrawCloudReady(res.data,this.search);
-                    });
-                },
-                filetreevis(){
-                    this.clearPage();
-                    var that = this;
-                    this.viewSelection="filetree";
-                    axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
-                        onDrawFileTreeReady(res.data);
-                    });
-                },
-                hicirclevis(){
-                    this.clearPage();
-                    var that = this;
-                    this.viewSelection="hicircle";
-                    axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
-                        onDrawHiCircleReady(res.data);
-                    });
-                },
-                bitreevis(){
-                    this.clearPage();
-                    var that = this;
-                    this.viewSelection="bitree";
-                    axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
-                        console.log(res.data);
-                        onDrawBitreeReady(res.data);
-                    });
-                },
-                downloadPhoto(form = "svg") {
-                    // 导出最基础的svg
-                    var html = d3.select("svg")
-                                .attr("version", 1.1)
-                                .attr("xmlns", "http://www.w3.org/2000/svg")
-                                .node().parentNode.innerHTML;
-                    var imgsrc = 'data:image/svg+xml;base64,' + window.btoa(unescape(encodeURIComponent(html)));
-                    // 从 String 对象中创建一个 base-64 编码的 ASCII 字符串，其中字符串中的每个字符都被视为一个二进制数据字节。
-                    var image = new Image;
-                    image.src = imgsrc;
-                    var self = this;
-                    if (form === "png") {
-                            var svg = d3.select("#svgbox").node()
-                            var img = '<img src="' + imgsrc + '">';
-                            d3.select("#svgdataurl").html(img);
-                            var boxWidth = svg.offsetWidth
-                            var boxHeight = svg.offsetHeight
-                            var canvas = document.querySelector("canvas");
-                            var context = canvas.getContext("2d");
-                            canvas.height = boxHeight; //canvas高度变化时清空画布
-                            canvas.width = boxWidth;
-                            image.onload = function () {
-                                context.drawImage(image, 0, 0);
-                                var canvasdata = canvas.toDataURL("image/png");
-                                var pngimg = '<img src="' + canvasdata + '">';
-                                d3.select("#pngdataurl").html(pngimg);
-                                var photo = document.createElement("a");
-                                photo.download =self.viewSelection+".png";
-                                photo.href = canvasdata;
-                                document.body.appendChild(photo);
-                                photo.click();
-                            }
-                    }else{
-                            var photo = document.createElement("a");
-                            photo.download =self.viewSelection+".svg";
-                            photo.href = imgsrc;
-                            document.body.appendChild(photo);
-                            photo.click();
-                            
-                    } }
-                },
-    mounted() {
-<!--        axios.get("http://127.0.0.1:5006/treevis").then(res => {-->
-<!--            const checkInterval = setInterval(() => {-->
-<!--                if (typeof onDrawTreeReady === 'function') {-->
-<!--                    clearInterval(checkInterval); // 停止轮询-->
-<!--                    onDrawTreeReady(res.data,this.search); // 调用回调函数-->
-<!--                }-->
-<!--            }, 100);-->
-<!--        });-->
-axios.get("http://127.0.0.1:5006/localPath")
-        .then((response) => {
-            this.localPath = response.data.result;
-            console.log(this.localPath);
-        })
-        .catch((error) => {
-            console.error("An error occurred while fetching localPath:", error);
-            this.localPath = "An error occurred.";
-        });
-    },
+            },
+            treevis() {
+                var that = this;
+                this.clearPage();
+                this.viewSelection="tree";
+                axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
+                     onDrawTreeReady(res.data,this.search);
+                });
+            },
+            netvis() {
+                var that = this;
+                this.clearPage();
+                this.viewSelection="net";
+                axios.get("http://127.0.0.1:5006/module?wanted=" + this.keyword).then(res=>{
+                     onDrawNetReady(res.data);
+                });
+            },
+            matrixvis() {
+                var that = this;
+                this.clearPage();
+                this.viewSelection="matrix";
+                axios.get("http://127.0.0.1:5006/module?wanted=" + this.keyword).then(res=>{
+                    onDrawMatrixReady(res.data);
+                });
+            },
+            bubblevis() {
+                var that = this;
+                this.clearPage();
+                this.viewSelection="bubble";
+                axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
+                     onDrawBubbleReady(res.data);
+                });
+            },
+            cloudvis() {
+                var that = this;
+                this.clearPage();
+                this.viewSelection="cloud";
+                axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
+                     onDrawCloudReady(res.data,this.search);
+                });
+            },
+            filetreevis() {
+                this.clearPage();
+                var that = this;
+                this.viewSelection="filetree";
+                axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
+                    onDrawFileTreeReady(res.data);
+                });
+            },
+            hicirclevis() {
+                this.clearPage();
+                var that = this;
+                this.viewSelection="hicircle";
+                axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
+                    onDrawHiCircleReady(res.data);
+                });
+            },
+            bitreevis() {
+                this.clearPage();
+                var that = this;
+                this.viewSelection="bitree";
+                axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
+                    console.log(res.data);
+                    onDrawBitreeReady(res.data);
+                });
+            },
+            downloadPhoto(form = "svg") {
+                // 导出最基础的svg
+                var html = d3.select("svg")
+                             .attr("version", 1.1)
+                             .attr("xmlns", "http://www.w3.org/2000/svg")
+                             .node().parentNode.innerHTML;
+                var imgsrc = 'data:image/svg+xml;base64,' + window.btoa(unescape(encodeURIComponent(html)));
+                // 从 String 对象中创建一个 base-64 编码的 ASCII 字符串，其中字符串中的每个字符都被视为一个二进制数据字节。
+                var image = new Image;
+                image.src = imgsrc;
+                var self = this;
+                if (form === "png") {
+                    var svg = d3.select("#svgbox").node()
+                    var img = '<img src="' + imgsrc + '">';
+                    d3.select("#svgdataurl").html(img);
+                    var boxWidth = svg.offsetWidth
+                    var boxHeight = svg.offsetHeight
+                    var canvas = document.querySelector("canvas");
+                    var context = canvas.getContext("2d");
+                    canvas.height = boxHeight; //canvas高度变化时清空画布
+                    canvas.width = boxWidth;
+                    image.onload = function () {
+                        context.drawImage(image, 0, 0);
+                        var canvasdata = canvas.toDataURL("image/png");
+                        var pngimg = '<img src="' + canvasdata + '">';
+                        d3.select("#pngdataurl").html(pngimg);
+                        var photo = document.createElement("a");
+                        photo.download =self.viewSelection+".png";
+                        photo.href = canvasdata;
+                        document.body.appendChild(photo);
+                        photo.click();
+                    }
+                } else {
+                    var photo = document.createElement("a");
+                    photo.download =self.viewSelection+".svg";
+                    photo.href = imgsrc;
+                    document.body.appendChild(photo);
+                    photo.click();
+                }
+            },
+        },
+
+        mounted() {
+<!--            axios.get("http://127.0.0.1:5006/treevis").then(res => {-->
+<!--                const checkInterval = setInterval(() => {-->
+<!--                    if (typeof onDrawTreeReady === 'function') {-->
+<!--                        clearInterval(checkInterval); // 停止轮询-->
+<!--                        onDrawTreeReady(res.data,this.search); // 调用回调函数-->
+<!--                    }-->
+<!--                }, 100);-->
+<!--            });-->
+            axios.get("http://127.0.0.1:5006/localPath")
+                .then((response) => {
+                    this.localPath = response.data.result;
+                    console.log(this.localPath);
+                })
+                .catch((error) => {
+                    console.error("An error occurred while fetching localPath:", error);
+                    this.localPath = "An error occurred.";
+                });
+        },
     });
+
     app.use(vant);
     app.use(vant.Lazyload);
     app.mount('#app');
