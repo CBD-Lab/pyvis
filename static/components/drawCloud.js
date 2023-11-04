@@ -66,54 +66,44 @@ function drawCloud(data,search){
                 }
             })
             .text(function (d) { return d.text; })
-            .on("click",function(d,i)
-                        {
-                          console.log(d,i)
-                          var fullname = i.text.slice(0, -3);;
-                          var point=i;
-                            while(point.depth>=0&& point.parent)
-                            {
-                                point=point.parent;
-                                fullname = point.data.name +'.'+ fullname; // 使用 + 运算符连接字符串
-                            }
+            .on("click", (d, i) => {
+             var fullname = i.text.slice(0, i.text.lastIndexOf("."));
+              var point = i;
+              while (point.depth >= 0 && point.parent) {
+                point = point.parent;
+                fullname = point.data.name + '.' + fullname;
+              }
 
-                                if(point.data.name=="nn")
-                                fullname="torch."+fullname;
-                                else
-                                fullname=fullname;
+              if(fullname.substring(0,2)=='nn')
+                {
+                fullname="torch."+fullname;
+                }
+              console.log(d, i, fullname);
+              fetch('http://127.0.0.1:5006/leafCode?wanted=' + fullname)
+                .then(response => response.text())
+                .then(data => {
+                  const language = 'python';
+                  const highlightedCode = Prism.highlight(data, Prism.languages[language], language);
+                  var tips = d3.select("body")
+                    .append("div")
+                    .attr("class", "popup");
 
-                        console.log(d,i,fullname);
-                        fetch('http://127.0.0.1:5006/bubbleCode?wanted=' + fullname)
-                                .then(response => response.text())
-                                .then(data => {
-                                 const language = 'python';
-                             // 使用 Prism.highlight 方法高亮代码字符串
-                                 const highlightedCode = Prism.highlight(data, Prism.languages[language], language);
-                                 var tips = d3.select("body")
-                                                .append("div")
-                                                .attr("class","popup");
+                  tips.append("span")
+                    .attr("class", "close")
+                    .attr("color", "red")
+                    .text("x")
+                    .on("click", () => {
+                      tips.remove();
+                    });
 
-                                tips.append("span")
-                                    .attr("class","close")
-                                    .attr("color","red")
-                                    .text("x")
-                                    .on("click",function(){
-                                   tips.remove();
-
-                                   });
-
-                                tips.append("div")
-                                    .attr("class","content")
-                                    .html('<pre><code class="language-python">'+highlightedCode+'</code></pre>');
-
-                                    console.log(data);
-                                    })
-                                .catch(error => {
-                                    console.error('Error executing Python script:', error);
-                                    // 处理错误
-                                });
-                        });
-
+                  tips.append("div")
+                    .attr("class", "content")
+                    .html('<pre><code class="language-python">' + highlightedCode + '</code></pre>');
+                })
+                .catch(error => {
+                  console.error('Error executing Python script:', error);
+                });
+            });
 
           var colorrec = d3.select("svg").selectAll('rect')
             .data(arraycolor)
