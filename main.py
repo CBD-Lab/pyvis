@@ -171,7 +171,8 @@ def localPath():
         global python_path
         python_path = sys.executable
         python_path = python_path.strip()
-        python_path = [python_path[:-10] if python_path.endswith("python.exe") else python_path]
+        python_path = python_path[:-10] if python_path.endswith("python.exe") else python_path
+        python_path = [python_path[:-8] if python_path.endswith("Scripts\\") else python_path]
         print("python_path：", python_path)
         paths = sys.executable
         paths = paths.strip()
@@ -208,7 +209,6 @@ def userPath():
     user_path = python_path[0]
     if not user_path.lower().endswith("scripts\\"):
         user_path = os.path.join(user_path, "Scripts\\")
-    print("user_path:", user_path)
 
     if os.path.isfile('pylibsNet.txt'):
         os.remove('pylibsNet.txt')
