@@ -1,5 +1,7 @@
 function drawTreeMap(data) {
     console.log("drawTreeMap");
+    var width=(window.innerWidth||document.documentElement.clientWidth||document.body.clientWidth)*0.83;
+	var height=(window.innerHeight||document.documentElement.clientHeight||document.body.clientHeight)*0.89;
     var color = d3.scaleOrdinal(d3.schemeCategory10);
     var svg = d3.select("#graph")
         .attr("width", width)
@@ -44,7 +46,8 @@ function drawTreeMap(data) {
         .attr("y", d => (d.y1 - d.y0) / 2)
         .attr("class", "txt")
         .attr("fill", "white")
-        .text(d => (d.data.name + "-" + d.data.value));
+        .text(d => (d.data.name.substr(d.data.name.lastIndexOf(".")+1,d.data.name.length) + "-" + d.data.value));
+    
 
 }
 

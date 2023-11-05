@@ -34,9 +34,7 @@ function drawFileTree(data) {
     //重新计算节点的y坐标
     nodes.forEach(function (d) { d.y = d.depth * 120; });
 
-    /*
-    （2） 节点的处理
-    */
+    //（2） 节点的处理
 
     //获取节点的update部分,个数相同
     var nodeUpdate = svg.selectAll(".node")
