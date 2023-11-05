@@ -16,16 +16,6 @@ import importlib
 #------------------do not delete the import above,using while runtime.----------------------------------
 
 
-modules = []
-mnetjson = {'nodes': '', 'links': ''}
-nodes = []
-links = []
-myclass = ""
-myfunction = ""
-
-layer = 0
-
-
 def get_modules(pname, initpname, layer):
     exec("import " + pname)
     arg = eval(pname)
@@ -135,6 +125,15 @@ def netjson(filename, initpname):
 
 
 def pyNet(moduleName):
+    global modules, mnetjson, nodes, links, myclass, myfunction, layer
+    modules = []
+    mnetjson = {'nodes': '', 'links': ''}
+    nodes = []
+    links = []
+    myclass = ""
+    myfunction = ""
+    layer = 0
+
     initpname = moduleName
     exec("import " + moduleName)
     netjson(moduleName, initpname)

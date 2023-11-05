@@ -16,16 +16,6 @@ import importlib
 # ------------------do not delete the import above,using while runtime.----------------------------------
 
 
-modules = []
-mnetjson = {'nodes': '', 'links': ''}
-nodes = []
-links = []
-myclass = ""
-myfunction = ""
-
-layer = 0
-
-
 def get_modules(pname, initpname, layer):
     exec("import " + pname)
     arg = eval(pname)
@@ -150,8 +140,16 @@ def readpackages():
 
 
 def pyNetAll(path):
-    path = path[:-8] + 'Lib\site-packages'
+    global modules, mnetjson, nodes, links, myclass, myfunction, layer
+    modules = []
+    mnetjson = {'nodes': '', 'links': ''}
+    nodes = []
+    links = []
+    myclass = ""
+    myfunction = ""
+    layer = 0
 
+    path = path[:-8] + 'Lib\site-packages'
     package_names = []
     package_names = readpackages()
     print("package_names", package_names)
