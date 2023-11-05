@@ -11,7 +11,6 @@ from extract import pylibsNet, pyNetAll, pyNetSingle
 from extract import pyTree, basicFunction
 from extract import pylibsTree
 
-
 app = Flask(__name__)
 CORS(app)
 
@@ -84,18 +83,19 @@ def leafCode():
         print(source_code)
     except ImportError as e:
         print(f"cannot load '{module_name}': {e}")
-        source_code=f"Cannot load '{module_name}': {e}"
+        source_code = f"Cannot load '{module_name}': {e}"
     except Exception as e:
         print(f"error happens: {e}")
-        source_code=f"error happens: {e}"
+        source_code = f"error happens: {e}"
     return source_code
+
 
 @app.route("/classVariable", methods=["GET"])
 def classVariable():
     my_class = request.args.get("wanted", type=str)
-    varAll=[]
-    class_name=my_class.rsplit('.',1)[1]
-    module_name=my_class.rsplit('.',1)[0]
+    varAll = []
+    class_name = my_class.rsplit('.', 1)[1]
+    module_name = my_class.rsplit('.', 1)[0]
 
     module = importlib.import_module(module_name)
     class_obj = getattr(module, class_name)
@@ -105,16 +105,17 @@ def classVariable():
     for var in class_variables:
         varAll.append(var)
 
-    funcAll=basicFunction.get_class_method(class_obj)
+    funcAll = basicFunction.get_class_method(class_obj)
 
-    docs,pdf=basicFunction.get_class_pdf(class_obj)
+    docs, pdf = basicFunction.get_class_pdf(class_obj)
     result = {
         "var": varAll,
         "fun": funcAll,
-        "doc":docs,
-        "pdf":pdf
+        "doc": docs,
+        "pdf": pdf
     }
     return jsonify(result)
+
 
 @app.route("/bubbleCode", methods=["GET"])
 def bubbleCode():
@@ -145,9 +146,9 @@ def moduletxt():
     exec(import_statement)
 
     print(wanted)
-    # modulesrc=inspect.getsource(eval(wanted))
+    # modulesrc = inspect.getsource(eval(wanted))
     modulesrc = open(eval(wanted).__file__).read()
-    # return jsonify({"result":modulesrc})
+    # return jsonify({"result": modulesrc})
     return modulesrc
 
 
@@ -171,16 +172,6 @@ def localPath():
         python_path = python_path[:-10] if python_path.endswith("python.exe") else python_path
         python_path = [python_path[:-8] if python_path.endswith("Scripts\\") else python_path]
         print("python_path：", python_path)
-        paths = sys.executable
-        paths = paths.strip()
-        paths = [paths[:-10] if paths.endswith("python.exe") else paths]
-        print("paths", paths)
-        # output = subprocess.check_output('where pip3', shell=True)
-        # paths = output.decode('utf-8').split('\n')
-        # paths = [path.strip() for path in paths if path.strip() != '']
-        # paths = [path[:-8] if path.endswith("pip3.exe") else path for path in paths]
-
-
         result = {'result': python_path}
         return jsonify(result)
     except Exception as e:
@@ -202,6 +193,7 @@ def single():
     pyTree.pyTree(path, single_module)
 
     return jsonify({'message': 'Tasks completed successfully'})
+
 
 @app.route('/userPath', methods=['GET'])
 def userPath():
@@ -241,4 +233,4 @@ def userPath():
 
 
 if "__main__" == __name__:  # 程序入口
-    app.run(port=5006,debug=True)
+    app.run(port=5006, debug=True)
