@@ -34,19 +34,16 @@ def module():
 
 @app.route("/treevis")
 def treevis():
-    # print("module")
     wanted = request.args.get("wanted", type=str)
     if (wanted is None) or (wanted == "undefined") or (wanted == ""):
         wanted = 'nn'
     jsonfile = "treejson/" + wanted + ".json"
-    # print(jsonfile)
     return app.send_static_file(jsonfile)
 
 
 @app.route("/treeLeaf", methods=["GET"])
 def treeLeaf():
     wanted = request.args.get("wanted", type=str)
-
     if (wanted is None) or (wanted == "undefined") or (wanted == ""):
         wanted = 'torch.nn.modules.transformer'
     wanted = urllib.parse.quote(wanted)
@@ -139,7 +136,7 @@ def bubbleCode():
 @app.route("/moduletxt")
 def moduletxt():
     wanted = request.args.get("wanted", type=str)
-    if wanted is None:
+    if (wanted is None) or (wanted == "undefined") or (wanted == ""):
         wanted = 'inspect'
     wanted = wanted[0:wanted.find(".py")]
     wanted = "torch.nn.modules." + wanted
@@ -194,6 +191,8 @@ def localPath():
 @app.route('/single', methods=['GET'])
 def single():
     single_module = request.args.get('wanted', type=str)
+    if (single_module is None) or (single_module == "undefined") or (single_module == ""):
+        single_module = 'numpy'
     if os.path.isfile('static/netjson/' + single_module + '.json'):
         os.remove('static/netjson/' + single_module + '.json')
     pyNetSingle.pyNet(single_module)
