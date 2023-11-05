@@ -12,111 +12,449 @@ function drawTree(data,search){
                             .style("border-radius", "2px")
                             .style("width",30)
                             .style("height",100);
+
     var svg = d3.select("#graph")
             .attr("width", width*0.85)
-            .attr("height", height);
+            .attr("height", height)
+            .on("click", function () {
+                 d3.select("#miniTree").remove();
+            });
        var tree=d3.tree()
                .size([height,width*0.7]);
        var hi=d3.hierarchy(data);
        var root=tree(hi);
        var links=root.links();
        var nodes=root.descendants();
-    var gc=svg.append("g")
-              .attr("id","mainsvg")
-              .attr("transform","translate(" + (width/40) + "," + (height/100) + ")");
-    var lines=gc.selectAll("path")
-                .data(links)
-                .enter()
-                .append("path")
-                .attr("fill","none")
-                .attr("stroke","#555")
-                .attr("stroke-width",0.5)
-                .attr("opacity",0.5)
-                .attr("d",d3.linkHorizontal()          //d3.linkHorizontal()
-                            .x(d=>d.y)
-                            .y(d=>d.x)
-                );
-    var mynode=gc.selectAll("circle")
-            .data(nodes)
-            .join("circle")
-            .attr("cx",d=>d.y)
-            .attr("cy",d=>d.x)
+       var i=0, duration=750,root;
+//       var treeData = {
+//      name: "Top Level"
+//    };
+       var treemap = d3.tree().size([height, width]);
+       initData();
+//       updateNodes(root,nodes);
+//       updateLinks(root,links);
+//    var gc=svg.append("g")
+//              .attr("id","mainsvg")
+//              .attr("transform","translate(" + (width/40) + "," + (height/100) + ")");
+//    var lines=gc.selectAll("path")
+//                .data(links)
+//                .enter()
+//                .append("path")
+//                .attr("fill","none")
+//                .attr("stroke","#555")
+//                .attr("stroke-width",0.5)
+//                .attr("opacity",0.5)
+//                .attr("d",d3.linkHorizontal()          //d3.linkHorizontal()
+//                            .x(d=>d.y)
+//                            .y(d=>d.x)
+//                );
+//    var mynode=gc.selectAll("circle")
+//            .data(nodes)
+//            .join("circle")
+//            .attr("cx",d=>d.y)
+//            .attr("cy",d=>d.x)
             //.attr("r",d=>(d.height+2)*2)
-            .attr("r",d=>d.value?d.value:5)
-            .attr("fill",(d,i)=>color[d.depth])
-            .attr("opacity",0.5)
-            .attr("stroke","#555");
+//            .attr("r",d=>d.value?d.value:5)
+//            .attr("fill",(d,i)=>color[d.depth])
+//            .attr("opacity",0.5)
+//            .attr("stroke","#555");
 
-    var nodetxt=gc.selectAll("text")
-            .data(nodes)
-            .enter()
-            .append("a")
-            .append("text")
-            .attr("x",d=>d.height==0?parseFloat(d.data.value)/240+d.y:d.y)
-            .attr("y",d=>d.x)
-            .attr("dx",(d,i)=>d.height==0?"0em":"-1em")
-            .attr("dy","0.5em")
-            .attr("text-anchor",(d,i)=>d.height==0?"start":"end")
-            .attr("font-size","12")
-            .attr("fill",(d,i)=>i%2==0?"green":"orange")
-            .datum(function(d, i) {
-                return { data: d, index: i };
-                })
-            .text(d=>d.data.data.name)
-            .on('mouseover',function(event,d){
-             d3.select("#miniTree")
+//    var nodetxt=gc.selectAll("text")
+//            .data(nodes)
+//            .enter()
+//            .append("a")
+//            .append("text")
+//            .attr("x",d=>d.height==0?parseFloat(d.data.value)/240+d.y:d.y)
+//            .attr("y",d=>d.x)
+//            .attr("dx",(d,i)=>d.height==0?"0em":"-1em")
+//            .attr("dy","0.5em")
+//            .attr("text-anchor",(d,i)=>d.height==0?"start":"end")
+//            .attr("font-size","12")
+//            .attr("fill",(d,i)=>i%2==0?"green":"orange")
+//            .datum(function(d, i) {
+//                return { data: d, index: i };
+//                })
+//            .text(d=>d.data.data.name)
+//            .on('mouseover',function(event,d){
+//             d3.select("#miniTree")
+//                .remove();
+//                d3.select(".rectout").remove();
+//                d3.select(this)
+//                  .attr("fill", "red")
+//                  .attr("font-weight","bold");
+//                if(!d.data.children){
+//                var point=d.data;
+//                var fullname = d.data.data.name.slice(0, d.data.data.name.lastIndexOf("."));
+//                while(point.depth>=0&& point.parent)
+//                {
+//                    point=point.parent;
+//                    fullname = point.data.name +'.'+ fullname;
+//                }
+//                if(fullname.substring(0,2)=='nn')
+//                {
+//                fullname="torch."+fullname;
+//                }
+//                fetch('http://127.0.0.1:5006/treeLeaf?wanted=' + fullname)
+//                    .then(response => response.json())
+//                    .then(data => {
+//                    if(data !== "null"){
+//                    var datain=data.jsoninside;
+//                    var dataout=data.jsonoutside;
+//
+//                    const jsontree = toJson(fullname,dataout);
+//
+//                    drawOutTree(nodes,links,datain,jsontree,event.pageX,event.pageY,search);
+//                   } })
+//                    .catch(error => {
+//                        console.error('Error executing Python script:', error);
+//                         处理错误
+//                    });
+//                    }
+//            })
+//            .on('mouseleave',function(event,d){
+//                d3.select(this)
+//                  .attr("fill", d.index%2==0?"green":"orange")
+//                  .attr("font-weight","none");
+//                tooltiptree.style("visibility",'false');
+//
+//            })
+
+//    var rect=gc.selectAll("rect")
+//            .data(nodes)
+//            .join("rect")
+//            .attr("x",d=>d.y)
+//            .attr("y",d=>d.x)
+//            .attr("width",d=>d.height==0?parseFloat(d.data.value)/240:0)
+//            .attr("height",0.5)
+//            .attr("opacity",0.5)
+//            .attr("fill",(d,i)=>i%2==0?"green":"orange");
+   /********************* 2. 数据初始化绑定（包括数据更新） *********************/
+    function initData() {
+      // 计算父节点、字节点、高度和深度（parent, children, height, depth）
+//      root = d3.hierarchy(treeData, function (d) {
+//        return d.children;
+//      });
+
+      // 设置第一个元素的初始位置
+      root.x0 = height / 2;
+      root.y0 = 10;
+        // 计算总节点数
+      const totalNodes = countNodes(root);
+      console.log(totalNodes)
+        // 在根节点上调用 collapseAllNodesByProbability，传入总节点数
+      collapseAllNodesByProbability(root, totalNodes);
+
+      // 更新节点状态
+      updateChart(root);
+
+    }
+// 计算树中的节点总数
+function countNodes(node) {
+  let count = 1; // 初始为 1，包括当前节点
+  if (node.children) {
+    node.children.forEach(function (child) {
+      count += countNodes(child); // 递归计算子节点的总数
+    });
+  }
+  return count;
+}
+function collapseAllNodesByProbability(node,totalNodes) {
+  if (node.children) {
+     node.children.forEach(function (child) {
+      collapseAllNodesByProbability(child, totalNodes); // 递归处理子节点并传递额外参数
+    });
+    // 根据概率属性决定是否收起节点
+    if (Math.random() > 100/totalNodes&node.depth!=0) {
+      node._children = node.children; // 将子节点移到 _children 中
+       node._children.forEach(function (child) {
+      collapseAllNodesByProbability(child, totalNodes); // 递归处理子节点并传递额外参数
+    });
+      node.children = null; // 清空 children
+    }
+  }
+}
+/********************* 5. link交互和绘制  *********************/
+function updateLinks(source, links) {
+  // 更新数据
+  var link = svg.selectAll("path.link").data(links, function (d) {
+    return d.id;
+  });
+
+  // 添加enter操作，添加类名为link的path元素
+  var linkEnter = link
+    .enter()
+    .insert("path", "g")
+    .attr("class", "link")
+    .attr("fill","none")
+    // 默认位置为当前父节点的位置
+    .attr("d", function (d) {
+      var o = {
+        x: source.x0,
+        y: source.y0
+      };
+      return diagonal(o, o);
+    });
+
+  // 获取update集
+  var linkUpdate = linkEnter.merge(link);
+
+  // 更新添加过渡动画
+  linkUpdate
+    .transition()
+    .duration(duration)
+    .attr("d", function (d) {
+      return diagonal(d, d.parent);
+    });
+
+  // 获取exit集
+  var linkExit = link
+    .exit()
+    // 设置过渡动画
+    .transition()
+    .duration(duration)
+    .attr("d", function (d) {
+      var o = {
+        x: source.x,
+        y: source.y
+      };
+      return diagonal(o, o);
+    })
+    // 移除link
+    .remove();
+}
+
+/********************* 4. node交互和绘制  *********************/
+function updateNodes(source, nodes) {
+  // 给节点添加id，用于选择集索引
+  var node = svg.selectAll("g.node").data(nodes, function (d,i) {
+    return d.id || (d.id = ++i);
+  });
+
+  // 添加enter操作，添加类名为node的group元素
+  var nodeEnter = node
+    .enter()
+    .append("g")
+    .attr("class", "node")
+    // 默认位置为当前父节点的位置
+    .attr("transform", function (d) {
+      return "translate(" + source.y0 + "," + source.x0 + ")";
+    });
+
+
+  // 给每个新加的group元素添加cycle元素
+  nodeEnter
+    .append("circle")
+    .attr("class", "node")
+    .attr("r", 1e-6)
+    // 如果元素有子节点，且为收起状态，则填充浅蓝色
+    .style("fill", function (d) {
+      return d._children &&d.data.children ? "grey" : "white";
+    })    // 给每个新加的节点绑定click事件
+    .on("click", function(d,i)
+    {
+    console.log(d,i);
+    click(i);
+    })
+    // 给每个新加的节点绑定dbclick事件
+    .on("dblclick", dblclick);
+
+  // 给每个新加的group元素添加文字说明
+  nodeEnter
+    .append("text")
+//    .attr("dy", ".1em")
+    .attr("x", function (d) {
+      return d.children || d._children ? -13 : 13;
+    })
+    .attr("text-anchor", function (d) {
+      return d.children || d._children ? "end" : "start";
+    })
+    .text(function (d) {
+      return d.data.name;
+    })
+     .attr("stroke", function(d){return color[d.depth];})
+     .attr("stroke-width","0.3px")
+     .on("click",function(event,d)
+     {
+        textclick(event,d);
+     })
+
+  // 获取update集
+  var nodeUpdate = nodeEnter.merge(node);
+
+  // 设置节点的位置变化，添加过渡动画效果
+  nodeUpdate
+    .transition()
+    .duration(duration)
+    .attr("transform", function (d) {
+      return "translate(" + d.y + "," + d.x + ")";
+    });
+
+  // 更新节点的属性和样式
+  nodeUpdate
+    .select("circle.node")
+    .attr("r", 10)
+    .style("fill", function (d) {
+//    console.log(d._children,d.data.children,d._children&&d.data.children)
+      return d._children&&d.data.children ? "grey" : "white";
+    })
+    .attr("cursor", "pointer");
+
+  // 获取exit操作
+  var nodeExit = node
+    .exit()
+    // 添加过渡动画
+    .transition()
+    .duration(duration)
+    .attr("transform", function (d) {
+      return "translate(" + source.y + "," + source.x + ")";
+    })
+    // 移除元素
+    .remove();
+
+  // exit集中节点的cycle元素尺寸变为0
+  nodeExit.select("circle").attr("r", 1e-6);
+
+  // exit集中节点的text元素可见度降为0
+  nodeExit.select("text").style("fill-opacity", 1e-6);
+}
+
+
+
+/********************* 6. 单击节点事件处理  *********************/
+// 当点击时，切换children，同时用_children来保存原子节点信息
+function click(d) {
+  if (d._clickid) {
+    // 若在200ms里面点击第二次，则不做任何操作，清空定时器
+    clearTimeout(d.data._clickid);
+    d.data._clickid = null;
+  } else {
+    // 首次点击，添加定时器，200ms后进行toggle
+    d.data._clickid = setTimeout(() => {
+      if (d.children) {
+        console.log("children不为空",d)
+        d._children = d.children;
+        d.children = null;
+      } else {
+        console.log("children为空",d);
+        d.children = d._children;
+        d._children = null;
+        console.log("children为空",d);
+      }
+      updateChart(d);
+      d.data._clickid = null;
+    }, 200);
+  }
+}
+
+function textclick(event,d){
+            console.log(d.height);
+            d3.select("#miniTree")
                 .remove();
-                d3.select(".rectout").remove();
-                d3.select(this)
-                  .attr("fill", "red")
-                  .attr("font-weight","bold");
-                if(!d.data.children){
-                var point=d.data;
-                var fullname = d.data.data.name.slice(0, d.data.data.name.lastIndexOf("."));
+            d3.select(".rectout").remove();
+//            d3.select(this)
+//              .attr("fill", "red")
+//              .attr("font-weight","bold");
+            if(d.height==0){
+            console.log(d);
+                var point=d;
+                var fullname = d.data.name.slice(0, d.data.name.lastIndexOf("."));
                 while(point.depth>=0&& point.parent)
-                {
-                    point=point.parent;
-                    fullname = point.data.name +'.'+ fullname;
-                }
+                    {
+                        point=point.parent;
+                        fullname = point.data.name +'.'+ fullname;
+                    }
                 if(fullname.substring(0,2)=='nn')
-                {
-                fullname="torch."+fullname;
-                }
+                    {
+                    fullname="torch."+fullname;
+                    }
                 fetch('http://127.0.0.1:5006/treeLeaf?wanted=' + fullname)
                     .then(response => response.json())
                     .then(data => {
                     if(data !== "null"){
                     var datain=data.jsoninside;
                     var dataout=data.jsonoutside;
-
+                    console.log(datain,dataout)
                     const jsontree = toJson(fullname,dataout);
 
                     drawOutTree(nodes,links,datain,jsontree,event.pageX,event.pageY,search);
-                   } })
+                       } })
                     .catch(error => {
                         console.error('Error executing Python script:', error);
-                        // 处理错误
+                         处理错误
                     });
-                    }
-            })
-            .on('mouseleave',function(event,d){
-                d3.select(this)
-                  .attr("fill", d.index%2==0?"green":"orange")
-                  .attr("font-weight","none");
-                tooltiptree.style("visibility",'false');
+            }
+//            .on('mouseleave',function(event,d){
+//                d3.select(this)
+//                  .attr("fill", d.index%2==0?"green":"orange")
+//                  .attr("font-weight","none");
+//                tooltiptree.style("visibility",'false');
+//
+//            })
+}
+  /********************* 3. 数据更新绑定  *********************/
+    function updateChart(source) {
+      // 设置节点的x、y位置信息
+      var treeData = treemap(root);
+      console.log(treeData);
+      // 计算新的Tree层级
+      var nodes = treeData.descendants(),
+        links = treeData.descendants().slice(1);
 
-            })
+      nodes.forEach(function (d) {
+        d.y = d.depth * 150;
+      });
 
-    var rect=gc.selectAll("rect")
-            .data(nodes)
-            .join("rect")
-            .attr("x",d=>d.y)
-            .attr("y",d=>d.x)
-            .attr("width",d=>d.height==0?parseFloat(d.data.value)/240:0)
-            .attr("height",0.5)
-            .attr("opacity",0.5)
-            .attr("fill",(d,i)=>i%2==0?"green":"orange");
+      // node交互和绘制
+      updateNodes(source, nodes);
+      // link交互和绘制
+      updateLinks(source, links);
 
+      // 为动画过渡保存旧的位置
+      nodes.forEach(function (d) {
+        d.x0 = d.x;
+        d.y0 = d.y;
+      });
+
+    }
+
+/********************* 7. 双击获取子节点事件处理  *********************/
+// 将获取到的节点，添加进data对象中，同时若已获取过不再获取
+function dblclick(d) {
+  // 若无d.data.children，则视为未获取
+  if (!(d.data && d.data.children)) {
+    // 这里模拟请求，1.json - 5.json 随机获取数据
+    var randomNum = Math.floor(Math.random() * 5) + 1;
+    d3.json(randomNum + ".json", function (error, data) {
+      if (error) throw error;
+      // 给子节点绑定父节点
+      var children = data.children.map(x => {
+        return {
+          name: x.name,
+          parent: d,
+          depth: d.depth + 1,
+          data: {
+            ...x
+          }
+        }
+      });
+      // 将子节点数据绑定在d节点上
+      if (children.length) d.children = children;
+      // 同时也绑到data上
+      d.data.children = children;
+      updateChart(d);
+    });
+  }
+}
+  // 添加贝塞尔曲线的path，衔接与父节点和子节点间
+    function diagonal(s, d) {
+      path =
+        `M ${s.y} ${s.x}
+              C ${(s.y + d.y) / 2} ${s.x},
+                ${(s.y + d.y) / 2} ${d.x},
+                ${d.y} ${d.x}`;
+
+      return path;
+    }
 function buildJsonTree(fullname, data) {
   const tree = { name: fullname, children: [] };
   for (const entry of data) {
@@ -137,7 +475,6 @@ function buildJsonTree(fullname, data) {
 
   return tree;
 }
-
 
 function toJson(fullname,data) {
 console.log(fullname,data);
@@ -279,25 +616,39 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,search)
                     closeButton.style("position", "fixed")
                           .style("top", "0")
                           .style("left", "0");
-                    data['var'].forEach(function(item) {
-                    tips.append("div")
-                            .attr("class", "contentVar")
-                            .html(item + "<br>")
-                            .style("color","green");})
-                    data['fun'].forEach(function(item) {
-                         tips.append("div")
+                    var contentContainer = tips.append("div").attr("class", "content-container");
+                    var varContainer = contentContainer.append("div").attr("class", "var-fun-container");
+                    varContainer.style("display", "flex") // 使用flex布局
+                                .style("flex-direction", "column") // 设置水平排列
+                                .style("justify-content", "space-between") // 在元素之间均匀分布
+                                .style("width", "100px"); // 添加内边距
+                      data['var'].forEach(function(item) {
+                          varContainer.append("div")
+                                    .attr("class", "contentVar")
+                                    .html(item + "<br>")
+                                    .style("color","green")
+                                    .style("width", "100px");})
+                      var funContainer = contentContainer.append("div").attr("class", "var-fun-container");
+                          funContainer.style("display", "flex") // 使用flex布局
+                                .style("flex-direction", "column") // 设置水平排列
+                                .style("justify-content", "space-between") // 在元素之间均匀分布
+                                .style("width", "100px"); // 添加内边距
+                   data['fun'].forEach(function(item) {
+                         funContainer.append("div")
                             .attr("class", "contentFun")
                             .html(item + "<br>")
-                            .style("color","blue");
+                            .style("color","blue")
+                            .style("width", "100px");
                     })
+                    var docContainer = tips.append("div").attr("class", "contentDoc-container");
                     var textWithLinks = data['doc'];
                     var linkRegex = /(\bhttps?:\/\/\S+\b)/g;
                     var textWithFormattedLinks = textWithLinks.replace(linkRegex, '<a href="$1" target="_blank">$1</a>');
 
-                    tips.append("div")
-                            .attr("class","contentDoc")
-                            .style("white-space", "pre-line")
-                            .html(textWithFormattedLinks)
+                   docContainer.append("div")
+                        .attr("class", "contentDoc")
+                        .style("white-space", "pre-line")
+                        .html(textWithFormattedLinks);
                     tips.append("div")
                             .attr("class","contentPdf")
                             .html(data['pdf']+"<br>")

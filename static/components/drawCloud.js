@@ -38,6 +38,7 @@ function drawCloud(data,search){
             .attr("height", height)
             .append("g")
             .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
+            .style("cursor", "pointer")
 
          svg.selectAll("text")
             .data(hiwords)
