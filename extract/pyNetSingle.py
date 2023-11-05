@@ -31,10 +31,10 @@ def get_modules(pname, initpname, layer):
     arg = eval(pname)
     if arg.__name__ == initpname:
         modules.append(arg.__name__)
-        myclass = basicFunction.in_out_classes_bymodulename(eval(arg.__name__))
+        myclass,outclass = basicFunction.in_out_classes_bymodulename(eval(arg.__name__))
         classcount = len(myclass)
 
-        myfunction = basicFunction.get_functions(eval(arg.__name__))
+        myfunction,outfunction = basicFunction.get_functions(eval(arg.__name__))
         functioncount = len(myfunction)
         if ("__file__" in dir(eval(arg.__name__)) and (eval(arg.__name__).__file__ is not None)):
             nodes.append(
@@ -44,7 +44,7 @@ def get_modules(pname, initpname, layer):
             nodes.append({'name': arg.__name__, 'file': 'none', 'ftype': 'none', 'layer': layer,
                           'hasclass': classcount, 'myclass': myclass, "hasfunction": functioncount,
                           "myfunction": myfunction})
-    #     count=count+1
+        # count = count + 1
 
     layer = layer + 1
     mem = inspect.getmembers(eval(pname), inspect.ismodule)
@@ -55,10 +55,10 @@ def get_modules(pname, initpname, layer):
                     # print("1---.py=",m,m_info.__name__,m_info.__file__)
                     modules.append(m_info.__name__)
 
-                    myclass = basicFunction.in_out_classes_bymodulename(eval(m_info.__name__))
+                    myclass,outclass = basicFunction.in_out_classes_bymodulename(eval(m_info.__name__))
                     classcount = len(myclass)
 
-                    myfunction = basicFunction.get_functions(eval(m_info.__name__))
+                    myfunction,outfunction = basicFunction.get_functions(eval(m_info.__name__))
                     functioncount = len(myfunction)
                     nodes.append({'name': m_info.__name__, 'file': eval(m_info.__name__).__file__, 'layer': layer,
                                   'hasclass': classcount, 'myclass': myclass, "hasfunction": functioncount,
@@ -69,10 +69,10 @@ def get_modules(pname, initpname, layer):
                     modules.append(m_info.__name__)
                     ex = os.path.splitext(m_info.__file__)[1]
                     # print(ex)
-                    myclass = basicFunction.in_out_classes_bymodulename(eval(m_info.__name__))
+                    myclass,outclass = basicFunction.in_out_classes_bymodulename(eval(m_info.__name__))
                     classcount = len(myclass)
 
-                    myfunction = basicFunction.get_functions(eval(m_info.__name__))
+                    myfunction,outfunction = basicFunction.get_functions(eval(m_info.__name__))
                     functioncount = len(myfunction)
                     nodes.append(
                         {'name': m_info.__name__, 'file': eval(m_info.__name__).__file__, 'ftype': ex, 'layer': layer,
@@ -83,10 +83,10 @@ def get_modules(pname, initpname, layer):
                 # print("3---NoFile",m,m_info.__name__)
                 modules.append(m_info.__name__)
 
-                myclass = basicFunction.in_out_classes_bymodulename(eval(m_info.__name__))
+                myclass, outclass = basicFunction.in_out_classes_bymodulename(eval(m_info.__name__))
                 classcount = len(myclass)
 
-                myfunction = basicFunction.get_functions(eval(m_info.__name__))
+                myfunction, outfunction = basicFunction.get_functions(eval(m_info.__name__))
                 functioncount = len(myfunction)
                 nodes.append({'name': m_info.__name__, 'file': 'none', 'ftype': 'none', 'layer': layer,
                               'hasclass': classcount, 'myclass': myclass, "hasfunction": functioncount,

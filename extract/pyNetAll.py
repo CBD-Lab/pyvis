@@ -1,5 +1,3 @@
-# 剔除了Open3D里的没有文件对应问题（Nodes）
-# 剔除了NLTK里别名和重定向问题（Nodes）
 import argparse
 import inspect
 from . import basicFunction
@@ -16,11 +14,6 @@ import textwrap
 import sys
 import importlib
 # ------------------do not delete the import above,using while runtime.----------------------------------
-import flask
-import torch
-import networkx
-import matplotlib
-from matplotlib import pyplot
 
 
 modules = []
@@ -38,12 +31,12 @@ def get_modules(pname, initpname, layer):
     arg = eval(pname)
     if arg.__name__ == initpname:
         modules.append(arg.__name__)
-        myclass = basicFunction.in_out_classes_bymodulename(eval(arg.__name__))
+        myclass,outclass = basicFunction.in_out_classes_bymodulename(eval(arg.__name__))
         classcount = len(myclass)
 
-        myfunction = basicFunction.get_functions(eval(arg.__name__))
+        myfunction,outfunction = basicFunction.get_functions(eval(arg.__name__))
         functioncount = len(myfunction)
-        if ("__file__" in dir(eval(arg.__name__))):
+        if ("__file__" in dir(eval(arg.__name__)) and (eval(arg.__name__).__file__ is not None)):
             nodes.append(
                 {'name': arg.__name__, 'file': arg.__file__, 'ftype': '.py', 'layer': layer, 'hasclass': classcount,
                  'myclass': myclass, "hasfunction": functioncount, "myfunction": myfunction})
@@ -51,40 +44,35 @@ def get_modules(pname, initpname, layer):
             nodes.append({'name': arg.__name__, 'file': 'none', 'ftype': 'none', 'layer': layer,
                           'hasclass': classcount, 'myclass': myclass, "hasfunction": functioncount,
                           "myfunction": myfunction})
-    #     count=count+1
+    # count = count + 1
 
     layer = layer + 1
     mem = inspect.getmembers(eval(pname), inspect.ismodule)
     for m, m_info in mem:
         if (pname in m_info.__name__) and not (m_info.__name__ in modules):  # Filter calling external modules
-            print(m_info)
-            print(dir(eval(m_info.__name__)))
-            print(eval(m_info.__name__).__file__)
             if ("__file__" in dir(eval(m_info.__name__)) and (eval(m_info.__name__).__file__ is not None)):
                 if (pathlib.Path(eval(m_info.__name__).__file__).suffix == ".py"):
                     # print("1---.py=",m,m_info.__name__,m_info.__file__)
                     modules.append(m_info.__name__)
 
-                    myclass = basicFunction.in_out_classes_bymodulename(eval(m_info.__name__))
+                    myclass, outclass = basicFunction.in_out_classes_bymodulename(eval(m_info.__name__))
                     classcount = len(myclass)
 
-                    myfunction = basicFunction.get_functions(eval(m_info.__name__))
+                    myfunction, outfunction = basicFunction.get_functions(eval(m_info.__name__))
                     functioncount = len(myfunction)
                     nodes.append({'name': m_info.__name__, 'file': eval(m_info.__name__).__file__, 'layer': layer,
                                   'hasclass': classcount, 'myclass': myclass, "hasfunction": functioncount,
                                   "myfunction": myfunction})
-
-                    # __import__(m_info.__name__)
 
                 else:
                     # print("2---Not.py(.pyd,.pyi,.pyc)",m,m_info.__name__,m_info.__file__)
                     modules.append(m_info.__name__)
                     ex = os.path.splitext(m_info.__file__)[1]
                     # print(ex)
-                    myclass = basicFunction.in_out_classes_bymodulename(eval(m_info.__name__))
+                    myclass, outclass = basicFunction.in_out_classes_bymodulename(eval(m_info.__name__))
                     classcount = len(myclass)
 
-                    myfunction = basicFunction.get_functions(eval(m_info.__name__))
+                    myfunction, outfunction = basicFunction.get_functions(eval(m_info.__name__))
                     functioncount = len(myfunction)
                     nodes.append(
                         {'name': m_info.__name__, 'file': eval(m_info.__name__).__file__, 'ftype': ex, 'layer': layer,
@@ -95,10 +83,10 @@ def get_modules(pname, initpname, layer):
                 # print("3---NoFile",m,m_info.__name__)
                 modules.append(m_info.__name__)
 
-                myclass = basicFunction.in_out_classes_bymodulename(eval(m_info.__name__))
+                myclass, outclass = basicFunction.in_out_classes_bymodulename(eval(m_info.__name__))
                 classcount = len(myclass)
 
-                myfunction = basicFunction.get_functions(eval(m_info.__name__))
+                myfunction, outfunction = basicFunction.get_functions(eval(m_info.__name__))
                 functioncount = len(myfunction)
                 nodes.append({'name': m_info.__name__, 'file': 'none', 'ftype': 'none', 'layer': layer,
                               'hasclass': classcount, 'myclass': myclass, "hasfunction": functioncount,
@@ -133,8 +121,6 @@ def get_links(mymodule, pname):
 
 
 def netjson(filename, initpname):
-    # 递归搜索模块Module节点
-
     mymodule = get_modules(filename, initpname, layer)
 
     print(len(nodes))
@@ -142,8 +128,7 @@ def netjson(filename, initpname):
 
     mnetjson['nodes'] = nodes
     mnetjson['links'] = links
-    # ------------------------ single test using the 146th line --------------------------
-    # f = open('../static/netjson/'+filename+'.json', 'w')
+
     f = open('static/netjson/' + filename + '.json', 'w')
     f.write(json.dumps(mnetjson))
     f.close()
@@ -156,7 +141,6 @@ def readpackages():
     with open(filename, 'r', encoding='utf-8') as f:
         line = f.readline()
         while line:
-            # print("line", line)
             packages.append(line.split(" ")[0])
             line = f.readline()
             i = i + 1
@@ -166,10 +150,7 @@ def readpackages():
 
 
 def pyNetAll(path):
-    # path = r'D:\Anaconda\Anaconda3\Lib\site-packages'
     path = path[:-8] + 'Lib\site-packages'
-    # filename = 'wordcloud'
-    # netjson(filename)
 
     package_names = []
     package_names = readpackages()
@@ -179,11 +160,7 @@ def pyNetAll(path):
         initpname = filename
         print("filename:", filename)
         try:
-            # 检查模块是否存在，如果存在则导入
             if importlib.util.find_spec(filename):
-                # import_statement = "import " + filename
-                # print(import_statement)
-                # exec(import_statement)
                 netjson(filename, initpname)
         except Exception as e:
             print(f"Error in package {filename}: {e}. Skipping...")
