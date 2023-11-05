@@ -221,18 +221,23 @@
             </van-row>
             <!--力导向图控制区-->
             <div v-show="viewSelection === 'net'">
-                <van-row style="margin-top:20px">Node Radius</van-row>
+                <van-row style="margin-top:20px;font-size:12px">Node Radius</van-row>
                 <van-row><input style="position:relative;top:3px;" type="range" id="nodescale" min="0.5" max="10"
                                 value="1">
                 </van-row>
-                <van-row style="margin-top:20px">Edge Length</van-row>
+                <van-row style="margin-top:20px;font-size:12px">Edge Length</van-row>
                 <van-row><input style="position:relative;top:3px;" type="range" id="edgescale" min="50" max="500"
                                 value="150"></van-row>
-                <van-row style="margin-top:20px">Charge</van-row>
+                <van-row style="margin-top:20px;font-size:12px">Charge</van-row>
                 <van-row><input style="position:relative;top:3px;" type="range" id="chargescale" min="5" max="1000"
                                 value="600"></van-row>
-                <van-row style="margin-top:30px"><input type="radio" name="flush" value="重绘" id="flush"
-                                                        onclick="javascript:location.reload()">Repaint</input></van-row>
+                <van-row style="margin-top:30px;font-size:12px">
+                    <van-col span="24"><input type="radio" name="flush" value="重绘" id="flush" onclick="javascript:location.reload()">Repaint</input></van-col>
+                    <van-col span="12"><input type="radio" name="radio" value="edgecount" id="radio1" checked @click="selectit()">Edge-Count</input></van-col>
+                    <van-col span="12"><input type="radio" name="radio" value="equalr" id="radio2" @click="selectit()">Equal-Radius</input></van-col>
+                    <van-col span="12"><input type="radio" name="radio" value="showclass" id="radio3" @click="selectit()">Show-Class</input></van-col>
+                    <van-col span="12"><input type="radio" name="radio" value="showfunction" id="radio4" @click="selectit()">Show-Function</input></van-col>
+                </van-row>
             </div>
             <div v-show="viewSelection === 'pinetree'">
                 <van-row style="margin-top:20px;margin-left: 5px;">Length</van-row>
@@ -322,7 +327,67 @@
                     tooltip.parentNode.removeChild(tooltip);
                 }
             },
-            search(key) {
+
+searchSingle() {
+    var that = this;
+    // 发送模块名给后端
+    fetch("/single?wanted=" + this.singleModule).then(res => {
+            if (res.ok) {
+                return res.json();
+            }
+            throw new Error("Network response was not ok.");
+        })
+        .then(data => {
+            console.log("Response from server:", data);
+            this.keyword = this.singleModule;
+            this.netvis();
+        })
+        .catch(error => {
+            console.error("Error:", error);
+        });
+},
+
+changePath(selectedPath) {
+    this.localValue = selectedPath;
+},
+select() {
+    const message = 'Confirm reloading folder data?';
+
+    if (window.confirm(message)) {
+        console.log('confirm');
+        console.log("selected Path: " + this.localValue);
+        // 发送路径给后端
+        fetch("/userPath?new_path=" + this.localValue).then(res => {
+            if (res.ok) {
+                return res.json();
+            }
+            throw new Error("Network response was not ok.");
+        })
+        .then(data => {
+            console.log("Response from server:", data);
+            this.netvis();
+        })
+        .catch(error => {
+            console.error("Error:", error);
+        });
+    } else {
+        console.log('cancel');
+    }
+},
+selectit(){
+    console.log("调用selectit方法");
+    var obj;
+    obj=document.getElementsByName("radio");
+    console.log('12',obj);
+    for(i=0;i<obj.length;i++){
+        if(obj[i].checked){
+            onNetfunction(obj[i].value);
+        }
+    }
+    return null;
+},
+
+                search(key) {
                 this.clearPage();
                 switch (this.viewSelection) {
                     case "tree":

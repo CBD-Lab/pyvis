@@ -1,3 +1,9 @@
+var nodehasclass;
+var nodehasfunction;
+var nodeweight;
+var nodelayer;
+
+
 function drawNet(data){
     var forceSimulation = d3.forceSimulation()
                         .force("link",d3.forceLink())
@@ -10,6 +16,13 @@ function drawNet(data){
     var module="pylibs.json"
     var nodes=data.nodes;
     var links=data.links;
+
+    console.log('check',nodes);
+    nodeweight=new Array(nodes.length);
+    nodehasclass=new Array(nodes.length);
+    nodehasfunction=new Array(nodes.length);
+    nodelayer=new Array(nodes.length);
+
     forceSimulation.nodes(nodes)
                    .on("tick");
       //links
@@ -31,7 +44,7 @@ function drawNet(data){
           .enter()
           .append("line")
           .attr("class", "link")
-          .style("stroke-width", 1);
+          .attr("stroke-width", 1);
 
     var node = svg.selectAll(".node")
               .data(nodes)
@@ -39,8 +52,15 @@ function drawNet(data){
               .append("a")
               .append("circle")
               .attr("class", "node")
-              .attr("r", d=>d.weight*2+6)
-              .style("fill", (d,i)=>color[i%10])
+              .attr("r", (d,i)=>{
+//                console.log(d);
+                nodehasclass[i] = d.hasclass+5;
+                nodehasfunction[i] = d.hasfunction+5;
+                nodeweight[i] = d.weight/2+5;
+                nodelayer[i] = d.layer;
+                return d.weight*2+5;
+              })
+              .attr("fill", (d,i)=>color[i%10])
               .call(drag());
 
     var texts=svg.selectAll(".forceText")
@@ -50,12 +70,9 @@ function drawNet(data){
                      .attr("class","forceText")
                      .attr("text-anchor","middle")
                      .attr("fill", "#555")
-                     //.attr("stroke-family","仿宋")
-                     .style("font-size","12px")
-                     //.attr("dx","-1.5em")
+                     .attr("font-size","12px")
                      .attr("dy","1.5em")
-                     //.text(function(d){return d.name;});
-                     .text(function(d){return d.name.substr(d.name.lastIndexOf(".")+1,d.name.length) });
+                     .text(d=>{return d.name.substr(d.name.lastIndexOf(".")+1,d.name.length) });
 
     forceSimulation.on("tick", () => {
         link
@@ -67,8 +84,8 @@ function drawNet(data){
         node
             .attr("cx", d => d.x)
             .attr("cy", d => d.y);
-        texts.attr("x",function(d){return d.x;});
-        texts.attr("y",function(d){return d.y;});
+        texts.attr("x",d=>{return d.x;});
+        texts.attr("y",d=>{return d.y;});
     });
 
     d3.select("input[id=edgescale]").on("change", function() {
@@ -83,15 +100,15 @@ function drawNet(data){
     d3.select("input[id=nodescale]").on("change", function() {
         console.log(this.value);
         var scale=this.value;
-        node.attr("r",function(d){
+        node.attr("r",d=>{
             return Math.floor(scale*d.weight+3);
         })
-        texts.attr("font-size",function(d){
+        texts.attr("font-size",d=>{
             var fontsize=""+Math.floor(scale*d.weight+3)+"px";
             console.log(fontsize);
             return fontsize;
         })
-        link.attr("stroke-width",function(d){
+        link.attr("stroke-width",d=>{
             var edgesize=""+Math.floor(scale+1)+"px";
             console.log(edgesize);
             return edgesize;
@@ -126,8 +143,44 @@ function drawNet(data){
 
 
     }
+
+}
+
+function selectit(type){
+    var nodes=document.getElementsByClassName("node");
+    console.log('获得正确',nodes);
+    if(type=="equalr"){
+        console.log("equalr");
+        r=10;
+        for(i=0;i<nodes.length;i++){
+            nodes[i].setAttribute("r",r);
+        }
+    }
+    else if(type=="showclass"){
+        console.log("show-class");
+        for(i=0;i<nodes.length;i++){
+            nodes[i].setAttribute("r",nodehasclass[i]);
+//            console.log('!',nodehasclass[i]);
+        }
+    }
+    else if(type=="showfunction"){
+        console.log("show-function");
+        for(i=0;i<nodes.length;i++){
+            nodes[i].setAttribute("r",nodehasfunction[i]);
+        }
+    }
+    else{
+        console.log("edge-count");
+        for(i=0;i<nodes.length;i++){
+            nodes[i].setAttribute("r",nodeweight[i]);
+        }
+    }
+    return null;
 }
 window.onDrawNetReady = function(data) {
     // 执行绘图逻辑
     drawNet(data);
+}
+window.onNetfunction = function(type) {
+    selectit(type);
 }

@@ -173,6 +173,15 @@ def localPath():
         python_path = python_path.strip()
         python_path = [python_path[:-10] if python_path.endswith("python.exe") else python_path]
         print("python_path：", python_path)
+        paths = sys.executable
+        paths = paths.strip()
+        paths = [paths[:-10] if paths.endswith("python.exe") else paths]
+        print("paths", paths)
+        # output = subprocess.check_output('where pip3', shell=True)
+        # paths = output.decode('utf-8').split('\n')
+        # paths = [path.strip() for path in paths if path.strip() != '']
+        # paths = [path[:-8] if path.endswith("pip3.exe") else path for path in paths]
+
 
         result = {'result': python_path}
         return jsonify(result)
