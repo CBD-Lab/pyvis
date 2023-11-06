@@ -38,7 +38,6 @@ function drawCloud(data,search){
             .attr("height", height)
             .append("g")
             .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
-            .style("cursor", "pointer")
 
          svg.selectAll("text")
             .data(hiwords)
@@ -47,6 +46,7 @@ function drawCloud(data,search){
             .append("text")
             .style("font-size", d => d.size)
             .style("font-family", "Impact")
+            .style("cursor", "pointer")
             .style("fill", function (d, i) {
           //   if(d.leaf=="True")
             //    {
@@ -68,7 +68,7 @@ function drawCloud(data,search){
             })
             .text(function (d) { return d.text; })
             .on("click", (d, i) => {
-             var fullname = i.text.slice(0, i.text.lastIndexOf("."));
+             var fullname = i.text.split('.', 1)[0];
               var point = i;
               while (point.depth >= 0 && point.parent) {
                 point = point.parent;
