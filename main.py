@@ -7,9 +7,9 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import inspect
 import importlib
-from extract import pylibsNet, pyNetAll, pyNetSingle
-from extract import pyTree, basicFunction
-from extract import pylibsTree
+from extract import basicFunction
+from extract import pyNetSingle, pyTree, pyClassNet
+from extract import pylibsTree, pylibsNet, pyNetAll
 
 app = Flask(__name__)
 CORS(app)
@@ -187,10 +187,14 @@ def single():
     if os.path.isfile('static/netjson/' + single_module + '.json'):
         os.remove('static/netjson/' + single_module + '.json')
     pyNetSingle.pyNet(single_module)
+
+    path = os.path.join(python_path[0], 'Lib', 'site-packages')
     if os.path.isfile('static/treejson/' + single_module + '.json'):
         os.remove('static/treejson/' + single_module + '.json')
-    path = os.path.join(python_path[0], 'Lib', 'site-packages')
     pyTree.pyTree(path, single_module)
+    if os.path.isfile('static/netjson/' + single_module + 'class.json'):
+        os.remove('static/netjson/' + single_module + 'class.json')
+    pyClassNet.getClassNet(path, single_module)
 
     return jsonify({'message': 'Tasks completed successfully'})
 
