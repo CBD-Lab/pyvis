@@ -35,6 +35,7 @@ function drawBubble(data) {
         .attr("r", d => d.r)
         .attr("fill", d => color[d.depth])
         .attr("opacity", 0.7)
+        .style("cursor", "pointer")
         .on("mouseenter", (event, d) => {
           d3.select(this.d)
             .attr("stroke", "#555")
@@ -49,7 +50,7 @@ function drawBubble(data) {
         })
         .on("click", (d, i) => {
           console.log(d, i);
-          var fullname = i.data.name.slice(0, -3);
+          var fullname = i.data.name.split('.', 1)[0];
           var point = i;
           while (point.depth >= 0 && point.parent) {
             point = point.parent;
@@ -62,7 +63,7 @@ function drawBubble(data) {
             fullname = fullname;
 
           console.log(d, i, fullname);
-          fetch('http://127.0.0.1:5006/bubbleCode?wanted=' + fullname)
+          fetch('http://127.0.0.1:5006/leafCode?wanted=' + fullname)
             .then(response => response.text())
             .then(data => {
               const language = 'python';
