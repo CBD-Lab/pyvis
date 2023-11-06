@@ -61,6 +61,54 @@ function drawNet(data){
                 return d.weight*2+5;
               })
               .attr("fill", (d,i)=>color[i%10])
+                          .on("mouseenter", (event, d) => {
+                // 将与圆形相连的线加粗
+                link.style("stroke-width", l => l.source == d || l.target == d ? 4 : 1);
+            })
+              .on("mouseleave", d => link.style("stroke-width", 1))
+              .style("cursor", "pointer")
+              .on("click", (d, i) => {
+          console.log(d, i);
+          var fullname = i.name.split('.', 1)[0];
+          var point = i;
+          while (point.depth >= 0 && point.parent) {
+            point = point.parent;
+            fullname = point.name + '.' + fullname;
+          }
+
+          if (point.name == "nn")
+            fullname = "torch." + fullname;
+          else
+            fullname = fullname;
+
+          console.log(d, i, fullname);
+          fetch('http://127.0.0.1:5006/leafCode?wanted=' + fullname)
+            .then(response => response.text())
+            .then(data => {
+              const language = 'python';
+              const highlightedCode = Prism.highlight(data, Prism.languages[language], language);
+              var tips = d3.select("body")
+                           .append("div")
+                           .attr("class", "popup");
+
+              tips.append("span")
+                  .attr("class", "close")
+                  .attr("color", "red")
+                  .text("x")
+                  .on("click", () => {
+                         tips.remove();
+                });
+
+              tips.append("div")
+                .attr("class", "content")
+                .html('<pre><code class="language-python">' + highlightedCode + '</code></pre>');
+
+              console.log(data);
+            })
+            .catch(error => {
+              console.error('Error executing Python script:', error);
+            });
+        })
               .call(drag());
 
     var texts=svg.selectAll(".forceText")
