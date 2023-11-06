@@ -61,6 +61,49 @@ function drawMatrixGraph(graph){
                  })
                  .attr("y",(d,i)=>{return R*5+i*R*2})
                  .text((d)=>{return d.name;})
+                 .style("cursor", "pointer")
+                 .on("click", (d, i) => {
+          console.log(d, i);
+          var fullname = i.name.split('.', 1)[0];
+          var point = i;
+          while (point.depth >= 0 && point.parent) {
+            point = point.parent;
+            fullname = point.name + '.' + fullname;
+          }
+
+          if (point.name == "nn")
+            fullname = "torch." + fullname;
+          else
+            fullname = fullname;
+
+          console.log(d, i, fullname);
+          fetch('http://127.0.0.1:5006/leafCode?wanted=' + fullname)
+            .then(response => response.text())
+            .then(data => {
+              const language = 'python';
+              const highlightedCode = Prism.highlight(data, Prism.languages[language], language);
+              var tips = d3.select("body")
+                           .append("div")
+                           .attr("class", "popup");
+
+              tips.append("span")
+                  .attr("class", "close")
+                  .attr("color", "red")
+                  .text("x")
+                  .on("click", () => {
+                         tips.remove();
+                });
+
+              tips.append("div")
+                .attr("class", "content")
+                .html('<pre><code class="language-python">' + highlightedCode + '</code></pre>');
+
+              console.log(data);
+            })
+            .catch(error => {
+              console.error('Error executing Python script:', error);
+            });
+        })
                  .on("mouseover", function(d,i){
                     d3.select(this)
                       .attr("fill","#F00")
@@ -283,6 +326,49 @@ function drawMatrixGraph(graph){
           .attr("fill",(d,i)=> {return color[i%10]; })
           .attr("stroke","black")
           .attr("stroke-width",0.5)
+          .style("cursor", "pointer")
+          .on("click", (d, i) => {
+          console.log(d, i);
+          var fullname = i.name.split('.', 1)[0];
+          var point = i;
+          while (point.depth >= 0 && point.parent) {
+            point = point.parent;
+            fullname = point.name + '.' + fullname;
+          }
+
+          if (point.name == "nn")
+            fullname = "torch." + fullname;
+          else
+            fullname = fullname;
+
+          console.log(d, i, fullname);
+          fetch('http://127.0.0.1:5006/leafCode?wanted=' + fullname)
+            .then(response => response.text())
+            .then(data => {
+              const language = 'python';
+              const highlightedCode = Prism.highlight(data, Prism.languages[language], language);
+              var tips = d3.select("body")
+                           .append("div")
+                           .attr("class", "popup");
+
+              tips.append("span")
+                  .attr("class", "close")
+                  .attr("color", "red")
+                  .text("x")
+                  .on("click", () => {
+                         tips.remove();
+                });
+
+              tips.append("div")
+                .attr("class", "content")
+                .html('<pre><code class="language-python">' + highlightedCode + '</code></pre>');
+
+              console.log(data);
+            })
+            .catch(error => {
+              console.error('Error executing Python script:', error);
+            });
+        })
           .on("mouseover",function(d,i) {    //加入提示框
                 d3.select(this)
                  .attr("r",R*1.5);
