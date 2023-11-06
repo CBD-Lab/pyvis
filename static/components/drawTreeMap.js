@@ -1,4 +1,4 @@
-function drawTreeMap(data) {
+function drawTreeMap(data,flag) {
     console.log("drawTreeMap");
     var width=(window.innerWidth||document.documentElement.clientWidth||document.body.clientWidth)*0.83;
 	var height=(window.innerHeight||document.documentElement.clientHeight||document.body.clientHeight)*0.89;
@@ -28,11 +28,20 @@ function drawTreeMap(data) {
         .attr("transform", function (d) { return "translate(" + d.x0 + "," + d.y0 + ")"; })
         .attr("id", function (d, i) { return i; });
 
+    console.log("js文件中的flag为：");
+    console.log(flag);
     var rect = gc.append("rect")
         .attr("width", d => d.x1 - d.x0)
         .attr("height", d => d.y1 - d.y0)
         .attr("fill", function (d) {
-            while (d.depth > 1) d = d.parent;
+            while (d.depth > 1) {
+                if(flag){
+                    d = d.parent;
+                }
+                else{
+                    break;
+                }
+            }
             return color(d.data.name)
         })
         //return color(d.data.name)})
@@ -52,7 +61,7 @@ function drawTreeMap(data) {
 }
 
 
-window.onDrawTreeMapReady = function (data) {
+window.onDrawTreeMapReady = function (data,flag) {
     // 执行绘图逻辑
-    drawTreeMap(data);
+    drawTreeMap(data,flag);
 }

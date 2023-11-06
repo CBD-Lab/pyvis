@@ -254,11 +254,18 @@
                     <input type="checkbox" name="label" value="showOn" id="showLabel" checked>Label</input>
                 </van-row>
                 <van-row style="margin-top:30px"><input type="radio" name="flush" value="重绘" id="flush"
-                                                        onclick="javascript:location.reload()">Repaint</input></van-row>
+                                                        onclick="javascript:location.reload()">Repaint</input>
+                </van-row>
             </div>
             <div v-show="viewSelection === 'filetree'">
                 <van-row style="margin-top:30px"><input type="radio" name="flush" value="重绘" id="flush"
-                                                        onclick="javascript:location.reload()">Repaint</input></van-row>
+                                                        onclick="javascript:location.reload()">Repaint</input>
+                </van-row>
+            </div>
+            <div v-show="viewSelection === 'treemap'">
+                <van-row style="margin-top:30px">
+                    <van-button style="margin-left: 5px;" class="van-haptics-feedback" @click="changemap()" type="primary">Exchange</van-button>
+                </van-row>
             </div>
             <div v-show="viewSelection === 'hicircle'">
                 <van-row style="margin-top:30px"><input type="radio" name="flush" value="重绘" id="flush"
@@ -313,6 +320,7 @@
                 isLoading: false,
                 localValue: '',
                 singleModule: '',
+                flag: false,
             };
         },
         methods: {
@@ -519,7 +527,9 @@ selectit(){
                 var that = this;
                 this.viewSelection="treemap";
                 axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
-                    onDrawTreeMapReady(res.data);
+                    onDrawTreeMapReady(res.data,this.flag);
+                    console.log("html中的flag为")
+                    console.log(this.flag)
                 });
             },
             pinetreevis() {
@@ -530,6 +540,10 @@ selectit(){
                     console.log(res.data);
                     onDrawPineTreeReady(res.data);
                 });
+            },
+            changemap() {
+                this.flag = !this.flag;
+                this.treemapvis();
             },
 
             downloadPhoto(form = "svg") {
