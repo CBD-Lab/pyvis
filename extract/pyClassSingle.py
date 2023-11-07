@@ -58,8 +58,6 @@ def getClassNet(path, pname):
 
     classesjson['nodes'] = nodes
     classesjson['links'] = links
-    # print(classesjson)
-    # f = open('../static/netjson/' + pname + 'class.json', 'w')
     f = open('static/netjson/' + pname + 'class.json', 'w')
     f.write(json.dumps(classesjson))
     f.close()
