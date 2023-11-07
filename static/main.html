@@ -185,11 +185,14 @@
                 </van-col>
             </van-row>
             <van-row class="viewset" style="margin-top:5px;">
-                <van-col span="12">
+                <van-col span="8">
                     <van-button class="van-haptics-feedback" @click="netvis()" type="primary">Net</van-button>
                 </van-col>
-                <van-col span="12">
+                <van-col span="8">
                     <van-button class="van-haptics-feedback" @click="matrixvis()" type="primary">Matrix</van-button>
+                </van-col>
+                <van-col span="8">
+                    <van-button class="van-haptics-feedback" @click="classvis()" type="primary">Class</van-button>
                 </van-col>
                 <van-col span="8">
                     <van-button class="van-haptics-feedback" @click="treevis()" type="primary">Tree</van-button>
@@ -336,152 +339,44 @@
                 }
             },
 
-searchSingle() {
-    var that = this;
-    // 发送模块名给后端
-    fetch("/single?wanted=" + this.singleModule).then(res => {
-            if (res.ok) {
-                return res.json();
-            }
-            throw new Error("Network response was not ok.");
-        })
-        .then(data => {
-            console.log("Response from server:", data);
-            this.keyword = this.singleModule;
-            this.netvis();
-        })
-        .catch(error => {
-            console.error("Error:", error);
-        });
-},
-
-changePath(selectedPath) {
-    this.localValue = selectedPath;
-},
-select() {
-    const message = 'Confirm reloading folder data?';
-
-    if (window.confirm(message)) {
-        console.log('confirm');
-        console.log("selected Path: " + this.localValue);
-        // 发送路径给后端
-        fetch("/userPath?new_path=" + this.localValue).then(res => {
-            if (res.ok) {
-                return res.json();
-            }
-            throw new Error("Network response was not ok.");
-        })
-        .then(data => {
-            console.log("Response from server:", data);
-            this.netvis();
-        })
-        .catch(error => {
-            console.error("Error:", error);
-        });
-    } else {
-        console.log('cancel');
-    }
-},
-selectit(){
-    console.log("调用selectit方法");
-    var obj;
-    obj=document.getElementsByName("radio");
-    console.log('12',obj);
-    for(i=0;i<obj.length;i++){
-        if(obj[i].checked){
-            onNetfunction(obj[i].value);
-        }
-    }
-    return null;
-},
-
-                search(key) {
+            search(key) {
                 this.clearPage();
                 switch (this.viewSelection) {
-                    case "tree":
-                        this.treevis();
-                        break;
                     case "net":
                         this.netvis();
                         break;
                     case "matrix":
                         this.matrixvis();
                         break;
-                    case "bubble":
-                        this.bubblevis();
+                    case "class":
+                        this.classvis();
                         break;
-                    case "cloud":
-                        if(typeof(key) != "undefined") {
-                            this.keyword=key;
-                        }
-                        this.cloudvis();
+                    case "tree":
+                        this.treevis();
+                        break;
+                    case "pinetree":
+                        this.pinetreevis();
                         break;
                     case "filetree":
                         this.filetreevis();
                         break;
+                    case "bubble":
+                        this.bubblevis();
+                        break;
+                    case "cloud":
+                        if (typeof(key) != "undefined") {
+                            this.keyword=key;
+                        }
+                        this.cloudvis();
+                        break;
                     case "treemap":
                         this.treemapvis();
-                        break;
-                    case "pinetree":
-                        this.pinetreevis();
                         break;
                     default:
                         break;
                 }
             },
 
-            select() {
-                const message = 'Confirm reloading folder data?';
-
-                if (window.confirm(message)) {
-                    this.isLoading = true;
-                    console.log('confirm');
-                    console.log("selected Path: " + this.localValue);
-                    fetch("/userPath").then(res => {
-                        if (res.ok) {
-                            this.isLoading = false;
-                            return res.json();
-                        }
-                        throw new Error("Network response was not ok.");
-                    })
-                    .then(data => {
-                        console.log("Response from server:", data);
-                        this.netvis();
-                    })
-                    .catch(error => {
-                        this.isLoading = false;
-                        console.error("Error:", error);
-                    });
-                } else {
-                    console.log('cancel');
-                }
-            },
-            searchSingle() {
-                var that = this;
-                fetch("/single?wanted=" + this.singleModule).then(res => {
-                        if (res.ok) {
-                            return res.json();
-                        }
-                        throw new Error("Network response was not ok.");
-                    })
-                    .then(data => {
-                        console.log("Response from server:", data);
-                        this.keyword = this.singleModule;
-                        this.netvis();
-                    })
-                    .catch(error => {
-                        console.error("Error:", error);
-                    });
-            },
-
-            treevis() {
-                var that = this;
-                this.clearPage();
-                this.viewSelection="tree";
-                axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
-                     onDrawTreeReady(res.data,this.search);
-                });
-            },
             netvis() {
                 var that = this;
                 this.clearPage();
@@ -496,6 +391,41 @@ selectit(){
                 this.viewSelection="matrix";
                 axios.get("http://127.0.0.1:5006/module?wanted=" + this.keyword).then(res=>{
                     onDrawMatrixReady(res.data);
+                });
+            },
+            classvis() {
+                var that = this;
+                this.clearPage();
+                this.viewSelection="class";
+                if (this.keyword == "" || this.keyword == "undefined" || this.keyword == "None")
+                    this.keyword = "numpy"
+                axios.get("http://127.0.0.1:5006/module?wanted=" + this.keyword + "class").then(res=>{
+                    onDrawNetReady(res.data);
+                });
+            },
+            treevis() {
+                var that = this;
+                this.clearPage();
+                this.viewSelection="tree";
+                axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
+                     onDrawTreeReady(res.data,this.search);
+                });
+            },
+            pinetreevis() {
+                this.clearPage();
+                var that = this;
+                this.viewSelection="pinetree";
+                axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
+                    console.log(res.data);
+                    onDrawPineTreeReady(res.data);
+                });
+            },
+            filetreevis() {
+                this.clearPage();
+                var that = this;
+                this.viewSelection="filetree";
+                axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
+                    onDrawFileTreeReady(res.data);
                 });
             },
             bubblevis() {
@@ -514,14 +444,6 @@ selectit(){
                      onDrawCloudReady(res.data,this.search);
                 });
             },
-            filetreevis() {
-                this.clearPage();
-                var that = this;
-                this.viewSelection="filetree";
-                axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
-                    onDrawFileTreeReady(res.data);
-                });
-            },
             treemapvis() {
                 this.clearPage();
                 var that = this;
@@ -532,14 +454,18 @@ selectit(){
                     console.log(this.flag)
                 });
             },
-            pinetreevis() {
-                this.clearPage();
-                var that = this;
-                this.viewSelection="pinetree";
-                axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
-                    console.log(res.data);
-                    onDrawPineTreeReady(res.data);
-                });
+
+            selectit(){
+                console.log("调用selectit方法");
+                var obj;
+                obj=document.getElementsByName("radio");
+                console.log('12',obj);
+                for(i=0;i<obj.length;i++){
+                    if (obj[i].checked){
+                        onNetfunction(obj[i].value);
+                    }
+                }
+                return null;
             },
             changemap() {
                 this.flag = !this.flag;
@@ -585,6 +511,50 @@ selectit(){
                     document.body.appendChild(photo);
                     photo.click();
                 }
+            },
+
+            select() {
+                const message = 'Confirm reloading folder data?';
+
+                if (window.confirm(message)) {
+                    this.isLoading = true;
+                    console.log('confirm');
+                    console.log("selected Path: " + this.localValue);
+                    fetch("/userPath").then(res => {
+                        if (res.ok) {
+                            this.isLoading = false;
+                            return res.json();
+                        }
+                        throw new Error("Network response was not ok.");
+                    })
+                    .then(data => {
+                        console.log("Response from server:", data);
+                        this.netvis();
+                    })
+                    .catch(error => {
+                        this.isLoading = false;
+                        console.error("Error:", error);
+                    });
+                } else {
+                    console.log('cancel');
+                }
+            },
+            searchSingle() {
+                var that = this;
+                fetch("/single?wanted=" + this.singleModule).then(res => {
+                        if (res.ok) {
+                            return res.json();
+                        }
+                        throw new Error("Network response was not ok.");
+                    })
+                    .then(data => {
+                        console.log("Response from server:", data);
+                        this.keyword = this.singleModule;
+                        this.netvis();
+                    })
+                    .catch(error => {
+                        console.error("Error:", error);
+                    });
             },
         },
 
