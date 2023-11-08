@@ -26,129 +26,23 @@ function drawTree(data,search){
        var links=root.links();
        var nodes=root.descendants();
        var i=0, duration=750,root;
-//       var treeData = {
-//      name: "Top Level"
-//    };
        var treemap = d3.tree().size([height, width]);
        initData();
-//       updateNodes(root,nodes);
-//       updateLinks(root,links);
-//    var gc=svg.append("g")
-//              .attr("id","mainsvg")
-//              .attr("transform","translate(" + (width/40) + "," + (height/100) + ")");
-//    var lines=gc.selectAll("path")
-//                .data(links)
-//                .enter()
-//                .append("path")
-//                .attr("fill","none")
-//                .attr("stroke","#555")
-//                .attr("stroke-width",0.5)
-//                .attr("opacity",0.5)
-//                .attr("d",d3.linkHorizontal()          //d3.linkHorizontal()
-//                            .x(d=>d.y)
-//                            .y(d=>d.x)
-//                );
-//    var mynode=gc.selectAll("circle")
-//            .data(nodes)
-//            .join("circle")
-//            .attr("cx",d=>d.y)
-//            .attr("cy",d=>d.x)
-            //.attr("r",d=>(d.height+2)*2)
-//            .attr("r",d=>d.value?d.value:5)
-//            .attr("fill",(d,i)=>color[d.depth])
-//            .attr("opacity",0.5)
-//            .attr("stroke","#555");
-
-//    var nodetxt=gc.selectAll("text")
-//            .data(nodes)
-//            .enter()
-//            .append("a")
-//            .append("text")
-//            .attr("x",d=>d.height==0?parseFloat(d.data.value)/240+d.y:d.y)
-//            .attr("y",d=>d.x)
-//            .attr("dx",(d,i)=>d.height==0?"0em":"-1em")
-//            .attr("dy","0.5em")
-//            .attr("text-anchor",(d,i)=>d.height==0?"start":"end")
-//            .attr("font-size","12")
-//            .attr("fill",(d,i)=>i%2==0?"green":"orange")
-//            .datum(function(d, i) {
-//                return { data: d, index: i };
-//                })
-//            .text(d=>d.data.data.name)
-//            .on('mouseover',function(event,d){
-//             d3.select("#miniTree")
-//                .remove();
-//                d3.select(".rectout").remove();
-//                d3.select(this)
-//                  .attr("fill", "red")
-//                  .attr("font-weight","bold");
-//                if(!d.data.children){
-//                var point=d.data;
-//                var fullname = d.data.data.name.slice(0, d.data.data.name.lastIndexOf("."));
-//                while(point.depth>=0&& point.parent)
-//                {
-//                    point=point.parent;
-//                    fullname = point.data.name +'.'+ fullname;
-//                }
-//                if(fullname.substring(0,2)=='nn')
-//                {
-//                fullname="torch."+fullname;
-//                }
-//                fetch('http://127.0.0.1:5006/treeLeaf?wanted=' + fullname)
-//                    .then(response => response.json())
-//                    .then(data => {
-//                    if(data !== "null"){
-//                    var datain=data.jsoninside;
-//                    var dataout=data.jsonoutside;
-//
-//                    const jsontree = toJson(fullname,dataout);
-//
-//                    drawOutTree(nodes,links,datain,jsontree,event.pageX,event.pageY,search);
-//                   } })
-//                    .catch(error => {
-//                        console.error('Error executing Python script:', error);
-//                         处理错误
-//                    });
-//                    }
-//            })
-//            .on('mouseleave',function(event,d){
-//                d3.select(this)
-//                  .attr("fill", d.index%2==0?"green":"orange")
-//                  .attr("font-weight","none");
-//                tooltiptree.style("visibility",'false');
-//
-//            })
-
-//    var rect=gc.selectAll("rect")
-//            .data(nodes)
-//            .join("rect")
-//            .attr("x",d=>d.y)
-//            .attr("y",d=>d.x)
-//            .attr("width",d=>d.height==0?parseFloat(d.data.value)/240:0)
-//            .attr("height",0.5)
-//            .attr("opacity",0.5)
-//            .attr("fill",(d,i)=>i%2==0?"green":"orange");
    /********************* 2. 数据初始化绑定（包括数据更新） *********************/
     function initData() {
-      // 计算父节点、字节点、高度和深度（parent, children, height, depth）
-//      root = d3.hierarchy(treeData, function (d) {
-//        return d.children;
-//      });
-
       // 设置第一个元素的初始位置
       root.x0 = height / 2;
       root.y0 = 10;
+      root._height=1;
         // 计算总节点数
       const totalNodes = countNodes(root);
-      console.log(totalNodes)
         // 在根节点上调用 collapseAllNodesByProbability，传入总节点数
       collapseAllNodesByProbability(root, totalNodes);
-
       // 更新节点状态
       updateChart(root);
 
     }
-// 计算树中的节点总数
+/********************* 计算树中的节点总数 *********************/
 function countNodes(node) {
   let count = 1; // 初始为 1，包括当前节点
   if (node.children) {
@@ -158,6 +52,7 @@ function countNodes(node) {
   }
   return count;
 }
+/********************* 根据树的节点个数随机关闭节点 *********************/
 function collapseAllNodesByProbability(node,totalNodes) {
   if (node.children) {
      node.children.forEach(function (child) {
@@ -166,12 +61,32 @@ function collapseAllNodesByProbability(node,totalNodes) {
     // 根据概率属性决定是否收起节点
     if (Math.random() > 100/totalNodes&node.depth!=0) {
       node._children = node.children; // 将子节点移到 _children 中
-       node._children.forEach(function (child) {
+      node._height=1;//将该结点的高度另存为1
+      node._children.forEach(function (child) {
       collapseAllNodesByProbability(child, totalNodes); // 递归处理子节点并传递额外参数
     });
       node.children = null; // 清空 children
     }
+    else{
+    node._height=node.height;
+    }
   }
+}
+/********************* 更新树的高度，根据_height参数 *********************/
+function updateHeight(root)
+{
+ let height = 0; // 初始值设置为 0
+ if(!root.children)
+ {
+    root._height=1;
+ }
+  if (root.children) {
+    root.children.forEach(function (child) {
+      height=Math.max(height,updateHeight(child));
+    });
+  }
+  root._height=height+1;
+  return height+1;
 }
 /********************* 5. link交互和绘制  *********************/
 function updateLinks(source, links) {
@@ -226,12 +141,12 @@ function updateLinks(source, links) {
 /********************* 4. node交互和绘制  *********************/
 function updateNodes(source, nodes) {
   // 给节点添加id，用于选择集索引
-  var node = svg.selectAll("g.node").data(nodes, function (d,i) {
+  var mynode = svg.selectAll("g.node").data(nodes, function (d,i) {
     return d.id || (d.id = ++i);
   });
 
   // 添加enter操作，添加类名为node的group元素
-  var nodeEnter = node
+  var nodeEnter = mynode
     .enter()
     .append("g")
     .attr("class", "node")
@@ -242,28 +157,43 @@ function updateNodes(source, nodes) {
 
 
   // 给每个新加的group元素添加cycle元素
-  nodeEnter
-    .append("circle")
-    .attr("class", "node")
+    nodeEnter
+     .append("path")
+     .attr("class","node")
+     .attr("d", d3.symbol().type(function(d) {
+      var endcase = (d.data.name).split('.')[1];
+      if (endcase == 'py'){
+          return d3.symbols[0];
+      }
+      else if (endcase == 'pyi'){
+          return d3.symbols[4];
+      }
+      else if (endcase == 'dll'){
+          return d3.symbols[2];
+      }
+      else if ((endcase == 'png' ) || (endcase == 'jpg')){
+          return d3.symbols[6];
+      }
+      else{
+          return d3.symbols[5];
+      }
+    }))
     .attr("r", 1e-6)
     // 如果元素有子节点，且为收起状态，则填充浅蓝色
     .style("fill", function (d) {
-      return d._children &&d.data.children ? "grey" : "white";
+      return d._children &&(!d.children) ? "grey" : "white";
     })    // 给每个新加的节点绑定click事件
     .on("click", function(d,i)
     {
-    console.log(d,i);
     click(i);
     })
-    // 给每个新加的节点绑定dbclick事件
-    .on("dblclick", dblclick);
 
   // 给每个新加的group元素添加文字说明
   nodeEnter
     .append("text")
 //    .attr("dy", ".1em")
     .attr("x", function (d) {
-      return d.children || d._children ? -13 : 13;
+      return d.children || d._children ? -10 : 10;
     })
     .attr("text-anchor", function (d) {
       return d.children || d._children ? "end" : "start";
@@ -279,7 +209,7 @@ function updateNodes(source, nodes) {
      })
 
   // 获取update集
-  var nodeUpdate = nodeEnter.merge(node);
+  var nodeUpdate = nodeEnter.merge(mynode);
 
   // 设置节点的位置变化，添加过渡动画效果
   nodeUpdate
@@ -291,16 +221,15 @@ function updateNodes(source, nodes) {
 
   // 更新节点的属性和样式
   nodeUpdate
-    .select("circle.node")
+    .select("path.node")
     .attr("r", 10)
     .style("fill", function (d) {
-//    console.log(d._children,d.data.children,d._children&&d.data.children)
-      return d._children&&d.data.children ? "grey" : "white";
+      return d._children&&(!d.children) ? "grey" : "white";
     })
     .attr("cursor", "pointer");
 
   // 获取exit操作
-  var nodeExit = node
+  var nodeExit = mynode
     .exit()
     // 添加过渡动画
     .transition()
@@ -330,15 +259,14 @@ function click(d) {
   } else {
     // 首次点击，添加定时器，200ms后进行toggle
     d.data._clickid = setTimeout(() => {
-      if (d.children) {
-        console.log("children不为空",d)
+      if (d.children) {//收起节点
+        d._height=1;//存另一个高度，为收起后屏幕显示的高度。
         d._children = d.children;
         d.children = null;
       } else {
-        console.log("children为空",d);
+        d._height=d.height;//展开节点，把节点高度设为真实值。
         d.children = d._children;
         d._children = null;
-        console.log("children为空",d);
       }
       updateChart(d);
       d.data._clickid = null;
@@ -347,15 +275,10 @@ function click(d) {
 }
 
 function textclick(event,d){
-            console.log(d.height);
             d3.select("#miniTree")
                 .remove();
             d3.select(".rectout").remove();
-//            d3.select(this)
-//              .attr("fill", "red")
-//              .attr("font-weight","bold");
             if(d.height==0){
-            console.log(d);
                 var point=d;
                 var fullname = d.data.name.slice(0, d.data.name.lastIndexOf("."));
                 while(point.depth>=0&& point.parent)
@@ -373,7 +296,6 @@ function textclick(event,d){
                     if(data !== "null"){
                     var datain=data.jsoninside;
                     var dataout=data.jsonoutside;
-                    console.log(datain,dataout)
                     const jsontree = toJson(fullname,dataout);
 
                     drawOutTree(nodes,links,datain,jsontree,event.pageX,event.pageY,search);
@@ -383,25 +305,18 @@ function textclick(event,d){
                          处理错误
                     });
             }
-//            .on('mouseleave',function(event,d){
-//                d3.select(this)
-//                  .attr("fill", d.index%2==0?"green":"orange")
-//                  .attr("font-weight","none");
-//                tooltiptree.style("visibility",'false');
-//
-//            })
 }
   /********************* 3. 数据更新绑定  *********************/
     function updateChart(source) {
+      updateHeight(root);
       // 设置节点的x、y位置信息
       var treeData = treemap(root);
-      console.log(treeData);
       // 计算新的Tree层级
       var nodes = treeData.descendants(),
-        links = treeData.descendants().slice(1);
+      links = treeData.descendants().slice(1);
 
       nodes.forEach(function (d) {
-        d.y = d.depth * 150;
+        d.y = d.depth * width/(root._height+1);
       });
 
       // node交互和绘制
@@ -417,44 +332,17 @@ function textclick(event,d){
 
     }
 
-/********************* 7. 双击获取子节点事件处理  *********************/
-// 将获取到的节点，添加进data对象中，同时若已获取过不再获取
-function dblclick(d) {
-  // 若无d.data.children，则视为未获取
-  if (!(d.data && d.data.children)) {
-    // 这里模拟请求，1.json - 5.json 随机获取数据
-    var randomNum = Math.floor(Math.random() * 5) + 1;
-    d3.json(randomNum + ".json", function (error, data) {
-      if (error) throw error;
-      // 给子节点绑定父节点
-      var children = data.children.map(x => {
-        return {
-          name: x.name,
-          parent: d,
-          depth: d.depth + 1,
-          data: {
-            ...x
-          }
-        }
-      });
-      // 将子节点数据绑定在d节点上
-      if (children.length) d.children = children;
-      // 同时也绑到data上
-      d.data.children = children;
-      updateChart(d);
-    });
-  }
 }
-  // 添加贝塞尔曲线的path，衔接与父节点和子节点间
-    function diagonal(s, d) {
-      path =
-        `M ${s.y} ${s.x}
-              C ${(s.y + d.y) / 2} ${s.x},
-                ${(s.y + d.y) / 2} ${d.x},
-                ${d.y} ${d.x}`;
+// 添加贝塞尔曲线的path，衔接与父节点和子节点间
+function diagonal(s, d) {
+  path =
+    `M ${s.y} ${s.x}
+          C ${(s.y + d.y) / 2} ${s.x},
+            ${(s.y + d.y) / 2} ${d.x},
+            ${d.y} ${d.x}`;
 
-      return path;
-    }
+  return path;
+}
 function buildJsonTree(fullname, data) {
   const tree = { name: fullname, children: [] };
   for (const entry of data) {
@@ -477,7 +365,6 @@ function buildJsonTree(fullname, data) {
 }
 
 function toJson(fullname,data) {
-console.log(fullname,data);
   const treeStructure = buildJsonTree(fullname,data);
   return treeStructure;
 }
@@ -583,7 +470,7 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,search)
         return (i+1)*15+30;
         })
         .attr("font-size","12px")
-        .text(d=>d)
+        .text(d=>d.split('.').slice(-1))
         .on("mouseover",function(d,i)
             {  d3.select(this)
                 .attr("fill", "red")
@@ -599,7 +486,6 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,search)
           fetch('http://127.0.0.1:5006/classVariable?wanted=' + i)
                     .then(response => response.json())
                     .then(data => {
-                    console.log(data['doc'])
                     var tips = d3.select("body")
                                       .append("div")
                                       .attr("class","popup")
@@ -617,39 +503,27 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,search)
                           .style("top", "0")
                           .style("left", "0");
                     var contentContainer = tips.append("div").attr("class", "content-container");
-                    var varContainer = contentContainer.append("div").attr("class", "var-fun-container");
-                    varContainer.style("display", "flex") // 使用flex布局
-                                .style("flex-direction", "column") // 设置水平排列
-                                .style("justify-content", "space-between") // 在元素之间均匀分布
-                                .style("width", "100px"); // 添加内边距
-                      data['var'].forEach(function(item) {
-                          varContainer.append("div")
-                                    .attr("class", "contentVar")
-                                    .html(item + "<br>")
-                                    .style("color","green")
-                                    .style("width", "100px");})
-                      var funContainer = contentContainer.append("div").attr("class", "var-fun-container");
-                          funContainer.style("display", "flex") // 使用flex布局
-                                .style("flex-direction", "column") // 设置水平排列
-                                .style("justify-content", "space-between") // 在元素之间均匀分布
-                                .style("width", "100px"); // 添加内边距
-                   data['fun'].forEach(function(item) {
-                         funContainer.append("div")
-                            .attr("class", "contentFun")
-                            .html(item + "<br>")
-                            .style("color","blue")
-                            .style("width", "100px");
-                    })
+                    var tableContainer = contentContainer.append("table").attr("class", "var-fun-container var-fun-container table-style");
+                    var tableHeader = tableContainer.append("thead").append("tr");
+                    tableHeader.append("th").text("Variable"); // 表头列1
+                    tableHeader.append("th").text("Function"); // 表头列2
+
+                    var tableBody = tableContainer.append("tbody"); // 创建表格主体部分
+                    var row = tableBody.append("tr"); // 创建一行
+                    row.append("td").attr("class", "contentVar").style("color", "green").html(data['var'].join("<br>")); // 第一列
+                    row.append("td").attr("class", "contentFun").style("color", "blue").html(data['fun'].join("<br>")); // 第二列
                     var docContainer = tips.append("div").attr("class", "contentDoc-container");
                     var textWithLinks = data['doc'];
-                    var linkRegex = /(\bhttps?:\/\/\S+\b)/g;
+                    var linkRegex = /(\bhttps?:\/\/\S+\b)/g;// \b匹配单词边界，\s查找空白字符
+//                    var linkRegex = /(\bhttps?:\/\/\S+?(?=\s|<|\|$))/g
+
                     var textWithFormattedLinks = textWithLinks.replace(linkRegex, '<a href="$1" target="_blank">$1</a>');
 
                    docContainer.append("div")
                         .attr("class", "contentDoc")
                         .style("white-space", "pre-line")
                         .html(textWithFormattedLinks);
-                    tips.append("div")
+                   tips.append("div")
                             .attr("class","contentPdf")
                             .html(data['pdf']+"<br>")
 })
@@ -719,7 +593,6 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,search)
                       fullname = point.data.name +'.'+ fullname; // 使用 + 运算符连接字符串
                   }
               //   fullname="torch."+fullname;
-              console.log(fullname);
               fetch('http://127.0.0.1:5006/bubbleCode?wanted=' + fullname)
                       .then(response => response.text())
                       .then(data => {
@@ -750,9 +623,7 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,search)
                           // 处理错误
                       });
             });
-
             }
-}
 
 window.onDrawTreeReady = function(data,search) {
     drawTree(data,search);

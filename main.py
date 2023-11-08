@@ -55,11 +55,13 @@ def treeLeaf():
             class_str = str(item[1])
             start_index = class_str.find("'") + 1  # 找到第一个单引号的位置
             end_index = class_str.rfind("'")  # 找到最后一个单引号的位置
-            class_name = class_str[start_index:end_index]
-            if (class_name.startswith(wanted)):
-                jsonstrinside.append(class_name)
+            class_name_all = class_str[start_index:end_index]
+            # print(len(wanted))
+            if (class_name_all.startswith(wanted)):
+                # class_name = class_name_all[class_name_all.find(wanted) + 1+len(wanted):]
+                jsonstrinside.append(class_name_all)
             else:
-                jsonstroutside.append(class_name)
+                jsonstroutside.append(class_name_all)
         response_data = {
             "jsoninside": jsonstrinside,
             "jsonoutside": jsonstroutside
