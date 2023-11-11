@@ -1,5 +1,5 @@
 function drawFileTree(data) {
-  var padding = {left: 80, right:50, top: 20, bottom: 20 };
+  var padding = { left: 80, right: 50, top: 20, bottom: 20 };
   var svg = d3.select("#graph")
     .attr("width", width + padding.left + padding.right)
     .attr("height", height + padding.top + padding.bottom)
@@ -94,7 +94,19 @@ function drawFileTree(data) {
 
     enterNodes.append("circle")
       .attr("r", d => d.height * 4 + 3)
-      .attr("fill", d=> d.height != 0 ? "green" : "#fff");
+      .attr("fill", d => d.height != 0 ? "green" : "#fff")
+      .on("mouseenter", (event, d) => {
+        d3.select(this.d)
+          .attr("stroke", "#555")
+          .attr("stroke-width", 0.5);
+        tooltip.html("1")
+          .style("left", event.pageX + "px")
+          .style("top", event.pageY + "px")
+      })
+      .on("mouseleave", (event, d) => {
+        d3.select(this.d).attr("stroke", null);
+        tooltip.style("visibility", 'false');
+      });
 
     enterNodes.append("text")
       .attr("x", d => d.x < Math.PI === !d.children ? 14 : -14)
@@ -103,12 +115,11 @@ function drawFileTree(data) {
       .attr("stroke", "#555")
       .attr("font-size", 12)
       .text(d => d.data.name)
-      .attr("font-family", "Consolas")// 设置字体样式为Consolas;
+      .attr("font-family", "Consolas")
       .attr("transform", d => `
             rotate(${d.x >= Math.PI ? 180 : 0})
           `)
-      .attr("font-weight", "bold")
-
+      .attr("font-weight", "bold");
 
     //2. 节点的 Update 部分的处理办法
     var updateNodes = nodeUpdate.transition()
@@ -138,7 +149,7 @@ function drawFileTree(data) {
     */
     //获取连线的update部分
     var linkUpdate = svg.selectAll(".link")
-      .data(links, d=> d.target.name);
+      .data(links, d => d.target.name);
 
     //获取连线的enter部分
     var linkEnter = linkUpdate.enter();
@@ -189,7 +200,7 @@ function drawFileTree(data) {
   function updateTextColors() {
     // 选择所有的文本元素，并根据是否具有子节点设置文本颜色
     svg.selectAll("text")
-      .style("fill", 
+      .style("fill",
         d => (d.children || d._children) ? "green" : "#000" // 具有子节点的文本颜色设置为绿色，否则为黑色
       );
   }
