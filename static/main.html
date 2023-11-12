@@ -171,7 +171,7 @@
     <!-- 顶部导航栏 -->
     <van-row style="height:10vh">
         <van-col span="4">
-            <van-nav-bar class="custom-navbar" title="PyVIS"></van-nav-bar>
+            <van-nav-bar class="custom-navbar" title="PyVIS" @click="home()" style="cursor: pointer;"></van-nav-bar>
         </van-col>
         <van-col span="12">
             <van-nav-bar class="custom-navbar" title="Python Module Visualization"></van-nav-bar>
@@ -336,6 +336,11 @@
             };
         },
         methods: {
+            home() {
+                this.keyword = "pylibsNet";
+                this.netvis();
+            },
+
             clearPage() {
                 d3.select('svg').selectAll('*').remove();
                 var tooltip = document.getElementById("tip");
@@ -586,6 +591,7 @@
                     console.error("An error occurred while fetching localValue:", error);
                     this.localValue = "An error occurred.";
                 });
+            this.home();
         },
     });
 
