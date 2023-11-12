@@ -45,21 +45,6 @@ def get_links(myclasses, nodes):
             links.append({'source': myclasses.index(str(myparent)), 'target': myclasses.index(myname)})
 
 
-def readpackages():
-    packages = []
-    filename = 'pylibsNet.txt'
-    i = 0
-    with open(filename, 'r', encoding='utf-8') as f:
-        line = f.readline()
-        while line:
-            packages.append(line.split(" ")[0])
-            line = f.readline()
-            i = i + 1
-        print("i", i)
-    print("pylibsNet before", packages)
-    return packages[2:]
-
-
 def getClassNet(path, pname):
     global myclasses, nodes, links, classesjson, methods, attributes
     myclasses = []
@@ -76,6 +61,21 @@ def getClassNet(path, pname):
     f = open('static/netjson/' + pname + 'class.json', 'w')
     f.write(json.dumps(classesjson))
     f.close()
+
+
+def readpackages():
+    packages = []
+    filename = 'pylibsNet.txt'
+    i = 0
+    with open(filename, 'r', encoding='utf-8') as f:
+        line = f.readline()
+        while line:
+            packages.append(line.split(" ")[0].lower().split("-")[0])
+            line = f.readline()
+            i = i + 1
+        print("i", i)
+    print("pylibsNet before", packages)
+    return packages[2:]
 
 
 def getClassNetAll(path):
