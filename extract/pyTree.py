@@ -1,3 +1,5 @@
+import importlib
+import inspect
 import os
 import json
 import pathlib
@@ -13,20 +15,36 @@ def print_files(path, tree):
         if (f != '__pycache__') and (f != 'test') and (f != 'testing'):  # test and cache directory are filtered
             if os.path.isfile(os.path.join(path, f)):  # inspect file
                 if (pathlib.Path(f).suffix == ".py") and (not f.startswith("_") or f.startswith("__")):
-                    print(f)
-
+                    pdfAll = []
                     fsize = os.path.getsize(os.path.join(path, f))  # file size
                     modulepath = os.path.splitext(os.path.join(path, f))[0]  # file path
                     modulepath = modulepath[modulepath.find(r"site-packages") + 14:len(modulepath)]
                     modulepath = modulepath.replace('\\', '.')
-                    print("1-------" + modulepath)
                     import_statement = "import " + modulepath
-                    print("------" + import_statement)
+                    docs = ""
                     try:
-                        # exec(import_statement)
+                        # try:
+                        #     subprocess.run(import_statement, shell=True, check=True)
+                        # except subprocess.CalledProcessError as e:
+                        #     print(f"Error executing import_statement: {e}")
+
+                        # if(modulepath.endswith('.py')):
+                        class_name = modulepath.rsplit('.', 1)[1]
+                        module_name = modulepath.rsplit('.', 1)[0]
+                        print("nameAll",module_name,class_name)
+                        module = importlib.import_module(module_name)
+                        class_obj = getattr(module, class_name)
+                        docs = inspect.getdoc(class_obj)
+                        if(docs):
+                            print("docs",docs)
+                            pdfurl = len("https://arxiv.org/abs/1810.04805")
+                            arxiv_index = docs.find("https://arxiv.org")
+                            if arxiv_index != -1:
+                                pdf = docs[arxiv_index:arxiv_index + pdfurl]
+                                pdfAll.append(pdf)
+                        myinclass, myoutclass = basicFunction.in_out_classes_bymodulename(eval(modulepath))
                         myinclass = []
                         myoutclass = []
-                        myinclass, myoutclass = basicFunction.in_out_classes_bymodulename(eval(modulepath))
                         inclasscount = len(myinclass)
                         outclasscount = len(myoutclass)
 
@@ -36,10 +54,12 @@ def print_files(path, tree):
 
                         child.append(
                             {"name": "" + f + "", "value": fsize, "in_classes": myinclass, "out_classes": myoutclass,
-                             "in_function": myfunction})
-                    except:
+                             "in_function": myfunction,"pdf":pdfAll})
+                        # print("children,",child)
+                    except Exception as e:
+                        print("发生了一点问题,",e)
                         fsize = os.path.getsize(os.path.join(path, f))
-                        child.append({"name": "" + f + "", "value": fsize})
+                        child.append({"name": "" + f + "", "value": fsize,"pdf":pdfAll})
                 else:
                     fsize = os.path.getsize(os.path.join(path, f))
                     child.append({"name": "" + f + "", "value": fsize})
@@ -49,8 +69,8 @@ def print_files(path, tree):
     tree['children'] = child
 
     dirs = [i for i in lsdir if os.path.isdir(os.path.join(path, i))]
-    # print("---------------")
-    # print(dirs)
+    print("---------------")
+    print(dirs)
     if dirs:
         for i in dirs:
             subtree = {"name": "", "children": ""}

@@ -163,7 +163,7 @@ def localPath():
         print(f'Error executing the command: {str(e)}')
         return jsonify({'error': 'An error occurred while executing the command'}), 500
 
-
+# load certain package
 @app.route('/single', methods=['GET'])
 def single():
     single_module = request.args.get('wanted', type=str)
@@ -183,7 +183,7 @@ def single():
 
     return jsonify({'message': 'Tasks completed successfully'})
 
-
+# load all local module....
 @app.route('/userPath', methods=['GET'])
 def userPath():
     user_path = python_path[0]
@@ -228,6 +228,16 @@ def userPath():
     pyTree.pyTreeAll(user_path)
 
     return jsonify({'message': 'Tasks completed successfully'})
+from flask import send_from_directory
+
+# 添加新的路由来返回SVG文件
+@app.route('/get_svg/<filename>')
+def get_svg(filename):
+    svg_directory = 'static/pic/'  # 替换为你的SVG文件所在的目录路径
+    return send_from_directory(svg_directory, filename)
+
+# 在你的代码中的某个地方调用这个接口，例如：
+# http://your-server/get_svg/pdf.svg
 
 
 if "__main__" == __name__:  # 程序入口
