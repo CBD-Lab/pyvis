@@ -253,6 +253,7 @@ function updateNodes(source, nodes) {
                 console.log(event,d);
                   return d.children || d._children ? -30 : 20+100;
                 })
+                .attr("y",-10)
                  .append("xhtml:div")
                  .style("margin", 0)
                  .style("padding", 0)
@@ -315,10 +316,8 @@ function updateNodes(source, nodes) {
     // 移除元素
     .remove();
 
-  // exit集中节点的cycle元素尺寸变为0
   nodeExit.select("circle").attr("r", 1e-6);
 
-  // exit集中节点的text元素可见度降为0
   nodeExit.select("text").style("fill-opacity", 1e-6);
 }
 
@@ -688,7 +687,7 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,search)
                       fullname = point.data.name +'.'+ fullname; // 使用 + 运算符连接字符串
                   }
               //   fullname="torch."+fullname;
-              fetch('http://127.0.0.1:5006/bubbleCode?wanted=' + fullname)
+              fetch('http://127.0.0.1:5006/leafCode?wanted=' + fullname)
                       .then(response => response.text())
                       .then(data => {
                        const language = 'python';
@@ -698,6 +697,28 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,search)
                        var tips = d3.select("body")
                                       .append("div")
                                       .attr("class","popup")
+                       var drag=d3.drag()
+                              .on("start", function (event) {
+                                // 记录拖拽开始时的位置
+                                var startX = event.x;
+                                var startY = event.y;
+
+                                // 获取当前提示框的位置
+                                var currentLeft = parseFloat(tips.style("left"));
+                                var currentTop = parseFloat(tips.style("top"));
+
+                                // 计算鼠标相对于提示框左上角的偏移
+                                offsetX = startX - currentLeft;
+                                offsetY = startY - currentTop;
+                              })
+                              .on("drag", function (event) {
+                                // 随鼠标移动，更新提示框位置
+                                tips.style("left", (event.x - offsetX) + "px")
+                                  .style("top", (event.y - offsetY) + "px");
+                              });
+
+                            // 将拖拽行为绑定到要拖拽的元素上
+                            tips.call(drag);
 
                       tips.append("span")
                           .attr("class","close")
