@@ -44,11 +44,8 @@ function drawTreeMap(data, flag) {
         })
         .attr("opacity", 0.7)
         .attr("stroke", "white")
+        .attr("cursor", "pointer")
         .on("mouseover", function (event, d) {
-
-            // 设置其他矩形的pointer-events为"none"
-            d3.selectAll("rect").filter(e => e !== d).style("pointer-events", "none");
-
             d3.select(this)
                 .attr("opacity", 1.0) // 鼠标悬停时矩形透明度为1
                 .transition()
@@ -58,7 +55,7 @@ function drawTreeMap(data, flag) {
                 .attr("rx", 10) // 圆角半径变为10
                 .attr("ry", 10)
                 .attr("z-index", 100);
-    
+
             // 选择相应的文本元素并添加过渡动画
             d3.select(this.parentNode).select(".txt").raise()
                 .transition()
@@ -77,7 +74,7 @@ function drawTreeMap(data, flag) {
                 .attr("height", d => d.y1 - d.y0)
                 .attr("rx", 0) // 圆角半径恢复为0
                 .attr("ry", 0);
-    
+
             // 选择相应的文本元素并添加过渡动画
             d3.select(this.parentNode).select(".txt")
                 .transition()
@@ -85,11 +82,52 @@ function drawTreeMap(data, flag) {
                 .attr("font-size", "12") // 恢复原始字体大小
                 .attr("x", d => (d.x1 - d.x0) / 2)
                 .attr("y", d => (d.y1 - d.y0) / 2)
-                .text(d => (d.data.name));
-            // 恢复其他矩形的pointer-events为默认值
-            d3.selectAll("rect").style("pointer-events", "auto");
+                .text(d => (d.data.name))
         })
-    
+        .on("click", (d, i) => {
+            console.log('treemap click');
+            console.log(i);
+            var fullname = i.data.name.split('.', 1)[0];
+            var point = i;
+              while (point.depth >= 0 && point.parent) {
+                point = point.parent;
+                console.log("point:",point.data.name);
+                fullname = point.data.name + '.' + fullname;
+              }
+              if(fullname.substring(0,2)=='nn')
+              {
+              fullname="torch."+fullname;
+              }
+            console.log("treemap fullname:",fullname);
+
+            fetch('http://127.0.0.1:5006/leafCode?wanted=' + fullname)
+                .then(response => response.text())
+                .then(data => {
+                    const language = 'python';
+                    const highlightedCode = Prism.highlight(data, Prism.languages[language], language);
+                    var tips = d3.select("body")
+                        .append("div")
+                        .attr("class", "popup");
+
+                    tips.append("span")
+                        .attr("class", "close")
+                        .attr("color", "red")
+                        .text("x")
+                        .on("click", () => {
+                            tips.remove();
+                        });
+
+                    tips.append("div")
+                        .attr("class", "content")
+                        .html('<pre><code class="language-python">' + highlightedCode + '</code></pre>');
+                })
+                .catch(error => {
+                    console.error('Error executing Python script:', error);
+                });
+        });
+
+        
+
 
     var text = gc.append("text")
         .attr("font-size", "12")
