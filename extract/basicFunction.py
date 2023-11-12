@@ -136,3 +136,19 @@ def get_class_method_attr(MyClass):
     attributes = [attr for attr in class_attributes_and_methods if not callable(getattr(MyClass, attr))]
     methods = [method for method in class_attributes_and_methods if callable(getattr(MyClass, method))]
     return methods, attributes
+
+def InstantiateOtherClasses(wanted):#basicFunction新增方法，输入是一个类，输出是这个类中有可能实例化的类
+    import re
+    pyname = wanted.__module__
+    ain,bout = in_out_classes_bymodulename(eval(pyname))
+    methods,_ = get_class_method_attr(wanted)
+    allin = ain + bout
+    classeslink = []
+    for i in methods:
+        doc = inspect.getsource(eval(target+'.'+i))
+        for j in allin:
+            pattern = r"\b"+j+"\("#正则表达式判断是否实例化其他类
+            tmpbool = bool(re.search(pattern, doc))
+            if tmpbool:
+                classeslink.append(j)
+    return classeslink
