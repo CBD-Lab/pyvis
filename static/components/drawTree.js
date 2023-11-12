@@ -13,21 +13,21 @@ function drawTree(data,search){
                             .style("width",30)
                             .style("height",100);
 
-    var svg = d3.select("#graph")
-            .attr("width", width*0.85)
-            .attr("height", height)
-            .on("click", function () {
-                 d3.select("#miniTree").remove();
-            });
-       var tree=d3.tree()
+     var svg = d3.select("#graph")
+                .attr("width", width*0.85)
+                .attr("height", height)
+                .on("click", function () {
+                     d3.select("#miniTree").remove();
+                });
+     var tree=d3.tree()
                .size([height,width*0.7]);
-       var hi=d3.hierarchy(data);
-       var root=tree(hi);
-       var links=root.links();
-       var nodes=root.descendants();
-       var i=0, duration=750,root;
-       var treemap = d3.tree().size([height, width]);
-       initData();
+     var hi=d3.hierarchy(data);
+     var root=tree(hi);
+     var links=root.links();
+     var nodes=root.descendants();
+     var i=0, duration=750,root;
+     var treemap = d3.tree().size([height, width]);
+     initData();
    /********************* 2. 数据初始化绑定（包括数据更新） *********************/
     function initData() {
       // 设置第一个元素的初始位置
@@ -179,10 +179,28 @@ function updateNodes(source, nodes) {
       }
     }))
     .attr("r", 1e-6)
-    // 如果元素有子节点，且为收起状态，则填充浅蓝色
     .style("fill", function (d) {
-      return d._children &&(!d.children) ? "grey" : "white";
-    })    // 给每个新加的节点绑定click事件
+     var endcase = (d.data.name).split('.')[1];
+      if (endcase == 'py'){
+          return color[0];
+      }
+      else if (endcase == 'pyi'){
+          return color[4];
+      }
+      else if (endcase == 'dll'){
+          return color[2];
+      }
+      else if ((endcase == 'png' ) || (endcase == 'jpg')){
+          return color[6];
+      }
+      else{
+          return color[5];
+      }
+    })
+    .attr("opacity",function(d)
+    {
+        return (d._children) &&(!d.children) ? 0.9:0.1;
+    })
     .on("click", function(d,i)
     {
     click(i);
@@ -195,18 +213,60 @@ function updateNodes(source, nodes) {
     .attr("x", function (d) {
       return d.children || d._children ? -10 : 10;
     })
+    .attr("y",3)
     .attr("text-anchor", function (d) {
       return d.children || d._children ? "end" : "start";
     })
     .text(function (d) {
       return d.data.name;
     })
-     .attr("stroke", function(d){return color[d.depth];})
+     .attr("stroke", function(d){
+        var endcase = (d.data.name).split('.')[1];
+      if (endcase == 'py'){
+          return color[0];
+      }
+      else if (endcase == 'pyi'){
+          return color[4];
+      }
+      else if (endcase == 'dll'){
+          return color[2];
+      }
+      else if ((endcase == 'png' ) || (endcase == 'jpg')){
+          return color[6];
+      }
+      else{
+          return color[5];
+      }})
      .attr("stroke-width","0.3px")
      .on("click",function(event,d)
      {
         textclick(event,d);
      })
+    nodeEnter
+        .each(function(d) {
+            if (typeof(d.data.pdf) !== "undefined" && d.data.pdf.length > 0) {
+            d3.select(this)
+                .append("foreignObject")
+                .attr("width", "8px")
+                .attr("height", "15px")
+                .attr("x", function(event,d) {
+                console.log(event,d);
+                  return d.children || d._children ? -30 : 20+100;
+                })
+                 .append("xhtml:div")
+                 .style("margin", 0)
+                 .style("padding", 0)
+                 .html('<img src="http://127.0.0.1:5006/get_svg/pdf.svg" width="100%" height="100%" />')
+                 .on("click",function()
+                 {
+                 console.log(d);
+                    var link = d.data.pdf;
+                    window.open(link, '_blank');
+                 })
+
+            }
+      });
+
 
   // 获取update集
   var nodeUpdate = nodeEnter.merge(mynode);
@@ -223,8 +283,23 @@ function updateNodes(source, nodes) {
   nodeUpdate
     .select("path.node")
     .attr("r", 10)
-    .style("fill", function (d) {
-      return d._children&&(!d.children) ? "grey" : "white";
+     .style("fill", function (d) {
+     var endcase = (d.data.name).split('.')[1];
+      if (endcase == 'py'){
+          return color[0];
+      }
+      else if (endcase == 'pyi'){
+          return color[4];
+      }
+      else if (endcase == 'dll'){
+          return color[2];
+      }
+      else if ((endcase == 'png' ) || (endcase == 'jpg')){
+          return color[6];
+      }
+      else{
+          return color[5];
+      }
     })
     .attr("cursor", "pointer");
 
@@ -302,7 +377,6 @@ function textclick(event,d){
                        } })
                     .catch(error => {
                         console.error('Error executing Python script:', error);
-                         处理错误
                     });
             }
 }
@@ -490,7 +564,28 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,search)
                                       .append("div")
                                       .attr("class","popup")
                                       .style("width", "500px")
+                    var drag=d3.drag()
+                              .on("start", function (event) {
+                                // 记录拖拽开始时的位置
+                                var startX = event.x;
+                                var startY = event.y;
 
+                                // 获取当前提示框的位置
+                                var currentLeft = parseFloat(tips.style("left"));
+                                var currentTop = parseFloat(tips.style("top"));
+
+                                // 计算鼠标相对于提示框左上角的偏移
+                                offsetX = startX - currentLeft;
+                                offsetY = startY - currentTop;
+                              })
+                              .on("drag", function (event) {
+                                // 随鼠标移动，更新提示框位置
+                                tips.style("left", (event.x - offsetX) + "px")
+                                  .style("top", (event.y - offsetY) + "px");
+                              });
+
+                            // 将拖拽行为绑定到要拖拽的元素上
+                            tips.call(drag);
                     var closeButton=tips.append("span")
                           .attr("class","close")
                           .attr("color","red")

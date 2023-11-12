@@ -3,13 +3,13 @@ import subprocess
 import sys
 import urllib.parse
 import shutil
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import inspect
 import importlib
 from extract import basicFunction
-from extract import pyNetSingle, pyTreeSingle, pyClassSingle
-from extract import pylibsTree, pylibsNet, pyNetAll, pyTreeAll, pyClassAll
+from extract import pylibsNet, pylibsTree
+from extract import pyNet, pyTree, pyClass
 
 app = Flask(__name__)
 CORS(app)
@@ -164,26 +164,28 @@ def localPath():
         return jsonify({'error': 'An error occurred while executing the command'}), 500
 
 
+# load certain package
 @app.route('/single', methods=['GET'])
 def single():
-    single_module = request.args.get('wanted', type=str)
+    single_module = request.args.get('wanted', type=str).lower()
     if (single_module is None) or (single_module == "undefined") or (single_module == ""):
         single_module = 'numpy'
     if os.path.isfile('static/netjson/' + single_module + '.json'):
         os.remove('static/netjson/' + single_module + '.json')
-    pyNetSingle.pyNet(single_module)
+    pyNet.pyNet(single_module)
 
     path = os.path.join(python_path[0], 'Lib', 'site-packages')
     if os.path.isfile('static/treejson/' + single_module + '.json'):
         os.remove('static/treejson/' + single_module + '.json')
-    pyTreeSingle.pyTree(path, single_module)
+    pyTree.pyTree(path, single_module)
     if os.path.isfile('static/netjson/' + single_module + 'class.json'):
         os.remove('static/netjson/' + single_module + 'class.json')
-    pyClassSingle.getClassNet(path, single_module)
+    pyClass.getClassNet(path, single_module)
 
     return jsonify({'message': 'Tasks completed successfully'})
 
 
+# load all local module....
 @app.route('/userPath', methods=['GET'])
 def userPath():
     user_path = python_path[0]
@@ -215,8 +217,8 @@ def userPath():
         except Exception as e:
             print(f"An error occurred while emptying the folder：{e}")
         pylibsNet.pylibs(user_path)
-        pyNetAll.pyNetAll(user_path)
-        pyClassAll.getClassNetAll(user_path)
+        pyNet.pyNetAll(user_path)
+        pyClass.getClassNetAll(user_path)
 
     try:
         shutil.rmtree('static/treejson')
@@ -225,9 +227,20 @@ def userPath():
     except Exception as e:
         print(f"An error occurred while emptying the folder：{e}")
     pylibsTree.main()
-    pyTreeAll.pyTreeAll(user_path)
+    pyTree.pyTreeAll(user_path)
 
     return jsonify({'message': 'Tasks completed successfully'})
+
+
+# 添加新的路由来返回SVG文件
+@app.route('/get_svg/<filename>')
+def get_svg(filename):
+    svg_directory = 'static/pic/'  # 替换为你的SVG文件所在的目录路径
+    return send_from_directory(svg_directory, filename)
+
+
+# 在你的代码中的某个地方调用这个接口，例如：
+# http://your-server/get_svg/pdf.svg
 
 
 if "__main__" == __name__:  # 程序入口

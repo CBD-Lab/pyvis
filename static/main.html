@@ -171,7 +171,7 @@
     <!-- 顶部导航栏 -->
     <van-row style="height:10vh">
         <van-col span="4">
-            <van-nav-bar class="custom-navbar" title="PyVIS"></van-nav-bar>
+            <van-nav-bar class="custom-navbar" title="PyVIS" @click="home()" style="cursor: pointer;"></van-nav-bar>
         </van-col>
         <van-col span="12">
             <van-nav-bar class="custom-navbar" title="Python Module Visualization"></van-nav-bar>
@@ -339,6 +339,11 @@
             };
         },
         methods: {
+            home() {
+                this.keyword = "nn";
+                this.netvis();
+            },
+
             clearPage() {
                 d3.select('svg').selectAll('*').remove();
                 var tooltip = document.getElementById("tip");
@@ -394,7 +399,7 @@
                 this.clearPage();
                 this.viewSelection="net";
                 axios.get("http://127.0.0.1:5006/module?wanted=" + this.keyword).then(res=>{
-                     onDrawNetReady(res.data);
+                    onDrawNetReady(res.data, this.keyword);
                 });
             },
             matrixvis() {
@@ -420,7 +425,7 @@
                 this.clearPage();
                 this.viewSelection="tree";
                 axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
-                     onDrawTreeReady(res.data,this.search);
+                    onDrawTreeReady(res.data,this.search);
                 });
             },
             pinetreevis() {
@@ -445,7 +450,7 @@
                 this.clearPage();
                 this.viewSelection="bubble";
                 axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
-                     onDrawBubbleReady(res.data);
+                    onDrawBubbleReady(res.data);
                 });
             },
             cloudvis() {
@@ -453,7 +458,7 @@
                 this.clearPage();
                 this.viewSelection="cloud";
                 axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
-                     onDrawCloudReady(res.data,this.search);
+                    onDrawCloudReady(res.data,this.search);
                 });
             },
             treemapvis() {
@@ -589,6 +594,7 @@
                     console.error("An error occurred while fetching localValue:", error);
                     this.localValue = "An error occurred.";
                 });
+            this.home();
         },
     });
 
