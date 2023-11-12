@@ -8,8 +8,8 @@ from flask_cors import CORS
 import inspect
 import importlib
 from extract import basicFunction
-from extract import pyNetSingle, pyTreeSingle, pyClassSingle
-from extract import pylibsTree, pylibsNet, pyNetAll, pyTreeAll, pyClassAll
+from extract import pylibsNet, pylibsTree
+from extract import pyNet, pyTree, pyClass
 
 app = Flask(__name__)
 CORS(app)
@@ -171,15 +171,15 @@ def single():
         single_module = 'numpy'
     if os.path.isfile('static/netjson/' + single_module + '.json'):
         os.remove('static/netjson/' + single_module + '.json')
-    pyNetSingle.pyNet(single_module)
+    pyNet.pyNet(single_module)
 
     path = os.path.join(python_path[0], 'Lib', 'site-packages')
     if os.path.isfile('static/treejson/' + single_module + '.json'):
         os.remove('static/treejson/' + single_module + '.json')
-    pyTreeSingle.pyTree(path, single_module)
+    pyTree.pyTree(path, single_module)
     if os.path.isfile('static/netjson/' + single_module + 'class.json'):
         os.remove('static/netjson/' + single_module + 'class.json')
-    pyClassSingle.getClassNet(path, single_module)
+    pyClass.getClassNet(path, single_module)
 
     return jsonify({'message': 'Tasks completed successfully'})
 
@@ -215,8 +215,8 @@ def userPath():
         except Exception as e:
             print(f"An error occurred while emptying the folder：{e}")
         pylibsNet.pylibs(user_path)
-        pyNetAll.pyNetAll(user_path)
-        pyClassAll.getClassNetAll(user_path)
+        pyNet.pyNetAll(user_path)
+        pyClass.getClassNetAll(user_path)
 
     try:
         shutil.rmtree('static/treejson')
@@ -225,7 +225,7 @@ def userPath():
     except Exception as e:
         print(f"An error occurred while emptying the folder：{e}")
     pylibsTree.main()
-    pyTreeAll.pyTreeAll(user_path)
+    pyTree.pyTreeAll(user_path)
 
     return jsonify({'message': 'Tasks completed successfully'})
 

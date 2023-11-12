@@ -396,7 +396,7 @@
                 this.clearPage();
                 this.viewSelection="net";
                 axios.get("http://127.0.0.1:5006/module?wanted=" + this.keyword).then(res=>{
-                     onDrawNetReady(res.data);
+                    onDrawNetReady(res.data, this.keyword);
                 });
             },
             matrixvis() {
@@ -422,7 +422,7 @@
                 this.clearPage();
                 this.viewSelection="tree";
                 axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
-                     onDrawTreeReady(res.data,this.search);
+                    onDrawTreeReady(res.data,this.search);
                 });
             },
             pinetreevis() {
@@ -447,7 +447,7 @@
                 this.clearPage();
                 this.viewSelection="bubble";
                 axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
-                     onDrawBubbleReady(res.data);
+                    onDrawBubbleReady(res.data);
                 });
             },
             cloudvis() {
@@ -455,7 +455,7 @@
                 this.clearPage();
                 this.viewSelection="cloud";
                 axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
-                     onDrawCloudReady(res.data,this.search);
+                    onDrawCloudReady(res.data,this.search);
                 });
             },
             treemapvis() {
