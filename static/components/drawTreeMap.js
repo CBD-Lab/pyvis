@@ -48,40 +48,23 @@ function drawTreeMap(data, flag) {
         .on("mouseover", function (event, d) {
             d3.select(this)
                 .attr("opacity", 1.0) // 鼠标悬停时矩形透明度为1
-                .transition()
-                .duration(300) // 过渡时间
-                .attr("width", d => (d.x1 - d.x0) * 1.2) // 放大矩形
-                .attr("height", d => (d.y1 - d.y0) * 1.2)
-                .attr("rx", 10) // 圆角半径变为10
-                .attr("ry", 10)
-                .attr("z-index", 100);
 
             // 选择相应的文本元素并添加过渡动画
             d3.select(this.parentNode).select(".txt").raise()
                 .transition()
                 .duration(300) // 过渡时间
                 .attr("font-size", "16") // 变化后的字体大小
-                .attr("x", d => (d.x1 - d.x0) * 1.2 / 2)
-                .attr("y", d => (d.y1 - d.y0) * 1.2 / 2)
                 .text(d => (d.data.name + "-" + d.data.value));
         })
         .on("mouseout", function (event, d) {
             d3.select(this)
                 .attr("opacity", 0.7) // 鼠标离开时矩形透明度为0.7
-                .transition()
-                .duration(300) // 过渡时间
-                .attr("width", d => d.x1 - d.x0) // 恢复原始矩形大小
-                .attr("height", d => d.y1 - d.y0)
-                .attr("rx", 0) // 圆角半径恢复为0
-                .attr("ry", 0);
 
             // 选择相应的文本元素并添加过渡动画
             d3.select(this.parentNode).select(".txt")
                 .transition()
                 .duration(300) // 过渡时间
                 .attr("font-size", "12") // 恢复原始字体大小
-                .attr("x", d => (d.x1 - d.x0) / 2)
-                .attr("y", d => (d.y1 - d.y0) / 2)
                 .text(d => (d.data.name))
         })
         .on("click", (d, i) => {

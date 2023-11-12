@@ -163,7 +163,31 @@ function drawFileTree(data) {
           .catch(error => {
             console.error('Error executing Python script:', error);
           });
-      });
+      })
+      .on("mouseover", function (event, d) {
+        console.log(d);
+        var fullname = d.data.name.split('.', 1)[0];
+        var point = d;
+        while (point.depth >= 0 && point.parent) {
+          point = point.parent;
+          console.log("point:",point.data.name);
+          fullname = point.data.name + '.' + fullname;
+        }
+        if(fullname.substring(0,2)=='nn')
+        {
+          fullname="torch."+fullname;
+        }
+        fullname = fullname + ".py";
+        d3.select(this)
+          .transition()
+          .duration(300)
+          .text(d => fullname)
+          
+      })
+      .on("mouseout", function (event, d) {
+        d3.select(this)
+          .text(d => d.data.name)
+      })
 
     //2. 节点的 Update 部分的处理办法
     var updateNodes = nodeUpdate.transition()
