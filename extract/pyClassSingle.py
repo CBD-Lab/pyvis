@@ -25,7 +25,7 @@ def get_classes(path, pname):
                             exec("from" + " " + modulepath + " " + "import" + " " + c)
                             methods, attributes = basicFunction.get_class_method_attr(eval(c))
                             parent = eval(c).__bases__[0].__name__
-                            instantiateOtherClasses = InstantiateOtherClasses(eval(c))
+                            instantiateOtherClasses = basicFunction.InstantiateOtherClasses(eval(c))
                             tmpclass = {"name": c, "myparent": parent, "methods": methods, "attributes": attributes,"otherclasseslink":instantiateOtherClasses}
                             myclasses.append(c)
                             nodes.append(tmpclass)
