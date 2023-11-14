@@ -53,7 +53,7 @@ function drawCloud(data,search){
               //  return "black";
                // }
              //else
-            return color[worddata[i].depth]; })
+                return color[worddata[i].depth]; })
             .attr("text-anchor", "middle")
             .attr("transform", function (d) {
               return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
@@ -67,6 +67,34 @@ function drawCloud(data,search){
                 }
             })
             .text(function (d) { return d.text; })
+            .on("mouseover", function(d,i){
+			    console.log('over',d,i);
+                d3.select(this)
+                    .attr("font-weight", "bold");
+                 var fullname = i.text;
+              var point = i;
+              while (point.depth >= 0 && point.parent) {
+                point = point.parent;
+                fullname = point.data.name + '.' + fullname;
+              }
+
+              if(fullname.substring(0,2)=='nn')
+                {
+                fullname="torch."+fullname;
+                }
+
+                var [x, y] = d3.pointer(event);
+                var text = d3.select('#svgbox').append("tooltip")
+                            .html(fullname)
+                            .style("left", (width*0.2) + "px")
+                            .style("top", (height*0.2) + "px")
+                            .style("position", "absolute");
+            })
+           .on("mouseout", function(d) {
+                d3.select(this)
+                  .attr("font-weight", "normal");
+                d3.select('#svgbox').selectAll("tooltip").remove();
+              })
             .on("click", (d, i) => {
              var fullname = i.text.split('.', 1)[0];
               var point = i;
