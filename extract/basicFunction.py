@@ -194,7 +194,7 @@ def InstantiateOtherClasses(wanted):#basicFunction新增方法，输入是一个
     allin = ain + bout
     classeslink = []
     for i in methods:
-        doc = inspect.getsource(eval(target+'.'+i))
+        doc = inspect.getsource(eval(pyname+'.'+i))
         for j in allin:
             pattern = r"\b"+j+"\("#正则表达式判断是否实例化其他类
             tmpbool = bool(re.search(pattern, doc))
