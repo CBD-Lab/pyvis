@@ -1,4 +1,4 @@
-function drawTree(data,search){
+function drawTree(data){
      let tooltiptree = d3.select('body')
                             .append('div')
                             .attr("id", "tiptree") // 添加ID属性
@@ -33,7 +33,7 @@ function drawTree(data,search){
       // 设置第一个元素的初始位置
       root.x0 = height / 2;
       root.y0 = 10;
-      root._height=1;
+      root._height=0;
         // 计算总节点数
       const totalNodes = countNodes(root);
         // 在根节点上调用 collapseAllNodesByProbability，传入总节点数
@@ -61,7 +61,7 @@ function collapseAllNodesByProbability(node,totalNodes) {
     // 根据概率属性决定是否收起节点
     if (Math.random() > 100/totalNodes&node.depth!=0) {
       node._children = node.children; // 将子节点移到 _children 中
-      node._height=1;//将该结点的高度另存为1
+      node._height=0;//将该结点的高度另存为1
       node._children.forEach(function (child) {
       collapseAllNodesByProbability(child, totalNodes); // 递归处理子节点并传递额外参数
     });
@@ -76,17 +76,21 @@ function collapseAllNodesByProbability(node,totalNodes) {
 function updateHeight(root)
 {
  let height = 0; // 初始值设置为 0
- if(!root.children)
- {
-    root._height=1;
- }
-  if (root.children) {
+  if(root.children) {//该分支不是叶子节点，没收起
     root.children.forEach(function (child) {
-      height=Math.max(height,updateHeight(child));
+      height=Math.max(height,1+updateHeight(child));
     });
+  root._height=height;
+  return height;
   }
-  root._height=height+1;
-  return height+1;
+ else//该树分支没有收起
+ {
+//    root._height=0;
+    root._height=0
+    return 0;
+ }
+
+//  root._height=height+1;
 }
 /********************* 5. link交互和绘制  *********************/
 function updateLinks(source, links) {
@@ -180,22 +184,7 @@ function updateNodes(source, nodes) {
     }))
     .attr("r", 1e-6)
     .style("fill", function (d) {
-     var endcase = (d.data.name).split('.')[1];
-      if (endcase == 'py'){
-          return color[0];
-      }
-      else if (endcase == 'pyi'){
-          return color[4];
-      }
-      else if (endcase == 'dll'){
-          return color[2];
-      }
-      else if ((endcase == 'png' ) || (endcase == 'jpg')){
-          return color[6];
-      }
-      else{
-          return color[5];
-      }
+     return chooseColor(d.data.name)
     })
     .attr("opacity",function(d)
     {
@@ -221,36 +210,45 @@ function updateNodes(source, nodes) {
       return d.data.name;
     })
      .attr("stroke", function(d){
-        var endcase = (d.data.name).split('.')[1];
-      if (endcase == 'py'){
-          return color[0];
-      }
-      else if (endcase == 'pyi'){
-          return color[4];
-      }
-      else if (endcase == 'dll'){
-          return color[2];
-      }
-      else if ((endcase == 'png' ) || (endcase == 'jpg')){
-          return color[6];
-      }
-      else{
-          return color[5];
-      }})
+        return chooseColor(d.data.name);
+    })
      .attr("stroke-width","0.3px")
      .on("click",function(event,d)
      {
+     if(d.height==0){
         textclick(event,d);
+        }
      })
     nodeEnter
         .each(function(d) {
-            if (typeof(d.data.pdf) !== "undefined" && d.data.pdf.length > 0) {
+            if(d.data.linkAll
+            &&
+            ((typeof( d.data.linkAll['pdfClass']) !== "undefined" && Object.keys(d.data.linkAll['pdfClass']).length > 0)||(typeof( d.data.linkAll['gitClass']) !== "undefined" && Object.keys(d.data.linkAll['gitClass']).length > 0)))
+            {
+              d3.select(this)
+                .append("foreignObject")
+                .attr("width", "8px")
+                .attr("height", "15px")
+                .attr("x", function(event,d) {
+                  return d.children || d._children ? -30 : 10+100;
+                })
+                .attr("y",-10)
+                 .append("xhtml:div")
+                 .style("margin", 0)
+                 .style("padding", 0)
+                 .html('<img src="http://127.0.0.1:5006/get_svg/fileBox.svg" width="100%" height="100%" />')
+                 .on("click",function(event,d)
+                 {
+                    textclick(event,d);
+                 })
+
+            }
+            if (d.data.linkAll && typeof(d.data.linkAll["pdfModule"]) !== "undefined" && d.data.linkAll["pdfModule"].length > 0) {
             d3.select(this)
                 .append("foreignObject")
                 .attr("width", "8px")
                 .attr("height", "15px")
                 .attr("x", function(event,d) {
-                console.log(event,d);
                   return d.children || d._children ? -30 : 20+100;
                 })
                 .attr("y",-10)
@@ -261,7 +259,7 @@ function updateNodes(source, nodes) {
                  .on("click",function()
                  {
                  console.log(d);
-                    var link = d.data.pdf;
+                    var link = d.data.linkAll['pdfModule'];
                     window.open(link, '_blank');
                  })
 
@@ -285,22 +283,7 @@ function updateNodes(source, nodes) {
     .select("path.node")
     .attr("r", 10)
      .style("fill", function (d) {
-     var endcase = (d.data.name).split('.')[1];
-      if (endcase == 'py'){
-          return color[0];
-      }
-      else if (endcase == 'pyi'){
-          return color[4];
-      }
-      else if (endcase == 'dll'){
-          return color[2];
-      }
-      else if ((endcase == 'png' ) || (endcase == 'jpg')){
-          return color[6];
-      }
-      else{
-          return color[5];
-      }
+        return chooseColor(d.data.name);
     })
     .attr("cursor", "pointer");
 
@@ -322,7 +305,6 @@ function updateNodes(source, nodes) {
 }
 
 
-
 /********************* 6. 单击节点事件处理  *********************/
 // 当点击时，切换children，同时用_children来保存原子节点信息
 function click(d) {
@@ -334,7 +316,7 @@ function click(d) {
     // 首次点击，添加定时器，200ms后进行toggle
     d.data._clickid = setTimeout(() => {
       if (d.children) {//收起节点
-        d._height=1;//存另一个高度，为收起后屏幕显示的高度。
+        d._height=0;//存另一个高度，为收起后屏幕显示的高度。
         d._children = d.children;
         d.children = null;
       } else {
@@ -349,6 +331,9 @@ function click(d) {
 }
 
 function textclick(event,d){
+            var pdfClass=d.data.linkAll&&d.data.linkAll['pdfClass']?d.data.linkAll['pdfClass']:'';
+            var gitClass=d.data.linkAll&&d.data.linkAll['gitClass']?d.data.linkAll['gitClass']:'';
+
             d3.select("#miniTree")
                 .remove();
             d3.select(".rectout").remove();
@@ -360,10 +345,6 @@ function textclick(event,d){
                         point=point.parent;
                         fullname = point.data.name +'.'+ fullname;
                     }
-                if(fullname.substring(0,2)=='nn')
-                    {
-                    fullname="torch."+fullname;
-                    }
                 fetch('http://127.0.0.1:5006/treeLeaf?wanted=' + fullname)
                     .then(response => response.json())
                     .then(data => {
@@ -372,7 +353,7 @@ function textclick(event,d){
                     var dataout=data.jsonoutside;
                     const jsontree = toJson(fullname,dataout);
 
-                    drawOutTree(nodes,links,datain,jsontree,event.pageX,event.pageY,search);
+                    drawOutTree(nodes,links,datain,jsontree,event.pageX,event.pageY,pdfClass,gitClass);
                        } })
                     .catch(error => {
                         console.error('Error executing Python script:', error);
@@ -380,7 +361,7 @@ function textclick(event,d){
             }
 }
   /********************* 3. 数据更新绑定  *********************/
-    function updateChart(source) {
+function updateChart(source) {
       updateHeight(root);
       // 设置节点的x、y位置信息
       var treeData = treemap(root);
@@ -389,7 +370,7 @@ function textclick(event,d){
       links = treeData.descendants().slice(1);
 
       nodes.forEach(function (d) {
-        d.y = d.depth * width/(root._height+1);
+        d.y = d.depth * width/(root._height+2);
       });
 
       // node交互和绘制
@@ -404,8 +385,6 @@ function textclick(event,d){
       });
 
     }
-
-}
 // 添加贝塞尔曲线的path，衔接与父节点和子节点间
 function diagonal(s, d) {
   path =
@@ -436,13 +415,32 @@ function buildJsonTree(fullname, data) {
 
   return tree;
 }
+function chooseColor(fullname)
+{
+  var endcase = (fullname).split('.')[1];
+      if (endcase == 'py'){
+          return color[0];
+      }
+      else if (endcase == 'pyi'){
+          return color[4];
+      }
+      else if (endcase == 'dll'){
+          return color[2];
+      }
+      else if ((endcase == 'png' ) || (endcase == 'jpg')){
+          return color[6];
+      }
+      else{
+          return color[5];
+      }
+}
 
 function toJson(fullname,data) {
   const treeStructure = buildJsonTree(fullname,data);
   return treeStructure;
 }
 
-function drawOutTree(nodes,links,datain,dataout,locX,locY,search)
+function drawOutTree(nodes,links,datain,dataout,locX,locY,pdfClass,gitClass)
 {
     var treemini=d3.tree()
            .size([300, 250]);
@@ -464,7 +462,7 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,search)
         if(nodes[j].height==0){
         if (nodes[j].data.name.substring(0, nodes[j].data.name.lastIndexOf(".")) === overlappingminiNodes[t].data.name &&nodes[j].depth-overlappingminiNodes[t].depth==-2) {
         var pointNode=nodes[j];
-        var pointminiNode=overlappingminiNodes[t]
+        var pointminiNode=overlappingminiNodes[t];
         while(pointNode.parent)
         {
         pointNode=pointNode.parent;
@@ -538,12 +536,66 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,search)
         .enter()
         .append("text")
         .attr("class","textin")
+        .attr("x",20)
         .attr("y",function(d,i)
         {
         return (i+1)*15+30;
         })
         .attr("font-size","12px")
         .text(d=>d.split('.').slice(-1))
+        .each(function(d,i) {
+            var linkPdf=pdfClass[d];
+            if(linkPdf)
+            {
+            var currentY = d3.select(this).attr("y");
+            d3.select(this.parentNode)
+                .append("foreignObject")
+                .attr("class","pdfClass")
+                .attr("width", "8px")
+                .attr("height", "15px")
+                .attr("x", function(event,d) {
+                  return 0;
+                })
+                .attr("y",function()
+                {
+                    return currentY;
+                })
+                .append("xhtml:div")
+                .html('<img src="http://127.0.0.1:5006/get_svg/pdf.svg" width="100%" height="100%" />')
+                .on("click",function()
+                {
+                    window.open(linkPdf, '_blank');
+                }
+                )
+                 }
+        })
+        .each(function(d,i) {
+            var linkGit=gitClass[d];
+            if(linkGit)
+            {
+            var currentY = d3.select(this).attr("y");
+            d3.select(this.parentNode)
+                .append("foreignObject")
+                .attr("class","gitClass")
+                .attr("width", "8px")
+                .attr("height", "15px")
+                .attr("x", function(event,d) {
+                  return 10;
+                })
+                .attr("y",function()
+                {
+                    return currentY;
+                })
+                .append("xhtml:div")
+                .html('<img src="http://127.0.0.1:5006/get_svg/github.svg" width="100%" height="100%" />')
+                .on("click",function()
+                {
+                    window.open(linkGit, '_blank');
+                }
+                )
+                 }
+        })
+
         .on("mouseover",function(d,i)
             {  d3.select(this)
                 .attr("fill", "red")
@@ -611,7 +663,7 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,search)
                     var linkRegex = /(\bhttps?:\/\/\S+\b)/g;// \b匹配单词边界，\s查找空白字符
 //                    var linkRegex = /(\bhttps?:\/\/\S+?(?=\s|<|\|$))/g
 
-                    var textWithFormattedLinks = textWithLinks.replace(linkRegex, '<a href="$1" target="_blank">$1</a>');
+                    var textWithFormattedLinks = linkRegex?textWithLinks.replace(linkRegex, '<a href="$1" target="_blank">$1</a>'):'';
 
                    docContainer.append("div")
                         .attr("class", "contentDoc")
@@ -733,15 +785,15 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,search)
                                     .attr("class","content")
                                     .html('<pre><code class="language-python">'+highlightedCode+'</code></pre>');
                                     })
-
                       .catch(error => {
                           console.error('Error executing Python script:', error);
                           // 处理错误
                       });
             });
             }
+}
 
-window.onDrawTreeReady = function(data,search) {
-    drawTree(data,search);
+window.onDrawTreeReady = function(data) {
+    drawTree(data);
 }
 

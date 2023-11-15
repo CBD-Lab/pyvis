@@ -58,7 +58,6 @@ def treeLeaf():
             class_name_all = class_str[start_index:end_index]
             # print(len(wanted))
             if (class_name_all.startswith(wanted)):
-                # class_name = class_name_all[class_name_all.find(wanted) + 1+len(wanted):]
                 jsonstrinside.append(class_name_all)
             else:
                 jsonstroutside.append(class_name_all)
@@ -109,12 +108,13 @@ def classVariable():
 
     funcAll = basicFunction.get_class_method(class_obj)
 
-    docs, pdf = basicFunction.get_class_pdf(class_obj)
+    docs, pdf, git = basicFunction.get_class_pdf(class_obj,my_class)
     result = {
         "var": varAll,
         "fun": funcAll,
         "doc": docs,
-        "pdf": pdf
+        "pdf": pdf,
+        'git':git
     }
     return jsonify(result)
 

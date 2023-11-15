@@ -3,6 +3,10 @@ import inspect
 import os
 import json
 import pathlib
+import subprocess
+import traceback
+from distutils.log import Log
+
 from . import basicFunction
 import torch
 
@@ -15,7 +19,12 @@ def print_files(path, tree):
         if (f != '__pycache__') and (f != 'test') and (f != 'testing'):  # test and cache directory are filtered
             if os.path.isfile(os.path.join(path, f)):  # inspect file
                 if (pathlib.Path(f).suffix == ".py") and (not f.startswith("_") or f.startswith("__")):
-                    pdfAll = []
+                    linkAll= {}
+                    pdfModule = []
+                    pdfClass=[]
+                    gitClass=[]
+                    classNameAll=''
+                    class_obj=None
                     fsize = os.path.getsize(os.path.join(path, f))  # file size
                     modulepath = os.path.splitext(os.path.join(path, f))[0]  # file path
                     modulepath = modulepath[modulepath.find(r"site-packages") + 14:len(modulepath)]
@@ -23,43 +32,55 @@ def print_files(path, tree):
                     import_statement = "import " + modulepath
                     docs = ""
                     try:
-                        # try:
-                        #     subprocess.run(import_statement, shell=True, check=True)
-                        # except subprocess.CalledProcessError as e:
-                        #     print(f"Error executing import_statement: {e}")
-
-                        # if(modulepath.endswith('.py')):
                         class_name = modulepath.rsplit('.', 1)[1]
                         module_name = modulepath.rsplit('.', 1)[0]
-                        print("nameAll",module_name,class_name)
                         module = importlib.import_module(module_name)
-                        class_obj = getattr(module, class_name)
-                        docs = inspect.getdoc(class_obj)
+                        # class_obj = getattr(module, class_name)
+                        # docs = inspect.getdoc(class_obj)
+                        if hasattr(module, class_name):
+                            class_obj = getattr(module, class_name)
+                            docs = inspect.getdoc(class_obj)
+                        else:
+                            print(f" cannot find attribute {class_name} in module {module_name}")
                         if(docs):
-                            print("docs",docs)
                             pdfurl = len("https://arxiv.org/abs/1810.04805")
                             arxiv_index = docs.find("https://arxiv.org")
+
                             if arxiv_index != -1:
                                 pdf = docs[arxiv_index:arxiv_index + pdfurl]
-                                pdfAll.append(pdf)
-                        myinclass, myoutclass = basicFunction.in_out_classes_bymodulename(eval(modulepath))
-                        myinclass = []
-                        myoutclass = []
+                                pdfModule.append(pdf)
+                        if(len(pdfModule)>0):
+                            linkAll["pdfModule"]=pdfModule
+                        pdfClass,gitClass,myinclass, myoutclass = basicFunction.in_out_classes_bymodulename_new(class_obj,modulepath)
+                        # myinclass = []
+                        # myoutclass = []
                         inclasscount = len(myinclass)
                         outclasscount = len(myoutclass)
-
+                        if len(pdfClass) > 0:
+                            linkAll["pdfClass"] = pdfClass
+                        if len(gitClass) > 0:
+                            linkAll["gitClass"] = gitClass
                         myfunction = []
-                        myfunction = basicFunction.get_functions(eval(modulepath))
+                        # myfunction = basicFunction.get_functions(modulepath)
                         functioncount = len(myfunction)
-
-                        child.append(
-                            {"name": "" + f + "", "value": fsize, "in_classes": myinclass, "out_classes": myoutclass,
-                             "in_function": myfunction,"pdf":pdfAll})
-                        # print("children,",child)
+                        if (linkAll):
+                            child.append({
+                                "name": "" + f + "",
+                                "value": fsize,
+                                "linkAll": linkAll
+                            })
+                        else:
+                            child.append({
+                                "name": "" + f + "",
+                                "value": fsize,
+                            })
                     except Exception as e:
-                        print("发生了一点问题,",e)
+                        traceback.print_exc()
                         fsize = os.path.getsize(os.path.join(path, f))
-                        child.append({"name": "" + f + "", "value": fsize,"pdf":pdfAll})
+                        child.append({
+                                "name": "" + f + "",
+                                "value": fsize,
+                            })
                 else:
                     fsize = os.path.getsize(os.path.join(path, f))
                     child.append({"name": "" + f + "", "value": fsize})
@@ -69,15 +90,11 @@ def print_files(path, tree):
     tree['children'] = child
 
     dirs = [i for i in lsdir if os.path.isdir(os.path.join(path, i))]
-    print("---------------")
-    print(dirs)
     if dirs:
         for i in dirs:
             subtree = {"name": "", "children": ""}
-
             for t in tree['children']:
                 if t['name'] == i:
-                    print(t, t['name'])
                     subtree = t
             print_files(os.path.join(path, i), subtree)
     files = [i for i in lsdir if os.path.isfile(os.path.join(path, i))]

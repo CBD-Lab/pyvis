@@ -1,8 +1,13 @@
+import importlib
 import inspect
 import ast
+import urllib
+
 import numpy
 from types import *
 from inspect import isclass
+
+from flask import jsonify
 
 
 def get_modules(wanted):
@@ -85,10 +90,39 @@ def in_out_classes_bymodulename(wanted):
         outclasses = []
     return inclasses, outclasses
 
-# ins,outs=in_out_classes_bymodulename(torch.nn.modules.transformer) inclass得到__module__名字和wanted一样的参数的__module__，outclass则是其他的
-# print(ins)
-# print("-------------")
-# print(outs)
+
+def in_out_classes_bymodulename_new(class_object,wanted):
+    pdfClass={}
+    gitClass={}
+    try:
+        # class_object = importlib.import_module(wanted)
+        jsonfile = inspect.getmembers(class_object, inspect.isclass)
+        classIn = []
+        classOut = []
+        for item in jsonfile:
+            class_str = str(item[1])
+
+            start_index = class_str.find("'") + 1  # 找到第一个单引号的位置
+            end_index = class_str.rfind("'")  # 找到最后一个单引号的位置
+            class_name_all = class_str[start_index:end_index]
+            print(class_str,class_name_all,wanted,type(class_name_all),type(wanted))
+            if (class_name_all.startswith(wanted)):
+                classIn.append(class_name_all)
+                class_name = class_name_all.rsplit('.', 1)[1]
+                module_name = class_name_all.rsplit('.', 1)[0]
+                module = importlib.import_module(module_name)
+                class_obj = getattr(module, class_name)
+                docs, pdf,git = get_class_pdf(class_obj,class_name_all)
+                if(pdf!=[]):
+                    pdfClass.update(pdf)
+                if (git != []):
+                    gitClass.update(git)
+            else:
+                classOut.append(class_name_all)
+        return pdfClass,gitClass,classIn,classOut
+    except Exception as e:
+        print("error", e)
+        return [],[],[],[]
 
 
 def get_class_method(wanted):
@@ -102,21 +136,30 @@ def get_class_method(wanted):
 
 
 # get a class's pdf in docs
-def get_class_pdf(class_obj):
-    print(class_obj)
+def get_class_pdf(class_obj,fullname):
     pdfurl = len("https://arxiv.org/abs/1810.04805")
     docs = ""
     classPdf = []
-
+    pdfValue={}
+    gitValue={}
+    classGit=[]
     if inspect.isclass(class_obj):
         docs = inspect.getdoc(class_obj)
         if docs:
             arxiv_index = docs.find("https://arxiv.org")
+            git_index=docs.find("https://github.com")
             if arxiv_index != -1:
                 pdf = docs[arxiv_index:arxiv_index + pdfurl]
-                classPdf.append(pdf)
-
-    return docs, classPdf
+                if(pdf!=[]):
+                    pdfValue[fullname]=pdf
+                    # classPdf.append(pdfValue)
+            if git_index!=-1:
+                git_end_index = docs.find(" ", git_index)  # 找到GitHub链接后的下一个空格
+                git=docs[git_index:git_end_index]
+                if(git!=[]):
+                    gitValue[fullname]=git
+                    # classGit.append(gitValue)
+    return docs, pdfValue,gitValue
 
 # print(get_class_method(torch.nn.modules.transformer.Transformer)) 得到__init__.py内python的内置函数，import的包和模块，form .xxx的xxx,前面带'_'的参数，以及在同一级目录下的其他模块（包和py文件）
 

@@ -38,7 +38,7 @@
         --buttonbgcolor:#FFFFFF;
         }
         .node {
-          stroke: grey;
+<!--          stroke: grey;-->
           stroke-width: 1px;
           opacity: 0.7;
         }
@@ -331,7 +331,7 @@
                 viewSelection:"tree",
                 nodes:'',
                 links:'',
-                keyword:'',
+                keyword:'torch',
                 isLoading: false,
                 localValue: '',
                 singleModule: '',
@@ -340,7 +340,7 @@
         },
         methods: {
             home() {
-                this.keyword = "nn";
+                this.keyword = "torch";
                 this.netvis();
             },
 
@@ -425,7 +425,7 @@
                 this.clearPage();
                 this.viewSelection="tree";
                 axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
-                    onDrawTreeReady(res.data,this.search);
+                    onDrawTreeReady(res.data);
                 });
             },
             pinetreevis() {
@@ -559,6 +559,7 @@
             searchSingle() {
                 var that = this;
                 fetch("/single?wanted=" + this.singleModule).then(res => {
+                        console.log(this.singleModule,"----------------");
                         if (res.ok) {
                             return res.json();
                         }
