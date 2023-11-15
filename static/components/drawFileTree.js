@@ -124,8 +124,6 @@ function drawFileTree(data) {
     
     svg.selectAll("text")
       .on("click", (d, i) => {
-        console.log('filetree click');
-        console.log(i);
         var fullname = i.data.name.split('.', 1)[0];
         var point = i;
           while (point.depth >= 0 && point.parent) {
@@ -137,7 +135,7 @@ function drawFileTree(data) {
           {
           fullname="torch."+fullname;
           }
-        console.log("treemap fullname:",fullname);           
+        //console.log("treemap fullname:",fullname);           
 
         fetch('http://127.0.0.1:5006/leafCode?wanted=' + fullname)
           .then(response => response.text())
@@ -165,7 +163,6 @@ function drawFileTree(data) {
           });
       })
       .on("mouseover", function (event, d) {
-        console.log(d);
         var fullname = d.data.name.split('.', 1)[0];
         var point = d;
         while (point.depth >= 0 && point.parent) {

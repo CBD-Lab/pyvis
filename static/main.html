@@ -279,7 +279,7 @@
             </div>
             <div v-show="viewSelection === 'treemap'">
                 <van-row style="margin-top:30px">
-                    <van-button style="margin-left: 5px;" class="van-haptics-feedback" @click="changemap()" type="primary">Exchange</van-button>
+                    <van-checkbox v-model="checked" style="margin-left: 5px;" class="van-haptics-feedback" @click="changemap()" type="primary">Exchange</van-checkbox>                
                 </van-row>
             </div>
             <div v-show="viewSelection === 'hicircle'">
@@ -336,6 +336,7 @@
                 localValue: '',
                 singleModule: '',
                 flag: false,
+                checked: false,
             };
         },
         methods: {

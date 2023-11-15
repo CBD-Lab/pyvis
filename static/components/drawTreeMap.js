@@ -18,7 +18,7 @@ function drawTreeMap(data, flag) {
     //console.log(hidata);
     var treedata = treemap(hidata);
     //console.log(treedata);
-    nodes = treedata.leaves()       //��Flare.jsonΪ��,��252���ڵ�
+    nodes = treedata.leaves()       
     //console.log(nodes);
 
     var gc = svg.selectAll("g")
@@ -68,13 +68,12 @@ function drawTreeMap(data, flag) {
                 .text(d => (d.data.name))
         })
         .on("click", (d, i) => {
-            console.log('treemap click');
-            console.log(i);
+            
             var fullname = i.data.name.split('.', 1)[0];
+            console.log("treemap fullname:",fullname);
             var point = i;
               while (point.depth >= 0 && point.parent) {
                 point = point.parent;
-                console.log("point:",point.data.name);
                 fullname = point.data.name + '.' + fullname;
               }
               if(fullname.substring(0,2)=='nn')
@@ -108,9 +107,87 @@ function drawTreeMap(data, flag) {
                     console.error('Error executing Python script:', error);
                 });
         });
+        rect
+        .each(function(d) {
+            
+            if(d.data.linkAll
+            &&
+            ((typeof( d.data.linkAll['pdfClass']) !== "undefined" && Object.keys(d.data.linkAll['pdfClass']).length > 0)||(typeof( d.data.linkAll['gitClass']) !== "undefined" && Object.keys(d.data.linkAll['gitClass']).length > 0)))
+            {
+                console.log("带有pdf的文件为：",d.data.name);
+              d3.select(this)
+                .append("foreignObject")
+                .attr("width", "8px")
+                .attr("height", "15px")
+                .attr("fill","black")
+                .attr("x", function(event,d) {
+                  return d.children || d._children ? -30 : 10+100;
+                })
+                .attr("y",-10)
+                 .append("xhtml:div")
+                 .style("margin", 0)
+                 .style("padding", 0)
+                 .html('<img src="http://127.0.0.1:5006/get_svg/fileBox.svg" width="100%" height="100%" />')
+                 .on("click",function(event,d)
+                 {
+                    
+                    textclick(event,d);
+                 })
+              
 
+            }
+            if (d.data.linkAll && typeof(d.data.linkAll["pdfModule"]) !== "undefined" && d.data.linkAll["pdfModule"].length > 0) {
+            d3.select(this)
+                .append("foreignObject")
+                .attr("width", "8px")
+                .attr("height", "15px")
+                .attr("x", function(event,d) {
+                  return d.children || d._children ? -30 : 20+100;
+                })
+                .attr("y",-10)
+                 .append("xhtml:div")
+                 .style("margin", 0)
+                 .style("padding", 0)
+                 .html('<img src="http://127.0.0.1:5006/get_svg/pdf.svg" width="100%" height="100%" />')
+                 .on("click",function()
+                 {
+                    var link = d.data.linkAll['pdfModule'];
+                    window.open(link, '_blank');
+                 })
+
+            }
+      });
         
+      function textclick(event,d){
+        var pdfClass=d.data.linkAll&&d.data.linkAll['pdfClass']?d.data.linkAll['pdfClass']:'';
+        var gitClass=d.data.linkAll&&d.data.linkAll['gitClass']?d.data.linkAll['gitClass']:'';
 
+        d3.select("#miniTree")
+            .remove();
+        d3.select(".rectout").remove();
+        if(d.height==0){
+            var point=d;
+            var fullname = d.data.name.slice(0, d.data.name.lastIndexOf("."));
+            while(point.depth>=0&& point.parent)
+                {
+                    point=point.parent;
+                    fullname = point.data.name +'.'+ fullname;
+                }
+            fetch('http://127.0.0.1:5006/treeLeaf?wanted=' + fullname)
+                .then(response => response.json())
+                .then(data => {
+                if(data !== "null"){
+                var datain=data.jsoninside;
+                var dataout=data.jsonoutside;
+                const jsontree = toJson(fullname,dataout);
+
+                drawOutTree(nodes,links,datain,jsontree,event.pageX,event.pageY,pdfClass,gitClass);
+                   } })
+                .catch(error => {
+                    console.error('Error executing Python script:', error);
+                });
+        }
+}
 
     var text = gc.append("text")
         .attr("font-size", "12")
