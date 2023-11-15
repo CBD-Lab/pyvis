@@ -16,6 +16,14 @@ import importlib
 # ------------------do not delete the import above,using while runtime.----------------------------------
 
 
+def is_iterable(wanted):
+    try:
+        iter(wanted)
+        return True
+    except:
+        return False
+
+
 def get_modules(pname, initpname, layer):
     exec("import " + pname)
     arg = eval(pname)
@@ -82,7 +90,8 @@ def get_modules(pname, initpname, layer):
                               'hasclass': classcount, 'myclass': myclass, "hasfunction": functioncount,
                               "myfunction": myfunction})
             if ("__file__" in dir(eval(m_info.__name__))):
-                get_modules(m_info.__name__, initpname, layer)
+                if basicFunction.is_iterable(eval(m_info.__name__)):
+                    get_modules(m_info.__name__, initpname, layer)
     return modules
 
 
