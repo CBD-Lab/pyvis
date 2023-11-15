@@ -239,6 +239,7 @@ function updateNodes(source, nodes) {
                  .html('<img src="http://127.0.0.1:5006/get_svg/fileBox.svg" width="100%" height="100%" />')
                  .on("click",function(event,d)
                  {
+                    console.log(d);
                     textclick(event,d);
                  })
 
@@ -258,7 +259,6 @@ function updateNodes(source, nodes) {
                  .html('<img src="http://127.0.0.1:5006/get_svg/pdf.svg" width="100%" height="100%" />')
                  .on("click",function()
                  {
-                 console.log(d);
                     var link = d.data.linkAll['pdfModule'];
                     window.open(link, '_blank');
                  })
@@ -558,7 +558,7 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,pdfClass,gitClass)
                 })
                 .attr("y",function()
                 {
-                    return currentY;
+                    return currentY-15;
                 })
                 .append("xhtml:div")
                 .html('<img src="http://127.0.0.1:5006/get_svg/pdf.svg" width="100%" height="100%" />')
@@ -584,7 +584,7 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,pdfClass,gitClass)
                 })
                 .attr("y",function()
                 {
-                    return currentY;
+                    return currentY-15;
                 })
                 .append("xhtml:div")
                 .html('<img src="http://127.0.0.1:5006/get_svg/github.svg" width="100%" height="100%" />')

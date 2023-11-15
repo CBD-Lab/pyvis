@@ -154,9 +154,15 @@ def get_class_pdf(class_obj,fullname):
                     pdfValue[fullname]=pdf
                     # classPdf.append(pdfValue)
             if git_index!=-1:
-                git_end_index = docs.find(" ", git_index)  # 找到GitHub链接后的下一个空格
-                git=docs[git_index:git_end_index]
-                if(git!=[]):
+                git_end_index1 = docs.find(")", git_index)
+                git_end_index2=docs.find(">", git_index)
+                git_end_index3 = docs.find(" ", git_index)
+                git_end_index=min(git_end_index3,git_end_index1,git_end_index2)
+                if(git_end_index!=-1):
+                    git=docs[git_index:git_end_index]
+                else:
+                    git=docs[git_index:]
+                if(git!=''):
                     gitValue[fullname]=git
                     # classGit.append(gitValue)
     return docs, pdfValue,gitValue
