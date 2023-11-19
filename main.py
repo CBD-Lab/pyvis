@@ -197,7 +197,9 @@ def userPath():
 
     if os.path.isfile('pylibsNet.txt'):
         try:
-            os.makedirs('static/netjson_tmp')
+            if os.path.exists('static/netjson_tmp'):
+                shutil.rmtree('static/netjson_tmp')
+            os.makedirs('static/netjson_tmp', exist_ok=True)
             pylibsNet.pylibs(user_path)
             pyNet.pyNetAll(user_path)
             pyClass.getClassNetAll(user_path)
@@ -220,7 +222,9 @@ def userPath():
 
     if os.path.isfile('pipdeptree.json'):
         try:
-            os.makedirs('static/treejson_tmp')
+            if os.path.exists('static/treejson_tmp'):
+                shutil.rmtree('static/treejson_tmp')
+            os.makedirs('static/treejson_tmp', exist_ok=True)
             pylibsTree.main()
             pyTree.pyTreeAll(user_path)
             shutil.rmtree('static/treejson')

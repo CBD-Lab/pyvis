@@ -113,7 +113,7 @@ def readpackages():
     with open(filename, 'r', encoding='utf-8') as f:
         line = f.readline()
         while line:
-            packages.append(line.split(" ")[0].replace(".py", "").lower().split("-")[0])
+            packages.append(line.split(" ")[0].replace(".py", "").lower())
             line = f.readline()
             i = i + 1
         print("i", i)
