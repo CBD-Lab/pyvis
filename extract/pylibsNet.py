@@ -59,29 +59,27 @@ def edges(pylibsNet, path):
 
 
 def readpylibsNet():
-    filename = 'pylibsNet.txt'
+    packages = []
     i = 0
-    with open(filename, 'r', encoding='utf-8') as f:
+    with open('pylibsNet.txt', 'r', encoding='utf-8') as f:
         line = f.readline()
         while line:
-            pylibsNet.append(line.split(" ")[0])
+            packages.append(line.split(" ")[0])
             line = f.readline()
             i = i + 1
         print("i", i)
-    print("pylibsNet before", pylibsNet)
-    return pylibsNet[2:]
+    return packages[2:]
 
 
 def pylibs(path):
-    global netjson, nodejson, edgejson, pylibsNet, e
+    global netjson, nodejson, edgejson, e
     netjson = {"links": "", "nodes": ""}
     nodejson = []
     edgejson = []
-    pylibsNet = []
     e = {"source": -1, "target": -1}
 
     pylibsNet = readpylibsNet()
-    print("pylibsNet after", pylibsNet)
+    print("pylibsNet: ", pylibsNet)
     edges(pylibsNet, path)
     nodes(pylibsNet)
     f = open('static/netjson_tmp/pylibsNet.json', 'w', encoding='utf-8')
