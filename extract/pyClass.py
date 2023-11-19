@@ -138,7 +138,7 @@ def getClassNetAll(path):
 
             classesjson['nodes'] = nodes
             classesjson['links'] = links
-            f = open('static/netjson/' + pname + 'class.json', 'w')
+            f = open('static/netjson_tmp/' + pname + 'class.json', 'w')
             f.write(json.dumps(classesjson))
             f.close()
         except Exception as e:

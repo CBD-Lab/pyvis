@@ -128,10 +128,6 @@ def netjson(filename, initpname):
     mnetjson['nodes'] = nodes
     mnetjson['links'] = links
 
-    f = open('static/netjson/' + filename + '.json', 'w')
-    f.write(json.dumps(mnetjson))
-    f.close()
-
 
 def pyNet(moduleName):
     global modules, mnetjson, nodes, links, myclass, myfunction, layer
@@ -146,6 +142,10 @@ def pyNet(moduleName):
     initpname = moduleName
     exec("import " + moduleName)
     netjson(moduleName, initpname)
+
+    f = open('static/netjson/' + moduleName + '.json', 'w')
+    f.write(json.dumps(mnetjson))
+    f.close()
 
 
 def readpackages():
@@ -165,24 +165,28 @@ def readpackages():
 
 def pyNetAll(path):
     global modules, mnetjson, nodes, links, myclass, myfunction, layer
-    modules = []
-    mnetjson = {'nodes': '', 'links': ''}
-    nodes = []
-    links = []
-    myclass = ""
-    myfunction = ""
-    layer = 0
 
     path = path[:-8] + 'Lib\site-packages'
     package_names = []
     package_names = readpackages()
     print("package_names", package_names)
     for package_name in package_names:
+        modules = []
+        mnetjson = {'nodes': '', 'links': ''}
+        nodes = []
+        links = []
+        myclass = ""
+        myfunction = ""
+        layer = 0
+
         filename = package_name.replace(".py", "")
         initpname = filename
         print("filename:", filename)
         try:
             if importlib.util.find_spec(filename):
                 netjson(filename, initpname)
+                f = open('static/netjson_tmp/' + filename + '.json', 'w')
+                f.write(json.dumps(mnetjson))
+                f.close()
         except Exception as e:
             print(f"Error in package {filename}: {e}. Skipping...")

@@ -141,7 +141,7 @@ def pyTreeAll(path):
             exec("import " + moduleName)
             folder_path = path + "\\" + moduleName
             print_files(folder_path, pytree)
-            f = open('static/treejson/' + moduleName + '.json', 'w')
+            f = open('static/treejson_tmp/' + moduleName + '.json', 'w')
             f.write(json.dumps(pytree))
             f.close()
         except Exception as e:

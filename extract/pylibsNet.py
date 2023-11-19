@@ -5,7 +5,7 @@ def requires(libname, path):
     import os
     import subprocess
     try:
-        temp_output_file = "static/netjson/temp_output.txt"
+        temp_output_file = "static/netjson_tmp/temp_output.txt"
         command = [path + 'pip3', 'show', libname]
         subprocess.run(command, stdout=open(temp_output_file, 'w', encoding='utf-8'), stderr=subprocess.PIPE,
                        check=True)
@@ -80,10 +80,10 @@ def pylibs(path):
     pylibsNet = []
     e = {"source": -1, "target": -1}
 
-    f = open('static/netjson/pylibsNet.json', 'w', encoding='utf-8')
     pylibsNet = readpylibsNet()
     print("pylibsNet after", pylibsNet)
     edges(pylibsNet, path)
     nodes(pylibsNet)
+    f = open('static/netjson_tmp/pylibsNet.json', 'w', encoding='utf-8')
     f.write(json.dumps(netjson))
     f.close()

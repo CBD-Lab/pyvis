@@ -7,9 +7,8 @@ from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import inspect
 import importlib
-from extract import basicFunction
-from extract import pylibsNet, pylibsTree
-from extract import pyNet, pyTree, pyClass
+from extract import basicFunction, pylibsNet, pyNet, pyClass, pylibsInfo, pyTree, pylibsTree
+
 
 app = Flask(__name__)
 CORS(app)
@@ -126,9 +125,7 @@ def moduletxt():
         wanted = 'inspect'
     wanted = wanted[0:wanted.find(".py")]
     wanted = "torch.nn.modules." + wanted
-    import_statement = "import " + wanted
-    print(import_statement)
-    exec(import_statement)
+    exec("import " + wanted)
 
     print(wanted)
     # modulesrc = inspect.getsource(eval(wanted))
@@ -170,10 +167,10 @@ def single():
     single_module = request.args.get('wanted', type=str).lower()
     if (single_module is None) or (single_module == "undefined") or (single_module == ""):
         single_module = 'numpy'
+
     if os.path.isfile('static/netjson/' + single_module + '.json'):
         os.remove('static/netjson/' + single_module + '.json')
     pyNet.pyNet(single_module)
-
     path = os.path.join(python_path[0], 'Lib', 'site-packages')
     if os.path.isfile('static/treejson/' + single_module + '.json'):
         os.remove('static/treejson/' + single_module + '.json')
@@ -188,9 +185,7 @@ def single():
 # load all local module....
 @app.route('/userPath', methods=['GET'])
 def userPath():
-    user_path = python_path[0]
-    if not user_path.lower().endswith("scripts\\"):
-        user_path = os.path.join(user_path, "Scripts\\")
+    user_path = os.path.join(python_path[0], 'Scripts\\')
 
     if os.path.isfile('pylibsNet.txt'):
         os.remove('pylibsNet.txt')
@@ -200,6 +195,21 @@ def userPath():
     except subprocess.CalledProcessError as e:
         return jsonify({'error': f'Error running pip3 list: {str(e)}'}), 500
 
+    if os.path.isfile('pylibsNet.txt'):
+        try:
+            os.makedirs('static/netjson_tmp')
+            pylibsNet.pylibs(user_path)
+            pyNet.pyNetAll(user_path)
+            pyClass.getClassNetAll(user_path)
+            shutil.rmtree('static/netjson')
+            os.rename('static/netjson_tmp', 'static/netjson')
+            if os.path.isfile('pylibsInfo.json'):
+                os.remove('pylibsInfo.json')
+            pylibsInfo.showInfo(user_path)
+            print(f"Folder static/netjson successfully updated.")
+        except Exception as e:
+            print(f"An error occurred while updating the folder：{e}")
+
     if os.path.isfile('pipdeptree.json'):
         os.remove('pipdeptree.json')
     try:
@@ -208,25 +218,16 @@ def userPath():
     except subprocess.CalledProcessError as e:
         return jsonify({'error': f'Error running pipdeptree: {str(e)}'}), 500
 
-    if os.path.isfile('pylibsNet.txt'):
+    if os.path.isfile('pipdeptree.json'):
         try:
-            shutil.rmtree('static/netjson')
-            os.makedirs('static/netjson')
-            print(f"Folder static/netjson successfully cleared.")
+            os.makedirs('static/treejson_tmp')
+            pylibsTree.main()
+            pyTree.pyTreeAll(user_path)
+            shutil.rmtree('static/treejson')
+            os.rename('static/treejson_tmp', 'static/treejson')
+            print(f"Folder static/treejson successfully updated.")
         except Exception as e:
-            print(f"An error occurred while emptying the folder：{e}")
-        pylibsNet.pylibs(user_path)
-        pyNet.pyNetAll(user_path)
-        pyClass.getClassNetAll(user_path)
-
-    try:
-        shutil.rmtree('static/treejson')
-        os.makedirs('static/treejson')
-        print(f"Folder static/treejson successfully cleared.")
-    except Exception as e:
-        print(f"An error occurred while emptying the folder：{e}")
-    pylibsTree.main()
-    pyTree.pyTreeAll(user_path)
+            print(f"An error occurred while updating the folder：{e}")
 
     return jsonify({'message': 'Tasks completed successfully'})
 
