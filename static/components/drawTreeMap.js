@@ -1,4 +1,4 @@
-function drawTreeMap(data, flag) {
+function drawTreeMap(data, flag, pdf) {
 
     var width = (window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth) * 0.83;
     var height = (window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight) * 0.89;
@@ -26,7 +26,13 @@ function drawTreeMap(data, flag) {
         .enter()
         .append("g")
         .attr("transform", function (d) { return "translate(" + d.x0 + "," + d.y0 + ")"; })
-        .attr("id", function (d, i) { return i; });
+        .attr("id", function (d, i) { 
+            
+            return i; 
+        });
+    var tooltip = d3.select("body").append("div")
+        .attr("class", "tooltip")
+        .style("opacity", 0);
 
     var rect = gc.append("rect")
         .attr("width", d => d.x1 - d.x0)
@@ -107,35 +113,75 @@ function drawTreeMap(data, flag) {
                     console.error('Error executing Python script:', error);
                 });
         });
+        var pdfFiles = [];
+        // 获取第一个矩形块的左上角位置
+        var firstRect = rect.filter((d, i) => i === 0);
+        var rectLeft = firstRect.attr("x");
+        var rectTop = firstRect.attr("y");
+
+        firstRect.on("mouseover", function (event, d) {
+            tooltip.transition()
+                .duration(300)
+                .style("opacity", .9);
+            tooltip.html("PDF Files: " + pdfFiles.join(", "))
+                .style("left", rectLeft + 230 + "px")
+                .style("top", rectTop + 100 + "px");
+            d3.select(this)
+                .attr("opacity", 1.0) // 鼠标悬停时矩形透明度为1
+
+            // 选择相应的文本元素并添加过渡动画
+            d3.select(this.parentNode).select(".txt").raise()
+                .transition()
+                .duration(300) // 过渡时间
+                .attr("font-size", "16") // 变化后的字体大小
+                .text(d => (d.data.name + "-" + d.data.value));
+        })
+        .on("mouseout", function (d) {
+            tooltip.transition()
+                .duration(300)
+                .style("opacity", 0);
+            d3.select(this)
+                .attr("opacity", 0.7) // 鼠标离开时矩形透明度为0.7
+
+            // 选择相应的文本元素并添加过渡动画
+            d3.select(this.parentNode).select(".txt")
+                .transition()
+                .duration(300) // 过渡时间
+                .attr("font-size", "12") // 恢复原始字体大小
+                .text(d => (d.data.name))
+        });
+
         rect
         .each(function(d) {
             
             if(d.data.linkAll
             &&
             ((typeof( d.data.linkAll['pdfClass']) !== "undefined" && Object.keys(d.data.linkAll['pdfClass']).length > 0)||(typeof( d.data.linkAll['gitClass']) !== "undefined" && Object.keys(d.data.linkAll['gitClass']).length > 0)))
-            {
-                console.log("带有pdf的文件为：",d.data.name);
-              d3.select(this)
-                .append("foreignObject")
-                .attr("width", "8px")
-                .attr("height", "15px")
-                .attr("fill","black")
-                .attr("x", function(event,d) {
-                  return d.children || d._children ? -30 : 10+100;
-                })
-                .attr("y",-10)
-                 .append("xhtml:div")
-                 .style("margin", 0)
-                 .style("padding", 0)
-                 .html('<img src="http://127.0.0.1:5006/get_svg/fileBox.svg" width="100%" height="100%" />')
-                 .on("click",function(event,d)
-                 {
+                {
                     
-                    textclick(event,d);
-                 })
-              
-
-            }
+                    pdfFiles.push(d.data.name);
+                    if(pdf){
+                        console.log("带有pdf的文件为：",d.data.name);
+                        d3.select(this)
+                        .append("foreignObject")
+                        .attr("width", "8px")
+                        .attr("height", "15px")
+                        .attr("fill","black")
+                        .attr("x", function(event,d) {
+                        return d.children || d._children ? -30 : 10+100;
+                        })
+                        .attr("y",-10)
+                        .append("xhtml:div")
+                        .style("margin", 0)
+                        .style("padding", 0)
+                        .html('<img src="http://127.0.0.1:5006/get_svg/fileBox.svg" width="100%" height="100%" />')
+                        .on("click",function(event,d)
+                        {
+                            textclick(event,d);
+                        })
+                    }
+                }
+            
             if (d.data.linkAll && typeof(d.data.linkAll["pdfModule"]) !== "undefined" && d.data.linkAll["pdfModule"].length > 0) {
             d3.select(this)
                 .append("foreignObject")
@@ -158,36 +204,36 @@ function drawTreeMap(data, flag) {
             }
       });
         
-      function textclick(event,d){
-        var pdfClass=d.data.linkAll&&d.data.linkAll['pdfClass']?d.data.linkAll['pdfClass']:'';
-        var gitClass=d.data.linkAll&&d.data.linkAll['gitClass']?d.data.linkAll['gitClass']:'';
+    function textclick(event,d){
+            var pdfClass=d.data.linkAll&&d.data.linkAll['pdfClass']?d.data.linkAll['pdfClass']:'';
+            var gitClass=d.data.linkAll&&d.data.linkAll['gitClass']?d.data.linkAll['gitClass']:'';
 
-        d3.select("#miniTree")
-            .remove();
-        d3.select(".rectout").remove();
-        if(d.height==0){
-            var point=d;
-            var fullname = d.data.name.slice(0, d.data.name.lastIndexOf("."));
-            while(point.depth>=0&& point.parent)
-                {
-                    point=point.parent;
-                    fullname = point.data.name +'.'+ fullname;
-                }
-            fetch('http://127.0.0.1:5006/treeLeaf?wanted=' + fullname)
-                .then(response => response.json())
-                .then(data => {
-                if(data !== "null"){
-                var datain=data.jsoninside;
-                var dataout=data.jsonoutside;
-                const jsontree = toJson(fullname,dataout);
+            d3.select("#miniTree")
+                .remove();
+            d3.select(".rectout").remove();
+            if(d.height==0){
+                var point=d;
+                var fullname = d.data.name.slice(0, d.data.name.lastIndexOf("."));
+                while(point.depth>=0&& point.parent)
+                    {
+                        point=point.parent;
+                        fullname = point.data.name +'.'+ fullname;
+                    }
+                fetch('http://127.0.0.1:5006/treeLeaf?wanted=' + fullname)
+                    .then(response => response.json())
+                    .then(data => {
+                    if(data !== "null"){
+                    var datain=data.jsoninside;
+                    var dataout=data.jsonoutside;
+                    const jsontree = toJson(fullname,dataout);
 
-                drawOutTree(nodes,links,datain,jsontree,event.pageX,event.pageY,pdfClass,gitClass);
-                   } })
-                .catch(error => {
-                    console.error('Error executing Python script:', error);
-                });
-        }
-}
+                    drawOutTree(nodes,links,datain,jsontree,event.pageX,event.pageY,pdfClass,gitClass);
+                    } })
+                    .catch(error => {
+                        console.error('Error executing Python script:', error);
+                    });
+            }
+    }
 
     var text = gc.append("text")
         .attr("font-size", "12")
@@ -202,7 +248,7 @@ function drawTreeMap(data, flag) {
 }
 
 
-window.onDrawTreeMapReady = function (data, flag) {
+window.onDrawTreeMapReady = function (data, flag, pdf) {
     // 执行绘图逻辑
-    drawTreeMap(data, flag);
+    drawTreeMap(data, flag, pdf);
 }
