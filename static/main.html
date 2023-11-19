@@ -242,6 +242,11 @@
                 <van-row style="margin-top:20px;font-size:12px">Charge</van-row>
                 <van-row><input style="position:relative;top:3px;" type="range" id="chargescale" min="5" max="1000"
                                 value="600"></van-row>
+                <div v-show="viewSelection === 'class' ">
+                <van-row>
+                    <van-col span="24"><input type="radio" name="radio" value="equalr" id="radio5" @click="selectit()">Equal-Radius</input></van-col>
+                </van-row>
+                </div>
                 <div v-show="viewSelection === 'net' ">
                 <van-row style="margin-top:30px;font-size:12px">
                     <van-col span="24"><input type="radio" name="flush" value="重绘" id="flush" onclick="javascript:location.reload()">Repaint</input></van-col>
