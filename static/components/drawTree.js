@@ -34,7 +34,6 @@ function drawTree(data){
       // 设置第一个元素的初始位置
       root.x0 = height / 2;
       root.y0 = 10;
-      root._height=0;
       root._children=[];
         // 计算总节点数
       const totalNodes = countNodes(root);
@@ -127,25 +126,25 @@ function collapseAllNodesByFile(node) {
 
 
 /********************* 更新树的高度，根据_height参数 *********************/
-function updateHeight(node)
-{
-  let height = 0; // 初始值设置为 0
-  if(!node.children)//要么所有子节点被隐藏要么没有子节点，显示高度为0
-  {
-//    node._height=0;
-    node.height=0
-    return 0;
-  }
-  else//当前节点有子节点并且有展开的节点
-  {
-     node.children.forEach(function (child) {
-     height=Math.max(height,1+updateHeight(child));//遍历所有子节点加一得到最大高度
-    });
-//    node._height=height;
-    node.height=height;
-    return height;
-    }
-  }
+//function updateHeight(node)
+//{
+//  let height = 0; // 初始值设置为 0
+//  if(!node.children)//要么所有子节点被隐藏要么没有子节点，显示高度为0
+//  {
+////    node._height=0;
+//    node.height=0
+//    return 0;
+//  }
+//  else//当前节点有子节点并且有展开的节点
+//  {
+//     node.children.forEach(function (child) {
+//     height=Math.max(height,1+updateHeight(child));//遍历所有子节点加一得到最大高度
+//    });
+////    node._height=height;
+//    node.height=height;
+//    return height;
+//    }
+//  }
 /********************* 5. link交互和绘制  *********************/
 function updateLinks(source, links) {
   // 更新数据
@@ -363,7 +362,6 @@ function updateNodes(source, nodes) {
 // 当点击时，展开当前节点的所有叶子节点
 function click(d) {
       if (d._children&&d._children.length>0) {//如果有隐藏节点，就全部展开
-          console.log("展开了")
           d._children.forEach(function(_child)
           {
             d.children.push(_child);
@@ -386,8 +384,6 @@ function click(d) {
                 }
           })
       }
-      console.log(d);
-
       updateChart(d);
 }
 
@@ -426,10 +422,9 @@ function updateChart(source) {
       d3.select("#fileBox").remove();
       d3.select("#pdfClass").remove();
       d3.select("#gitClass").remove();
-      updateHeight(root);
+//      updateHeight(root);
       console.log(root)
 //      var treeData=root
-//      var hi=d3.hierarchy(root)
       var treeData = tree(root);
       console.log(treeData)
       // 计算新的Tree层级

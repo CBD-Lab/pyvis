@@ -21,6 +21,7 @@ def print_files(path, tree):
                 if (pathlib.Path(f).suffix == ".py") and (not f.startswith("_") or f.startswith("__")):
                     linkAll = {}
                     pdfModule = []
+                    fileCount = 0
                     pdfClass = []
                     gitClass = []
                     classNameAll = ''
@@ -51,6 +52,7 @@ def print_files(path, tree):
                                 pdfModule.append(pdf)
                         if (len(pdfModule) > 0):
                             linkAll["pdfModule"] = pdfModule
+                            fileCount += len(pdfModule)
                         pdfClass, gitClass, myinclass, myoutclass = basicFunction.in_out_classes_bymodulename_new(
                             class_obj, modulepath)
                         # myinclass = []
@@ -59,8 +61,10 @@ def print_files(path, tree):
                         outclasscount = len(myoutclass)
                         if len(pdfClass) > 0:
                             linkAll["pdfClass"] = pdfClass
+                            fileCount += len(pdfClass)
                         if len(gitClass) > 0:
                             linkAll["gitClass"] = gitClass
+                            fileCount += len(gitClass)
                         myfunction = []
                         # myfunction = basicFunction.get_functions(modulepath)
                         functioncount = len(myfunction)
@@ -68,12 +72,14 @@ def print_files(path, tree):
                             child.append({
                                 "name": "" + f + "",
                                 "value": fsize,
-                                "linkAll": linkAll
+                                "linkAll": linkAll,
+                                "fileCount": fileCount
                             })
                         else:
                             child.append({
                                 "name": "" + f + "",
                                 "value": fsize,
+                                "fileCount": fileCount
                             })
                     except Exception as e:
                         traceback.print_exc()
