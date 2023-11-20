@@ -28,5 +28,5 @@ def main():
         "name": "package",
         "children": data
     }
-    with open('static/treejson/pylibsTree.json', 'w') as f:
+    with open('static/treejson_tmp/pylibsTree.json', 'w') as f:
         json.dump(root_data, f, indent=2)

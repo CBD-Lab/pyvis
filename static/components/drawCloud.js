@@ -1,4 +1,6 @@
 function drawCloud(data,search){
+      var width = (window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth) * 0.84;
+      var height = (window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight) * 0.89;
 
       var arraycolor = new Array(10);
       for (var i = 0; i < 10; i++) {
@@ -88,7 +90,11 @@ function drawCloud(data,search){
                             .html(fullname)
                             .style("left", (width*0.2) + "px")
                             .style("top", (height*0.2) + "px")
-                            .style("position", "absolute");
+                            .style("position", "absolute")
+                            .style("background-color", "white")
+                            .style("border-radius", "5px")
+                            .style("padding", "5px")
+                            .style("box-shadow", "0px 4px 6px rgba(0, 0, 0, 0.1)");
             })
            .on("mouseout", function(d) {
                 d3.select(this)
@@ -116,6 +122,29 @@ function drawCloud(data,search){
                   var tips = d3.select("body")
                     .append("div")
                     .attr("class", "popup");
+
+                  var drag=d3.drag()
+                              .on("start", function (event) {
+                                // 记录拖拽开始时的位置
+                                var startX = event.x;
+                                var startY = event.y;
+
+                                // 获取当前提示框的位置
+                                var currentLeft = parseFloat(tips.style("left"));
+                                var currentTop = parseFloat(tips.style("top"));
+
+                                // 计算鼠标相对于提示框左上角的偏移
+                                offsetX = startX - currentLeft;
+                                offsetY = startY - currentTop;
+                              })
+                              .on("drag", function (event) {
+                                // 随鼠标移动，更新提示框位置
+                                tips.style("left", (event.x - offsetX) + "px")
+                                  .style("top", (event.y - offsetY) + "px");
+                              });
+
+                        // 将拖拽行为绑定到要拖拽的元素上
+                        tips.call(drag);
 
                   tips.append("span")
                     .attr("class", "close")

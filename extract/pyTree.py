@@ -19,12 +19,12 @@ def print_files(path, tree):
         if (f != '__pycache__') and (f != 'test') and (f != 'testing'):  # test and cache directory are filtered
             if os.path.isfile(os.path.join(path, f)):  # inspect file
                 if (pathlib.Path(f).suffix == ".py") and (not f.startswith("_") or f.startswith("__")):
-                    linkAll= {}
+                    linkAll = {}
                     pdfModule = []
-                    pdfClass=[]
-                    gitClass=[]
-                    classNameAll=''
-                    class_obj=None
+                    pdfClass = []
+                    gitClass = []
+                    classNameAll = ''
+                    class_obj = None
                     fsize = os.path.getsize(os.path.join(path, f))  # file size
                     modulepath = os.path.splitext(os.path.join(path, f))[0]  # file path
                     modulepath = modulepath[modulepath.find(r"site-packages") + 14:len(modulepath)]
@@ -42,16 +42,17 @@ def print_files(path, tree):
                             docs = inspect.getdoc(class_obj)
                         else:
                             print(f" cannot find attribute {class_name} in module {module_name}")
-                        if(docs):
+                        if docs:
                             pdfurl = len("https://arxiv.org/abs/1810.04805")
                             arxiv_index = docs.find("https://arxiv.org")
 
                             if arxiv_index != -1:
                                 pdf = docs[arxiv_index:arxiv_index + pdfurl]
                                 pdfModule.append(pdf)
-                        if(len(pdfModule)>0):
-                            linkAll["pdfModule"]=pdfModule
-                        pdfClass,gitClass,myinclass, myoutclass = basicFunction.in_out_classes_bymodulename_new(class_obj,modulepath)
+                        if (len(pdfModule) > 0):
+                            linkAll["pdfModule"] = pdfModule
+                        pdfClass, gitClass, myinclass, myoutclass = basicFunction.in_out_classes_bymodulename_new(
+                            class_obj, modulepath)
                         # myinclass = []
                         # myoutclass = []
                         inclasscount = len(myinclass)
@@ -78,9 +79,9 @@ def print_files(path, tree):
                         traceback.print_exc()
                         fsize = os.path.getsize(os.path.join(path, f))
                         child.append({
-                                "name": "" + f + "",
-                                "value": fsize,
-                            })
+                            "name": "" + f + "",
+                            "value": fsize,
+                        })
                 else:
                     fsize = os.path.getsize(os.path.join(path, f))
                     child.append({"name": "" + f + "", "value": fsize})
@@ -114,35 +115,31 @@ def pyTree(path, moduleName):
 
 def readpackages():
     packages = []
-    filename = 'pylibsNet.txt'
     i = 0
-    with open(filename, 'r', encoding='utf-8') as f:
+    with open('pylibsNet.txt', 'r', encoding='utf-8') as f:
         line = f.readline()
         while line:
-            packages.append(line.split(" ")[0].lower().split("-")[0])
+            packages.append(line.split(" ")[0].replace(".py", "").lower())
             line = f.readline()
             i = i + 1
         print("i", i)
-    print("pylibsNet before", packages)
     return packages[2:]
 
 
 def pyTreeAll(path):
     path = path[:-8] + 'Lib\site-packages'
-    package_names = []
-    package_names = readpackages()
-    print("package_names", package_names)
-    for package_name in package_names:
-        filename = package_name.replace(".py", "")
-        moduleName = filename
-        print("filename:", filename)
+    packages_name = readpackages()
+    print("package_names", packages_name)
+    for package_name in packages_name:
+        moduleName = package_name
+        print("package_name: ", package_name)
         try:
             pytree = {"name": moduleName, "children": ""}
             exec("import " + moduleName)
             folder_path = path + "\\" + moduleName
             print_files(folder_path, pytree)
-            f = open('static/treejson/' + moduleName + '.json', 'w')
+            f = open('static/treejson_tmp/' + moduleName + '.json', 'w')
             f.write(json.dumps(pytree))
             f.close()
         except Exception as e:
-            print(f"Error in package {filename}: {e}. Skipping...")
+            print(f"Error in package {package_name}: {e}. Skipping...")

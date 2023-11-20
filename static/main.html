@@ -242,6 +242,11 @@
                 <van-row style="margin-top:20px;font-size:12px">Charge</van-row>
                 <van-row><input style="position:relative;top:3px;" type="range" id="chargescale" min="5" max="1000"
                                 value="600"></van-row>
+                <div v-show="viewSelection === 'class' ">
+                <van-row>
+                    <van-col span="24"><input type="radio" name="radio" value="equalr" id="radio5" @click="selectit()">Equal-Radius</input></van-col>
+                </van-row>
+                </div>
                 <div v-show="viewSelection === 'net' ">
                 <van-row style="margin-top:30px;font-size:12px">
                     <van-col span="24"><input type="radio" name="flush" value="重绘" id="flush" onclick="javascript:location.reload()">Repaint</input></van-col>
@@ -279,6 +284,9 @@
             <div v-show="viewSelection === 'treemap'">
                 <van-row style="margin-top:30px">
                     <van-checkbox v-model="checked" style="margin-left: 5px;" class="van-haptics-feedback" @click="changemap()" type="primary">Exchange</van-checkbox>
+                </van-row>
+                <van-row style="margin-top:30px">
+                    <van-checkbox v-model="checked2" style="margin-left: 5px;" class="van-haptics-feedback" @click="viewpdf()" type="primary">PDF</van-checkbox>
                 </van-row>
             </div>
             <div v-show="viewSelection === 'hicircle'">
@@ -335,7 +343,9 @@
                 localValue: '',
                 singleModule: '',
                 flag: false,
+                pdf: false,
                 checked: false,
+                checked2: false,
             };
         },
         methods: {
@@ -466,9 +476,8 @@
                 var that = this;
                 this.viewSelection="treemap";
                 axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
-                    onDrawTreeMapReady(res.data,this.flag);
-                    console.log("html中的flag为")
-                    console.log(this.flag)
+                    onDrawTreeMapReady(res.data,this.flag,this.pdf);
+                    
                 });
             },
 
@@ -486,6 +495,10 @@
             },
             changemap() {
                 this.flag = !this.flag;
+                this.treemapvis();
+            },
+            viewpdf() {
+                this.pdf = !this.pdf;
                 this.treemapvis();
             },
 

@@ -13,7 +13,18 @@ import platform
 import textwrap
 import sys
 import importlib
-#------------------do not delete the import above,using while runtime.----------------------------------
+# ------------------do not delete the import above,using while runtime.----------------------------------
+
+
+def init():
+    global modules, mnetjson, nodes, links, myclass, myfunction, layer
+    modules = []
+    mnetjson = {'nodes': '', 'links': ''}
+    nodes = []
+    links = []
+    myclass = ""
+    myfunction = ""
+    layer = 0
 
 
 def is_iterable(wanted):
@@ -29,10 +40,10 @@ def get_modules(pname, initpname, layer):
     arg = eval(pname)
     if arg.__name__ == initpname:
         modules.append(arg.__name__)
-        myclass,outclass = basicFunction.in_out_classes_bymodulename(eval(arg.__name__))
+        myclass, outclass = basicFunction.in_out_classes_bymodulename(eval(arg.__name__))
         classcount = len(myclass)
 
-        myfunction,outfunction = basicFunction.get_functions(eval(arg.__name__))
+        myfunction, outfunction = basicFunction.get_functions(eval(arg.__name__))
         functioncount = len(myfunction)
         if ("__file__" in dir(eval(arg.__name__)) and (eval(arg.__name__).__file__ is not None)):
             nodes.append(
@@ -53,10 +64,10 @@ def get_modules(pname, initpname, layer):
                     # print("1---.py=",m,m_info.__name__,m_info.__file__)
                     modules.append(m_info.__name__)
 
-                    myclass,outclass = basicFunction.in_out_classes_bymodulename(eval(m_info.__name__))
+                    myclass, outclass = basicFunction.in_out_classes_bymodulename(eval(m_info.__name__))
                     classcount = len(myclass)
 
-                    myfunction,outfunction = basicFunction.get_functions(eval(m_info.__name__))
+                    myfunction, outfunction = basicFunction.get_functions(eval(m_info.__name__))
                     functioncount = len(myfunction)
                     nodes.append({'name': m_info.__name__, 'file': eval(m_info.__name__).__file__, 'layer': layer,
                                   'hasclass': classcount, 'myclass': myclass, "hasfunction": functioncount,
@@ -67,10 +78,10 @@ def get_modules(pname, initpname, layer):
                     modules.append(m_info.__name__)
                     ex = os.path.splitext(m_info.__file__)[1]
                     # print(ex)
-                    myclass,outclass = basicFunction.in_out_classes_bymodulename(eval(m_info.__name__))
+                    myclass, outclass = basicFunction.in_out_classes_bymodulename(eval(m_info.__name__))
                     classcount = len(myclass)
 
-                    myfunction,outfunction = basicFunction.get_functions(eval(m_info.__name__))
+                    myfunction, outfunction = basicFunction.get_functions(eval(m_info.__name__))
                     functioncount = len(myfunction)
                     nodes.append(
                         {'name': m_info.__name__, 'file': eval(m_info.__name__).__file__, 'ftype': ex, 'layer': layer,
@@ -128,61 +139,43 @@ def netjson(filename, initpname):
     mnetjson['nodes'] = nodes
     mnetjson['links'] = links
 
-    f = open('static/netjson/' + filename + '.json', 'w')
+
+def pyNet(moduleName):
+    initpname = moduleName
+    exec("import " + moduleName)
+    init()
+    netjson(moduleName, initpname)
+
+    f = open('static/netjson/' + moduleName + '.json', 'w')
     f.write(json.dumps(mnetjson))
     f.close()
 
 
-def pyNet(moduleName):
-    global modules, mnetjson, nodes, links, myclass, myfunction, layer
-    modules = []
-    mnetjson = {'nodes': '', 'links': ''}
-    nodes = []
-    links = []
-    myclass = ""
-    myfunction = ""
-    layer = 0
-
-    initpname = moduleName
-    exec("import " + moduleName)
-    netjson(moduleName, initpname)
-
-
 def readpackages():
     packages = []
-    filename = 'pylibsNet.txt'
     i = 0
-    with open(filename, 'r', encoding='utf-8') as f:
+    with open('pylibsNet.txt', 'r', encoding='utf-8') as f:
         line = f.readline()
         while line:
-            packages.append(line.split(" ")[0].lower().split("-")[0])
+            packages.append(line.split(" ")[0].replace(".py", "").lower())
             line = f.readline()
             i = i + 1
         print("i", i)
-    print("pylibsNet before", packages)
     return packages[2:]
 
 
 def pyNetAll(path):
-    global modules, mnetjson, nodes, links, myclass, myfunction, layer
-    modules = []
-    mnetjson = {'nodes': '', 'links': ''}
-    nodes = []
-    links = []
-    myclass = ""
-    myfunction = ""
-    layer = 0
-
     path = path[:-8] + 'Lib\site-packages'
-    package_names = []
-    package_names = readpackages()
-    print("package_names", package_names)
-    for package_name in package_names:
-        filename = package_name.replace(".py", "")
-        initpname = filename
-        print("filename:", filename)
+    packages_name = readpackages()
+    for package_name in packages_name:
+        init()
+        initpname = package_name
+        print("package_name: ", package_name)
         try:
-            if importlib.util.find_spec(filename):
-                netjson(filename, initpname)
+            if importlib.util.find_spec(package_name):
+                netjson(package_name, initpname)
+                f = open('static/netjson_tmp/' + package_name + '.json', 'w')
+                f.write(json.dumps(mnetjson))
+                f.close()
         except Exception as e:
-            print(f"Error in package {filename}: {e}. Skipping...")
+            print(f"Error in package {package_name}: {e}. Skipping...")

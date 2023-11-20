@@ -5,6 +5,16 @@ from extract import basicFunction
 import builtins
 
 
+def init():
+    global myclasses, nodes, links, classesjson, methods, attributes
+    myclasses = []
+    nodes = []
+    links = []
+    classesjson = {'nodes': '', 'links': ''}
+    methods = []
+    attributes = []
+
+
 def get_classes(path, pname):
     exec("import " + pname)
     print(path)
@@ -82,12 +92,7 @@ def get_links(myclasses, nodes):
 
 
 def getClassNet(path, pname):
-    global myclasses, nodes, links, classesjson, methods, attributes
-    myclasses = []
-    nodes = []
-    links = []
-    classesjson = {'nodes': '', 'links': ''}
-
+    init()
     path = os.path.join(path, pname)
     myclasses = get_classes(path, pname)
     print("-----5----")
@@ -108,7 +113,7 @@ def readpackages():
     with open(filename, 'r', encoding='utf-8') as f:
         line = f.readline()
         while line:
-            packages.append(line.split(" ")[0].lower().split("-")[0])
+            packages.append(line.split(" ")[0].replace(".py", "").lower())
             line = f.readline()
             i = i + 1
         print("i", i)
@@ -117,20 +122,13 @@ def readpackages():
 
 
 def getClassNetAll(path):
-    global myclasses, nodes, links, classesjson, methods, attributes
-    myclasses = []
-    nodes = []
-    links = []
-    classesjson = {'nodes': '', 'links': ''}
-
     path = path[:-8] + 'Lib\site-packages'
-    package_names = []
-    package_names = readpackages()
-    print("package_names", package_names)
-    for package_name in package_names:
-        filename = package_name.replace(".py", "")
-        pname = filename
-        print("filename:", filename)
+    packages_name = readpackages()
+    print("package_names: ", packages_name)
+    for package_name in packages_name:
+        init()
+        pname = package_name
+        print("package_name: ", package_name)
         try:
             folder_path = os.path.join(path, pname)
             get_classes(folder_path, pname)
@@ -138,8 +136,8 @@ def getClassNetAll(path):
 
             classesjson['nodes'] = nodes
             classesjson['links'] = links
-            f = open('static/netjson/' + pname + 'class.json', 'w')
+            f = open('static/netjson_tmp/' + pname + 'class.json', 'w')
             f.write(json.dumps(classesjson))
             f.close()
         except Exception as e:
-            print(f"Error in package {filename}: {e}. Skipping...")
+            print(f"Error in package {package_name}: {e}. Skipping...")
