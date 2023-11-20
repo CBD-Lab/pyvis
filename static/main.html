@@ -371,6 +371,9 @@
                 this.clearPage();
                 switch (this.viewSelection) {
                     case "net":
+                        if (typeof(key) != "undefined") {
+                            this.keyword=key;
+                        }
                         this.netvis();
                         break;
                     case "matrix":
@@ -410,7 +413,14 @@
                 this.clearPage();
                 this.viewSelection="net";
                 axios.get("http://127.0.0.1:5006/module?wanted=" + this.keyword).then(res=>{
-                    onDrawNetReady(res.data, this.keyword);
+                console.log("hello")
+                    onDrawNetReady(res.data, this.keyword,this.search);
+                })
+                .catch(error=>
+                {
+                 console.error("error fetching",error);
+                 this.singleModule=this.keyword;
+                 this.searchSingle();
                 });
             },
             matrixvis() {
@@ -571,16 +581,15 @@
                 }
             },
             searchSingle() {
+                console.log("search single");
                 var that = this;
                 fetch("/single?wanted=" + this.singleModule).then(res => {
-                        console.log(this.singleModule,"----------------");
                         if (res.ok) {
                             return res.json();
                         }
                         throw new Error("Network response was not ok.");
                     })
                     .then(data => {
-                        console.log("Response from server:", data);
                         this.keyword = this.singleModule;
                         this.netvis();
                     })
