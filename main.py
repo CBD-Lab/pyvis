@@ -1,9 +1,10 @@
+import json
 import os
 import subprocess
 import sys
 import urllib.parse
 import shutil
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify, send_from_directory,send_file
 from flask_cors import CORS
 import inspect
 import importlib
@@ -21,12 +22,10 @@ def netvis():
 
 @app.route("/module")
 def module():
-    print("module")
     wanted = request.args.get("wanted", type=str)
     if (wanted is None) or (wanted == "undefined") or (wanted == ""):
         wanted = 'pylibsNet'
     jsonfile = "netjson/" + wanted + ".json"
-    print(jsonfile)
     return app.send_static_file(jsonfile)
 
 
@@ -133,7 +132,6 @@ def moduletxt():
     # return jsonify({"result": modulesrc})
     return modulesrc
 
-
 @app.route("/localModule")
 def localModule():
     print("localModule")
@@ -143,6 +141,7 @@ def localModule():
     jsonfile = "netjson/" + wanted + ".json"
     print(jsonfile)
     return app.send_static_file(jsonfile)
+
 
 
 @app.route('/localPath', methods=['GET'])
@@ -239,13 +238,20 @@ def userPath():
 # 添加新的路由来返回SVG文件
 @app.route('/get_svg/<filename>')
 def get_svg(filename):
-    svg_directory = 'static/pic/'  # 替换为你的SVG文件所在的目录路径
+    svg_directory = 'static/pic/'
     return send_from_directory(svg_directory, filename)
 
-
-# 在你的代码中的某个地方调用这个接口，例如：
-# http://your-server/get_svg/pdf.svg
-
+# 获得整体包的信息
+@app.route("/pylibsInfo", methods=["GET"])
+def pylibsInfo():
+    module_name = request.args.get("wanted", type=str)
+    filedir='static/pylibsInfo.json'
+    # print(send_from_directory(filedir))
+    with open(filedir,'rb') as f:
+        load_json=json.load(f)
+        module_info=load_json[module_name]
+        print(module_info)
+    return module_info
 
 if "__main__" == __name__:  # 程序入口
     app.run(port=5006, debug=True)
