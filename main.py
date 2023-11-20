@@ -215,7 +215,7 @@ def userPath():
         os.remove('pipdeptree.json')
     try:
         print("Performs command line operations.")
-        subprocess.run('pipdeptree --json-tree > pipdeptree.json', shell=True, check=True)
+        subprocess.run(user_path + 'pipdeptree --json-tree > pipdeptree.json', shell=True, check=True)
     except subprocess.CalledProcessError as e:
         return jsonify({'error': f'Error running pipdeptree: {str(e)}'}), 500
 
