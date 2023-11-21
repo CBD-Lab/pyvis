@@ -1,9 +1,10 @@
-function drawTree(data){
+function drawTree(data,treecount){
      let tooltiptree = d3.select('body')
                             .append('div')
                             .attr("id", "tiptree") // 添加ID属性
                             .style('position', 'absolute')
                             .style('z-index', '25')
+                            .style('color', 'black')
                             .style('color', 'black')
                             .style('font-size', '12px')
                             .style("background-color","#AAF")
@@ -25,23 +26,40 @@ function drawTree(data){
      var root=tree(hi);
      var links=root.links();
      var nodes=root.descendants();
-     var i=0, duration=750,root;
-     var treemap = d3.tree().size([height, width]);
-     initData();
+     var i=0, duration=750;
+//     var treemap = d3.tree().size([height, width]);
+     initData(root);
    /********************* 2. 数据初始化绑定（包括数据更新） *********************/
-    function initData() {
+    function initData(root) {
       // 设置第一个元素的初始位置
       root.x0 = height / 2;
       root.y0 = 10;
-      root._height=0;
+      root._children=[];
         // 计算总节点数
       const totalNodes = countNodes(root);
-        // 在根节点上调用 collapseAllNodesByProbability，传入总节点数
-      collapseAllNodesByProbability(root, totalNodes);
+      var filecount=updateFileCount(root)
+      treecount.treeNodeCount=totalNodes;
+      if(filecount>0){
+      collapseAllNodesByFile(root);}
       // 更新节点状态
       updateChart(root);
-
     }
+/*********************************更新整个树形结构的节点文件数目   **************************/
+function updateFileCount(node)
+{
+    if(!node.data.fileCount)
+        {
+            node.data.fileCount=0;
+        }
+    if(node.children)
+    {
+        node.children.forEach(function (child) {
+        node.data.fileCount=updateFileCount(child)+node.data.fileCount
+        })
+    }
+    return node.data.fileCount
+}
+
 /********************* 计算树中的节点总数 *********************/
 function countNodes(node) {
   let count = 1; // 初始为 1，包括当前节点
@@ -72,26 +90,66 @@ function collapseAllNodesByProbability(node,totalNodes) {
     }
   }
 }
-/********************* 更新树的高度，根据_height参数 *********************/
-function updateHeight(root)
+//根据节点名字来在父节点中移除
+function removeNodeByName(parent,nodeName)
 {
- let height = 0; // 初始值设置为 0
-  if(root.children) {//该分支不是叶子节点，没收起
-    root.children.forEach(function (child) {
-      height=Math.max(height,1+updateHeight(child));
-    });
-  root._height=height;
-  return height;
-  }
- else//该树分支没有收起
- {
-//    root._height=0;
-    root._height=0
-    return 0;
- }
-
-//  root._height=height+1;
+    parent.children=parent.children.filter(child=>child.data.name!==nodeName);
+    parent.data.children=parent.data.children.filter(datachild=>datachild.name!=nodeName);
+    if(parent.children.length==0)  //问题2出在这里，不能把子节点里面的children设为空数组，必须设为null否则不能用d3.tree()
+    {
+        parent.children=null;
+        parent.data.children=null;
+    }
 }
+
+/********************* 根据树的节点及其子节点是否含有文件关闭节点 *********************/
+function collapseAllNodesByFile(node) {
+    if (node.children) {
+    // 创建 children 数组的副本
+    const childrenCopy = node.children.slice();
+    childrenCopy.forEach(function (child) {
+      collapseAllNodesByFile(child); // 递归处理子节点并传递额外参数
+    });
+  }
+
+  if (!node.data.fileCount) {
+    node.data.fileCount = 0;
+  }
+
+  // 目前是把当前节点作为子节点考虑是不是要收起，初始设置未如果当前节点树没有文件就收起
+  if (node.data.fileCount === 0 && node.parent) {
+    // 收起该节点
+    var parent = node.parent;
+    removeNodeByName(parent, node.data.name);
+
+    if (!parent._children) {
+      parent._children = [];
+    }
+
+    parent._children.push(node);
+  }
+}
+
+/********************* 更新树的高度 *********************/
+function updateHeight(node)
+{
+  let height = 0; // 初始值设置为 0
+  if(!node.children)//要么所有子节点被隐藏要么没有子节点，显示高度为0
+  {
+//    node._height=0;
+    node.height=0
+    return 0;
+  }
+  else//当前节点有子节点并且有展开的节点
+  {
+     node.children.forEach(function (child) {
+     height=Math.max(height,1+updateHeight(child));//遍历所有子节点加一得到最大高度
+    });
+//    node._height=height;
+    node.height=height;
+    return height;
+    }
+  }
 /********************* 5. link交互和绘制  *********************/
 function updateLinks(source, links) {
   // 更新数据
@@ -146,7 +204,21 @@ function updateLinks(source, links) {
 function updateNodes(source, nodes) {
   // 给节点添加id，用于选择集索引
   var mynode = svg.selectAll("g.node").data(nodes, function (d,i) {
-    return d.id || (d.id = ++i);
+      if(d.id)//问题1出在这里我哭...分配的新节点的id不能跟之前的节点id重合，不然会错乱显示
+      {
+        return d.id
+      }
+      else{
+        var fullname = d.data.name;
+        var point=d;
+                    while(point.depth>=0&& point.parent)
+                        {
+                            point=point.parent;
+                            fullname = point.data.name +'.'+ fullname;
+                        }
+        d.id=fullname
+        return d.id
+        }
   });
 
   // 添加enter操作，添加类名为node的group元素
@@ -154,7 +226,6 @@ function updateNodes(source, nodes) {
     .enter()
     .append("g")
     .attr("class", "node")
-    // 默认位置为当前父节点的位置
     .attr("transform", function (d) {
       return "translate(" + source.y0 + "," + source.x0 + ")";
     });
@@ -164,7 +235,7 @@ function updateNodes(source, nodes) {
     nodeEnter
      .append("path")
      .attr("class","node")
-     .attr("d", d3.symbol().type(function(d) {
+     .attr("d", d3.symbol().type(function(d,i) {
       var endcase = (d.data.name).split('.')[1];
       if (endcase == 'py'){
           return d3.symbols[0];
@@ -182,7 +253,7 @@ function updateNodes(source, nodes) {
           return d3.symbols[5];
       }
     }))
-    .attr("r", 1e-6)
+//    .attr("r", 1e-6)
     .style("fill", function (d) {
      return chooseColor(d.data.name)
     })
@@ -190,14 +261,15 @@ function updateNodes(source, nodes) {
     {
         return (d._children) &&(!d.children) ? 0.9:0.1;
     })
-    .on("click", function(d,i)
+    .on("click", function(event,d)
     {
-    click(i);
-    })
+        click(d);
+    });
 
   // 给每个新加的group元素添加文字说明
   nodeEnter
     .append("text")
+//    .attr("class","node")
 //    .attr("dy", ".1em")
     .attr("x", function (d) {
       return d.children || d._children ? -10 : 10;
@@ -215,10 +287,29 @@ function updateNodes(source, nodes) {
      .attr("stroke-width","0.3px")
      .on("click",function(event,d)
      {
-     if(d.height==0){
-        textclick(event,d);
-        }
+         if(d.height==0){
+            textclick(event,d);
+            }
      })
+
+      // 给每个新加的group元素添加节点的文件数说明
+  nodeEnter
+    .append("text")
+    .attr("x", function (d) {
+      return d.children || d._children ? 20 : -20;
+    })
+    .attr("y",3)
+    .attr("text-anchor", function (d) {
+      return d.children || d._children ? "end" : "start";
+    })
+    .text(function (d) {
+      return d.data.fileCount==0?'':d.data.fileCount;
+    })
+     .attr("stroke", function(d){
+        return chooseColor(d.data.name);
+    })
+     .attr("stroke-width","0.3px")
+
     nodeEnter
         .each(function(d) {
             if(d.data.linkAll
@@ -227,6 +318,7 @@ function updateNodes(source, nodes) {
             {
               d3.select(this)
                 .append("foreignObject")
+                .attr("class","fileBox")
                 .attr("width", "8px")
                 .attr("height", "15px")
                 .attr("x", function(event,d) {
@@ -239,7 +331,6 @@ function updateNodes(source, nodes) {
                  .html('<img src="http://127.0.0.1:5006/get_svg/fileBox.svg" width="100%" height="100%" />')
                  .on("click",function(event,d)
                  {
-                    console.log(d);
                     textclick(event,d);
                  })
 
@@ -269,7 +360,6 @@ function updateNodes(source, nodes) {
 
   // 获取update集
   var nodeUpdate = nodeEnter.merge(mynode);
-
   // 设置节点的位置变化，添加过渡动画效果
   nodeUpdate
     .transition()
@@ -282,7 +372,7 @@ function updateNodes(source, nodes) {
   nodeUpdate
     .select("path.node")
     .attr("r", 10)
-     .style("fill", function (d) {
+    .style("fill", function (d) {
         return chooseColor(d.data.name);
     })
     .attr("cursor", "pointer");
@@ -299,35 +389,37 @@ function updateNodes(source, nodes) {
     // 移除元素
     .remove();
 
-  nodeExit.select("circle").attr("r", 1e-6);
-
+  nodeExit.select("path").attr("opacity", 1e-6);
   nodeExit.select("text").style("fill-opacity", 1e-6);
 }
 
 
 /********************* 6. 单击节点事件处理  *********************/
-// 当点击时，切换children，同时用_children来保存原子节点信息
+// 当点击时，展开当前节点的所有叶子节点
 function click(d) {
-  if (d._clickid) {
-    // 若在200ms里面点击第二次，则不做任何操作，清空定时器
-    clearTimeout(d.data._clickid);
-    d.data._clickid = null;
-  } else {
-    // 首次点击，添加定时器，200ms后进行toggle
-    d.data._clickid = setTimeout(() => {
-      if (d.children) {//收起节点
-        d._height=0;//存另一个高度，为收起后屏幕显示的高度。
-        d._children = d.children;
-        d.children = null;
-      } else {
-        d._height=d.height;//展开节点，把节点高度设为真实值。
-        d.children = d._children;
-        d._children = null;
+      if (d._children&&d._children.length>0) {//如果有隐藏节点，就全部展开
+          d._children.forEach(function(_child)
+          {
+            d.children.push(_child);
+            d.data.children.push(_child.data)
+          })
+            d._children = [];
+          }
+      else {//如果已经全部展开就收缩回去
+        const childrenCopy = d.children.slice();//创建副本
+        childrenCopy.forEach(function(child)
+            {
+            if(!d._children)
+                {
+                    d._children=[];
+                }
+            if(child.data.fileCount<1){
+                d._children.push(child)
+                removeNodeByName(d,child.data.name)
+                }
+          })
       }
       updateChart(d);
-      d.data._clickid = null;
-    }, 200);
-  }
 }
 
 function textclick(event,d){
@@ -362,15 +454,14 @@ function textclick(event,d){
 }
   /********************* 3. 数据更新绑定  *********************/
 function updateChart(source) {
+      treecount.treeShowNodeCount=countNodes(root);
       updateHeight(root);
-      // 设置节点的x、y位置信息
-      var treeData = treemap(root);
+      var treeData = tree(root);
       // 计算新的Tree层级
       var nodes = treeData.descendants(),
       links = treeData.descendants().slice(1);
-
       nodes.forEach(function (d) {
-        d.y = d.depth * width/(root._height+2);
+        d.y = d.depth * width/(root.height+2);
       });
 
       // node交互和绘制
@@ -793,7 +884,7 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,pdfClass,gitClass)
             }
 }
 
-window.onDrawTreeReady = function(data) {
-    drawTree(data);
+window.onDrawTreeReady = function(data,treecount) {
+    drawTree(data,treecount);
 }
 

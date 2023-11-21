@@ -4,7 +4,8 @@ var nodeweight;
 var nodelayer;
 
 
-function drawNet(data, k){
+function drawNet(data, k,search){
+//    console.log(search);
     var forceSimulation = d3.forceSimulation()
 							.force("link",d3.forceLink())
 							.force("charge",d3.forceManyBody().strength(-100))
@@ -17,7 +18,7 @@ function drawNet(data, k){
     var nodes = data.nodes;
     var links = data.links;
 
-    console.log('check',nodes);
+//    console.log('check',nodes);
     nodeweight = new Array(nodes.length);
     nodehasclass = new Array(nodes.length);
     nodehasfunction = new Array(nodes.length);
@@ -49,6 +50,21 @@ function drawNet(data, k){
     var img_h = 50;
     var img_w = 50;
     var rad = 23;
+       // 这里是添加的  start
+    var tooltip = d3.select("body").append("div")
+                   .attr("class", "tooltip")
+                   .style("left", "20vw")
+                   .style("top", "20vh")
+                   .style("width", "40vw")
+                   .style("background-color", "#E4F1FF")
+                   .style("font-family", "Consolas")
+                   .style("white-space", "pre-line")
+                   .style("display", "none");
+    var styleElement = document.createElement('style');
+    var cssStyles = '.tooltip:after { content: ""; width: 0; height: 0; border: 12px transparent; }';
+    styleElement.appendChild(document.createTextNode(cssStyles));
+    document.head.appendChild(styleElement);
+   // 这里是添加的  end
     var node = svg.selectAll(".node")
 				  .data(nodes)
 				  .enter()
@@ -87,28 +103,33 @@ function drawNet(data, k){
 					  }
 					  else { return color[i%10]; }
 				  })
-				  .on("mouseover", (event, d) => {
-
+				   .on("mouseenter", (d,i) => {
+					  link.style("stroke-width", l => l.source == d || l.target == d ? 4 : 1);
+					  var point=i;
+					  fullname=point.name;
+					  if(fullname.lastIndexOf('.')==-1)
+					  {
+					    fetch('http://127.0.0.1:5006/pylibsInfo?wanted='+fullname)
+					    .then(response => response.json())  // 使用json()方法提取JSON数据
+					        .then(data=>{
+					        console.log(typeof(data),data.Name,data['Name']);
+					        const tooltipContent = `<div style="background-color:grey">Name:${data.Name}</div><div>Version:${data.Version}</div><div>Summary:${data.Summary}</div><div>Author:${data.Author}</div><div>License:${data.License}</div><div>Location:${data.Location}</div>`;
+					        tooltip.html(tooltipContent).style("display","block")
+					        })
+					  }
 				  })
-				  .on("mouseout", d => {
-
+				  .on("mouseleave", d =>
+				  {
+				  tooltip.style("display", "none");
+				  link.style("stroke-width", 1)
 				  })
 				  .style("cursor", "pointer")
 				  .on("click", (d, i) => {
-				      console.log(d, i);
-					  var fullname = i.name.split('.', 1)[0];
 					  var point = i;
-					  while (point.depth >= 0 && point.parent) {
-						  point = point.parent;
-						  fullname = point.name + '.' + fullname;
-					  }
-
-					  if (point.name == "nn")
-						fullname = "torch." + fullname;
-					  else
-						fullname = fullname;
-
-					  console.log(d, i, fullname);
+                      fullname=point.name;
+				      console.log(point,fullname);
+				      if(fullname.lastIndexOf('.')!=-1)
+				      {
 					  fetch('http://127.0.0.1:5006/leafCode?wanted=' + fullname)
 						  .then(response => response.text())
 						  .then(data => {
@@ -129,12 +150,16 @@ function drawNet(data, k){
 							  tips.append("div")
 								  .attr("class", "content")
 								  .html('<pre><code class="language-python">' + highlightedCode + '</code></pre>');
-
-							  console.log(data);
 						  })
 						  .catch(error => {
 							  console.error('Error executing Python script:', error);
 						  });
+						  }
+
+						  else
+						  {
+						    search(i.name);
+						  }
 				  })
 				  .call(drag());
 
@@ -252,9 +277,9 @@ function selectit(type){
     return null;
 }
 
-window.onDrawNetReady = function(data, k) {
+window.onDrawNetReady = function(data, k,search) {
     // 执行绘图逻辑
-    drawNet(data, k);
+    drawNet(data, k,search);
 }
 window.onNetfunction = function(type) {
     selectit(type);
