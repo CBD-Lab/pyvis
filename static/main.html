@@ -109,6 +109,12 @@
 
         .van-hairline--surround{
             background-color:var(--leftsidecolor);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh; /* 设置最小高度为视窗高度，保证内容少时仍然占满整个屏幕 */
+        }
+        .flex-placeholder {
+          flex-grow: 0.6; /* 占满剩余空间，将下面的两个 van-row 推到底部 */
         }
         .searchbox{
             border:1px solid var(--topcolor);
@@ -184,6 +190,7 @@
 
     <van-row style="height:90vh">
         <van-col offset="0" span="4" class="van-hairline--surround">
+            <div class="flex-placeholder">
             <!--左侧搜索栏-->
             <van-row class="searchbox">
                 <van-col offset="0" span="16">
@@ -294,9 +301,24 @@
                 <van-row style="margin-top:30px"><input type="radio" name="flush" value="重绘" id="flush"
                                                         onclick="javascript:location.reload()">Repaint</input></van-row>
             </div>
-
-            <van-row style="margin: 10vh 0 1vh 1vh; font-size: 16px;">
-                <div>Current Environment Path:</div>
+            <div v-show="viewSelection === 'tree'&&drawTreeReady==1">
+                <div style="margin-top: 30px;">
+                  <van-row>Totally {{ treecount.treeNodeCount }} nodes</van-row>
+                  <van-row>Show {{ treecount.treeShowNodeCount }} nodes</van-row>
+                </div>
+                    </div>
+            </div>
+<!--            <van-row style="margin: 10vh 0 1vh 1vh; font-size: 16px; display: flex; align-items: flex-end;">-->
+<!--                <div>Current Environment Path:</div>-->
+<!--            </van-row>-->
+         <div style="display: flex; flex-direction: column;">
+            <van-row class="searchbox" >
+                <van-col offset="0" span="16">
+                    <van-field v-model="singleModule" placeholder="Single Module Name"></van-field>
+                </van-col>
+                <van-col span="8">
+                    <van-button class="van-haptics-feedback" @click="searchSingle()">ExtractSingle</van-button>
+                </van-col>
             </van-row>
             <van-row class="searchbox" >
                 <van-col offset="0" span="16">
@@ -307,17 +329,9 @@
                                 :loading="isLoading" loading-text="loading...">ExtractAll</van-button>
                 </van-col>
             </van-row>
-
-            <van-row class="searchbox" style="margin-top:0.5vh;">
-                <van-col offset="0" span="16">
-                    <van-field v-model="singleModule" placeholder="Single Module Name"></van-field>
-                </van-col>
-                <van-col span="8">
-                    <van-button class="van-haptics-feedback" @click="searchSingle()">ExtractSingle</van-button>
-                </van-col>
-            </van-row>
-
+         </div>
         </van-col>
+
         <van-col class="graphpart" span="20">
             <div id="svgbox">
                 <svg id="graph" width="100%" height="100%"></svg>
@@ -347,11 +361,16 @@
                 pdf: false,
                 checked: false,
                 checked2: false,
+                treecount: {
+                  treeNodeCount: 0,
+                  treeShowNodeCount: 0
+                },
+                drawTreeReady:0
             };
         },
         methods: {
             home() {
-                this.keyword = "jinja2";
+                this.keyword = "torch";
                 this.netvis();
             },
 
@@ -446,7 +465,8 @@
                 this.clearPage();
                 this.viewSelection="tree";
                 axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
-                    onDrawTreeReady(res.data);
+                    onDrawTreeReady(res.data,this.treecount);
+                    this.drawTreeReady=1;
                 });
             },
             pinetreevis() {
