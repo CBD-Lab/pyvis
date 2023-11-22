@@ -1,4 +1,4 @@
-function drawPineTree(data) {
+function drawPineTree(data,pineCount) {
     var width = (window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth) * 0.84;
     var height = (window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight) * 0.89;
 
@@ -58,6 +58,7 @@ function drawPineTree(data) {
 		.attr("fill", color[2])
 		.text("Nodes=" + data.children.length);
 
+    pineCount.node = data.children.length;
 	var length = 100;
 	var rate = 0.6;
 	var x0 = width / 2;
@@ -149,7 +150,20 @@ function drawPineTree(data) {
             }))
             .attr("opacity",d => count > 0 ? 0 : 0.5)
             .attr("stroke", "lightgray")
-            .attr("fill", (d,i)=>color[data.depth])
+            .attr("fill", (d)=>{
+                console.log(d,now_data);
+                 if(now_data.data.linkAll &&
+                 ((typeof( now_data.data.linkAll['pdfClass']) !== "undefined" && Object.keys(now_data.data.linkAll['pdfClass']).length > 0)
+                 || (typeof( now_data.data.linkAll['gitClass']) !== "undefined" && Object.keys(now_data.data.linkAll['gitClass']).length > 0)
+                 || (typeof( now_data.data.linkAll['pdfModule']) !== "undefined" && Object.keys(now_data.data.linkAll['pdfModule']).length > 0)))
+                 {
+
+                    return 'black';
+                 }
+                 else{
+                    return color[now_data.depth];
+                 }
+            })
 			.attr("cursor", "pointer")
 			.on("mouseover", function(){
 			    console.log('over',now_data);
@@ -289,7 +303,7 @@ function drawPineTree(data) {
 	show(data, x0, y0, length, rate, -Math.PI / 2, data.children.length);
 
 }
-window.onDrawPineTreeReady = function (data) {
+window.onDrawPineTreeReady = function (data,pineCount) {
 	// 执行绘图逻辑
-	drawPineTree(data);
+	drawPineTree(data,pineCount);
 }

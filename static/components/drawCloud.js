@@ -1,4 +1,4 @@
-function drawCloud(data,search){
+function drawCloud(data,search,cloudCount){
       var width = (window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth) * 0.84;
       var height = (window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight) * 0.89;
 
@@ -14,6 +14,8 @@ function drawCloud(data,search){
       var root=tree(hidata);
       var links=root.links();
       var worddata=root.descendants();
+
+      cloudCount.node = worddata.length;
       console.log(worddata);
       for (var i = 0; i < worddata.length; i++) {
 //          hiwords[i] = { text: worddata[i].data.name, size:(worddata[i].height+1)*6 };
@@ -33,7 +35,8 @@ function drawCloud(data,search){
           })
           .on("end", draw)
           .start();
-       function draw(words) {
+
+      function draw(words) {
   var svg=d3.select("#graph").append("svg")
             .attr("id", "cloudsvg")
             .attr("width", width)
@@ -50,12 +53,16 @@ function drawCloud(data,search){
             .style("font-family", "Impact")
             .style("cursor", "pointer")
             .style("fill", function (d, i) {
-          //   if(d.leaf=="True")
-            //    {
-              //  return "black";
-               // }
-             //else
-                return color[worddata[i].depth]; })
+                if(worddata[i].data.linkAll &&
+                 ((typeof( worddata[i].data.linkAll['pdfClass']) !== "undefined" && Object.keys(worddata[i].data.linkAll['pdfClass']).length > 0)
+                 || (typeof( worddata[i].data.linkAll['gitClass']) !== "undefined" && Object.keys(worddata[i].data.linkAll['gitClass']).length > 0)
+                 || (typeof( worddata[i].data.linkAll['pdfModule']) !== "undefined" && Object.keys(worddata[i].data.linkAll['pdfModule']).length > 0)))
+                 {
+
+                    return 'black';
+                 }
+                 else{
+                    return color[worddata[i].depth]; }})
             .attr("text-anchor", "middle")
             .attr("transform", function (d) {
               return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
@@ -102,6 +109,8 @@ function drawCloud(data,search){
                 d3.select('#svgbox').selectAll("tooltip").remove();
               })
             .on("click", (d, i) => {
+//                var nodecolor = d3.select(this).property('fill');
+//                console.log('nodec',nodecolor);
              var fullname = i.text.split('.', 1)[0];
               var point = i;
               while (point.depth >= 0 && point.parent) {
@@ -113,7 +122,8 @@ function drawCloud(data,search){
                 {
                 fullname="torch."+fullname;
                 }
-              console.log(d, i, fullname);
+              console.log('cloudname',d, i, fullname);
+
               fetch('http://127.0.0.1:5006/leafCode?wanted=' + fullname)
                 .then(response => response.text())
                 .then(data => {
@@ -124,24 +134,24 @@ function drawCloud(data,search){
                     .attr("class", "popup");
 
                   var drag=d3.drag()
-                              .on("start", function (event) {
-                                // 记录拖拽开始时的位置
-                                var startX = event.x;
-                                var startY = event.y;
+                          .on("start", function (event) {
+                            // 记录拖拽开始时的位置
+                            var startX = event.x;
+                            var startY = event.y;
 
-                                // 获取当前提示框的位置
-                                var currentLeft = parseFloat(tips.style("left"));
-                                var currentTop = parseFloat(tips.style("top"));
+                            // 获取当前提示框的位置
+                            var currentLeft = parseFloat(tips.style("left"));
+                            var currentTop = parseFloat(tips.style("top"));
 
-                                // 计算鼠标相对于提示框左上角的偏移
-                                offsetX = startX - currentLeft;
-                                offsetY = startY - currentTop;
-                              })
-                              .on("drag", function (event) {
-                                // 随鼠标移动，更新提示框位置
-                                tips.style("left", (event.x - offsetX) + "px")
-                                  .style("top", (event.y - offsetY) + "px");
-                              });
+                            // 计算鼠标相对于提示框左上角的偏移
+                            offsetX = startX - currentLeft;
+                            offsetY = startY - currentTop;
+                          })
+                          .on("drag", function (event) {
+                            // 随鼠标移动，更新提示框位置
+                            tips.style("left", (event.x - offsetX) + "px")
+                              .style("top", (event.y - offsetY) + "px");
+                          });
 
                         // 将拖拽行为绑定到要拖拽的元素上
                         tips.call(drag);
@@ -185,8 +195,8 @@ function drawCloud(data,search){
         }
 }
 
-window.onDrawCloudReady = function(data,search) {
+window.onDrawCloudReady = function(data,search,cloudCount) {
     console.log('drawTree.js is ready');
     // 执行绘图逻辑
-    drawCloud(data,search);
+    drawCloud(data,search,cloudCount);
 }
