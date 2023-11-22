@@ -40,7 +40,15 @@ function drawTree(data,treecount){
       var filecount=updateFileCount(root)
       treecount.treeNodeCount=totalNodes;
       if(filecount>0){
-      collapseAllNodesByFile(root);}
+          hasFile=1;
+          collapseAllNodesByFile(root);}
+      else if(filecount<1&&totalNodes>200)
+      {
+        hasFile=0;
+        pretendFileCount(root,totalNodes)
+        updateFileCount(root)
+        collapseAllNodesByFile(root);
+      }
       // 更新节点状态
       updateChart(root);
     }
@@ -70,6 +78,24 @@ function countNodes(node) {
   }
   return count;
 }
+/********************* 当文件个数为0并且节点过多的时候按照概率值模拟文件个数 *********************/
+function pretendFileCount(node,totalNodes)
+{
+    if(node.children)
+    {
+         node.children.forEach(function (child) {
+            pretendFileCount(child,totalNodes); // 递归处理子节点并传递额外参数
+    });
+    }
+
+    else if(Math.random() < 50/totalNodes&node.height==0)
+    {
+        node.data.fileCount=1;
+    }
+    else{
+        node.data.fileCount=0;
+    }
+}
 /********************* 根据树的节点个数随机关闭节点 *********************/
 function collapseAllNodesByProbability(node,totalNodes) {
   if (node.children) {
@@ -79,14 +105,10 @@ function collapseAllNodesByProbability(node,totalNodes) {
     // 根据概率属性决定是否收起节点
     if (Math.random() > 100/totalNodes&node.depth!=0) {
       node._children = node.children; // 将子节点移到 _children 中
-      node._height=0;//将该结点的高度另存为1
       node._children.forEach(function (child) {
       collapseAllNodesByProbability(child, totalNodes); // 递归处理子节点并传递额外参数
     });
       node.children = null; // 清空 children
-    }
-    else{
-    node._height=node.height;
     }
   }
 }
@@ -303,7 +325,7 @@ function updateNodes(source, nodes) {
       return d.children || d._children ? "end" : "start";
     })
     .text(function (d) {
-      return d.data.fileCount==0?'':d.data.fileCount;
+      return d.data.fileCount==0||!hasFile?'':d.data.fileCount;
     })
      .attr("stroke", function(d){
         return chooseColor(d.data.name);
@@ -883,7 +905,7 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,pdfClass,gitClass)
             });
             }
 }
-
+var hasFile=1;
 window.onDrawTreeReady = function(data,treecount) {
     drawTree(data,treecount);
 }
