@@ -50,7 +50,6 @@ function drawNet(data, k,search){
     var img_h = 50;
     var img_w = 50;
     var rad = 23;
-       // 这里是添加的  start
     var tooltip = d3.select("body").append("div")
                    .attr("class", "tooltip")
                    .style("left", "20vw")
@@ -64,7 +63,6 @@ function drawNet(data, k,search){
     var cssStyles = '.tooltip:after { content: ""; width: 0; height: 0; border: 12px transparent; }';
     styleElement.appendChild(document.createTextNode(cssStyles));
     document.head.appendChild(styleElement);
-   // 这里是添加的  end
     var node = svg.selectAll(".node")
 				  .data(nodes)
 				  .enter()
@@ -103,25 +101,23 @@ function drawNet(data, k,search){
 					  }
 					  else { return color[i%10]; }
 				  })
-				   .on("mouseenter", (d,i) => {
+				  .on("mouseenter", (d,i) => {
 					  link.style("stroke-width", l => l.source == d || l.target == d ? 4 : 1);
-					  var point=i;
-					  fullname=point.name;
-					  if(fullname.lastIndexOf('.')==-1)
-					  {
-					    fetch('http://127.0.0.1:5006/pylibsInfo?wanted='+fullname)
-					    .then(response => response.json())  // 使用json()方法提取JSON数据
-					        .then(data=>{
-					        console.log(typeof(data),data.Name,data['Name']);
-					        const tooltipContent = `<div style="background-color:grey">Name:${data.Name}</div><div>Version:${data.Version}</div><div>Summary:${data.Summary}</div><div>Author:${data.Author}</div><div>License:${data.License}</div><div>Location:${data.Location}</div>`;
-					        tooltip.html(tooltipContent).style("display","block")
-					        })
+					  var point = i;
+					  fullname = point.name;
+					  if(fullname.lastIndexOf('.') == -1) {
+					      fetch('http://127.0.0.1:5006/pylibsInfo?wanted=' + fullname)
+					      .then(response => response.json())  // 使用json()方法提取JSON数据
+					      .then(data => {
+					          console.log(typeof(data), data.Name, data['Name']);
+					          const tooltipContent = `<div style="background-color:grey">Name:${data.Name}</div><div>Version:${data.Version}</div><div>Summary:${data.Summary}</div><div>Author:${data.Author}</div><div>License:${data.License}</div><div>Location:${data.Location}</div>`;
+					          tooltip.html(tooltipContent).style("display","block");
+					      })
 					  }
 				  })
-				  .on("mouseleave", d =>
-				  {
-				  tooltip.style("display", "none");
-				  link.style("stroke-width", 1)
+				  .on("mouseleave", d => {
+				      tooltip.style("display", "none");
+				      link.style("stroke-width", 1)
 				  })
 				  .style("cursor", "pointer")
 				  .on("click", (d, i) => {

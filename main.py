@@ -4,12 +4,11 @@ import subprocess
 import sys
 import urllib.parse
 import shutil
-from flask import Flask, request, jsonify, send_from_directory,send_file
+from flask import Flask, request, jsonify, send_from_directory, send_file
 from flask_cors import CORS
 import inspect
 import importlib
 from extract import basicFunction, pylibsNet, pyNet, pyClass, pylibsInfo, pyTree, pylibsTree
-
 
 app = Flask(__name__)
 CORS(app)
@@ -106,13 +105,13 @@ def classVariable():
 
     funcAll = basicFunction.get_class_method(class_obj)
 
-    docs, pdf, git = basicFunction.get_class_pdf(class_obj,my_class)
+    docs, pdf, git = basicFunction.get_class_pdf(class_obj, my_class)
     result = {
         "var": varAll,
         "fun": funcAll,
         "doc": docs,
         "pdf": pdf,
-        'git':git
+        'git': git
     }
     return jsonify(result)
 
@@ -132,6 +131,7 @@ def moduletxt():
     # return jsonify({"result": modulesrc})
     return modulesrc
 
+
 @app.route("/localModule")
 def localModule():
     print("localModule")
@@ -141,7 +141,6 @@ def localModule():
     jsonfile = "netjson/" + wanted + ".json"
     print(jsonfile)
     return app.send_static_file(jsonfile)
-
 
 
 @app.route('/localPath', methods=['GET'])
@@ -241,17 +240,19 @@ def get_svg(filename):
     svg_directory = 'static/pic/'
     return send_from_directory(svg_directory, filename)
 
+
 # 获得整体包的信息
 @app.route("/pylibsInfo", methods=["GET"])
 def pylibsInfo():
     module_name = request.args.get("wanted", type=str)
-    filedir='static/pylibsInfo.json'
+    filedir = 'pylibsInfo.json'
     # print(send_from_directory(filedir))
-    with open(filedir,'rb') as f:
-        load_json=json.load(f)
-        module_info=load_json[module_name]
+    with open(filedir, 'rb') as f:
+        load_json = json.load(f)
+        module_info = load_json[module_name]
         print(module_info)
     return module_info
+
 
 if "__main__" == __name__:  # 程序入口
     app.run(port=5006, debug=True)
