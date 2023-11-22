@@ -267,6 +267,7 @@
             </div>
 
             <div v-show="viewSelection === 'pinetree'">
+                <van-row>Totally {{ pineCount.node }} nodes</van-row>
                 <van-row style="margin-top:20px;margin-left: 5px;">Length</van-row>
                 <van-row>
                     <input style="position:relative;top:3px;margin-left: 5px;" type="range" id="lengthscale" min="30"
@@ -301,18 +302,23 @@
                 <van-row style="margin-top:30px"><input type="radio" name="flush" value="重绘" id="flush"
                                                         onclick="javascript:location.reload()">Repaint</input></van-row>
             </div>
-            <div v-show="viewSelection === 'bubble'">
+            <div v-show="viewSelection === 'bubble'" >
                 <van-row style="margin-top:30px;">
                     <input type="checkbox" name="label" value="showOn" id="showPdf" >show-pdf</input>
                     <input type="checkbox" name="label" value="showOn" id="showGit" >show-git</input>
                 </van-row>
+                <van-row>Totally {{ bubbleCount.node }} nodes</van-row>
+<!--                <van-row>Totally {{ bubbleCount.bubblePdf }} pdfs</van-row>-->
+<!--                <van-row>Totally {{ bubbleCount.bubbleGit }} gits</van-row>-->
+            </div>
+             <div v-show="viewSelection === 'cloud'" >
+                <van-row>Totally {{cloudCount.node }} nodes</van-row>
             </div>
             <div v-show="viewSelection === 'tree'&&drawTreeReady==1">
                 <div style="margin-top: 30px;">
                   <van-row>Totally {{ treecount.treeNodeCount }} nodes</van-row>
                   <van-row>Show {{ treecount.treeShowNodeCount }} nodes</van-row>
                 </div>
-                    </div>
             </div>
 <!--            <van-row style="margin: 10vh 0 1vh 1vh; font-size: 16px; display: flex; align-items: flex-end;">-->
 <!--                <div>Current Environment Path:</div>-->
@@ -335,6 +341,7 @@
                                     :loading="isLoading" loading-text="loading...">ExtractAll</van-button>
                     </van-col>
                 </van-row>
+
             </div>
         </van-col>
 
@@ -371,7 +378,16 @@
                   treeNodeCount: 0,
                   treeShowNodeCount: 0
                 },
-                drawTreeReady:0
+                drawTreeReady:0,
+                bubbleCount: {
+                    node:0
+                },
+                cloudCount:{
+                    node:0
+                },
+                pineCount:{
+                    node:0
+                }
             };
         },
         methods: {
@@ -481,7 +497,7 @@
                 this.viewSelection="pinetree";
                 axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
                     console.log(res.data);
-                    onDrawPineTreeReady(res.data);
+                    onDrawPineTreeReady(res.data,this.pineCount);
                 });
             },
             filetreevis() {
@@ -497,7 +513,8 @@
                 this.clearPage();
                 this.viewSelection="bubble";
                 axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
-                    onDrawBubbleReady(res.data);
+                    console.log('>>>>',this.bubbleCount);
+                    onDrawBubbleReady(res.data,this.bubbleCount);
                 });
             },
             cloudvis() {
@@ -505,7 +522,7 @@
                 this.clearPage();
                 this.viewSelection="cloud";
                 axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
-                    onDrawCloudReady(res.data,this.search);
+                    onDrawCloudReady(res.data,this.search,this.cloudCount);
                 });
             },
             treemapvis() {
