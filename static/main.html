@@ -291,12 +291,18 @@
                 </van-row>
             </div>
             <div v-show="viewSelection === 'treemap'">
+                <van-row style="margin-top:20px;margin-left: 5px;">Length</van-row>
+                <van-row>
+                    <input style="position:relative;top:3px;margin-left: 5px;" type="range" id="length" min="100"
+                           max="300" value="100">
+                </van-row>
                 <van-row style="margin-top:30px">
                     <van-checkbox v-model="checked" style="margin-left: 5px;" class="van-haptics-feedback" @click="changemap()" type="primary">Exchange</van-checkbox>
                 </van-row>
-                <van-row style="margin-top:30px">
+                <van-row style="margin-top:10px">
                     <van-checkbox v-model="checked2" style="margin-left: 5px;" class="van-haptics-feedback" @click="viewpdf()" type="primary">PDF</van-checkbox>
                 </van-row>
+                <van-row style="margin-top: 5px;">Totally {{ mapCount.node }} nodes</van-row>
             </div>
             <div v-show="viewSelection === 'hicircle'">
                 <van-row style="margin-top:30px"><input type="radio" name="flush" value="重绘" id="flush"
@@ -387,6 +393,9 @@
                     node:0
                 },
                 pineCount:{
+                    node:0
+                },
+                mapCount:{
                     node:0
                 }
             };
@@ -531,7 +540,7 @@
                 var that = this;
                 this.viewSelection="treemap";
                 axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
-                    onDrawTreeMapReady(res.data,this.flag,this.pdf);
+                    onDrawTreeMapReady(res.data,this.flag,this.pdf,this.mapCount);
                     
                 });
             },
