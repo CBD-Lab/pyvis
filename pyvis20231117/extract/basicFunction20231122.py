@@ -10,7 +10,40 @@ from inspect import isclass
 from flask import jsonify
 
 
-def get_functions(wanted):
+def get_modules(wanted):
+    modules = inspect.getmembers(wanted, inspect.ismodule)
+    mymodules = []
+    for m in modules:
+        mymodules.append(m[1].__name__)
+        # print(m)
+    return mymodules
+
+
+# print(get_modules(torch.nn.modules.transformer)) 得到py文件和包 ，多出来的有torch和os和warnings
+
+
+def get_classes(wanted):
+    classes = inspect.getmembers(wanted, inspect.isclass)
+    myclasses = []
+    for m in classes:
+        myclasses.append(m[1].__name__)
+        # print(m)
+
+    return myclasses
+
+
+# print(get_classes(torch.nn.modules.transformer)) 也是init得到类
+
+
+def get_classes_bydir(wanted):
+    classes = [x for x in dir(wanted) if isclass(getattr(wanted, x))]
+    return classes
+
+
+# print(get_classes_bydir(torch.nn.modules.transformer)) 和上面的结果一样
+
+
+def get_functions(wanted):  ##to do
     try:
         funcs = inspect.getmembers(wanted, inspect.isfunction)
         infuncs = []
@@ -29,6 +62,20 @@ def get_functions(wanted):
 
 
 # print(get_functions(torch.nn.modules.transformer))会直接得到__init__.py里的函数
+
+
+def internal_classes(wanted):  # classes defined in this .py file
+    try:
+        src = inspect.getsource(wanted)
+        p = ast.parse(src)
+        classes = [node.name for node in ast.walk(p) if isinstance(node, ast.ClassDef)]
+    except Exception as e:
+        print("inspect.getsource error, maybe return null")
+        classes = []
+    return classes
+
+
+# print(internal_classes(torch.nn.modules.transformer))直接输入包名跑为空
 
 
 def in_out_classes_bymodulename(wanted):
@@ -113,10 +160,6 @@ def get_class_method(wanted):
     return cmethod
 
 
-# print(get_class_method(torch.nn.modules.transformer.Transformer)) 得到__init__.py内python的内置函数，import的包和模块，
-# form .xxx的xxx,前面带'_'的参数，以及在同一级目录下的其他模块（包和py文件）
-
-
 # get a class's pdf in docs
 def get_class_pdf(class_obj, fullname):
     pdfurl = len("https://arxiv.org/abs/1810.04805")
@@ -148,6 +191,16 @@ def get_class_pdf(class_obj, fullname):
                     gitValue[fullname] = git
                     # classGit.append(gitValue)
     return docs, pdfValue, gitValue
+
+
+# print(get_class_method(torch.nn.modules.transformer.Transformer)) 得到__init__.py内python的内置函数，import的包和模块，form .xxx的xxx,前面带'_'的参数，以及在同一级目录下的其他模块（包和py文件）
+
+
+def get_class_attributes(wanted):
+    return [item for item in wanted.__dict__ if not callable(getattr(wanted, item)) and not item.startswith('__')]
+
+
+# print(get_class_attributes(torch.nn.modules)) 还是有开头是'_'的item会被划进来，
 
 
 def get_class_method_attr(MyClass):

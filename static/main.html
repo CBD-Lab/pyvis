@@ -317,24 +317,25 @@
 <!--            <van-row style="margin: 10vh 0 1vh 1vh; font-size: 16px; display: flex; align-items: flex-end;">-->
 <!--                <div>Current Environment Path:</div>-->
 <!--            </van-row>-->
-         <div style="display: flex; flex-direction: column;">
-            <van-row class="searchbox" >
-                <van-col offset="0" span="16">
-                    <van-field v-model="singleModule" placeholder="Single Module Name"></van-field>
-                </van-col>
-                <van-col span="8">
-                    <van-button class="van-haptics-feedback" @click="searchSingle()">ExtractSingle</van-button>
-                </van-col>
-            <van-row class="searchbox" >
-                <van-col offset="0" span="16">
-                    <van-field v-model="localValue" readonly></van-field>
-                </van-col>
-                <van-col span="8">
-                    <van-button class="van-haptics-feedback" @click="select()"
-                                :loading="isLoading" loading-text="loading...">ExtractAll</van-button>
-                </van-col>
-            </van-row>
-         </div>
+            <div style="display: flex; flex-direction: column;">
+                <van-row class="searchbox">
+                    <van-col offset="0" span="16">
+                        <van-field v-model="singleModule" placeholder="Single Module Name"></van-field>
+                    </van-col>
+                    <van-col span="8">
+                        <van-button class="van-haptics-feedback" @click="searchSingle()">ExtractSingle</van-button>
+                    </van-col>
+                </van-row>
+                <van-row class="searchbox">
+                    <van-col offset="0" span="16">
+                        <van-field v-model="localValue" readonly></van-field>
+                    </van-col>
+                    <van-col span="8">
+                        <van-button class="van-haptics-feedback" @click="select()"
+                                    :loading="isLoading" loading-text="loading...">ExtractAll</van-button>
+                    </van-col>
+                </van-row>
+            </div>
         </van-col>
 
         <van-col class="graphpart" span="20">
