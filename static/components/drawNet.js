@@ -9,7 +9,10 @@ function drawNet(data, k,search){
     var forceSimulation = d3.forceSimulation()
 							.force("link",d3.forceLink())
 							.force("charge",d3.forceManyBody().strength(-100))
-							.force("center",d3.forceCenter(width/2,height/2));
+							.force("center",d3.forceCenter(width/2,height/2))
+//							.force("x", d3.forceX(width / 2))
+//                            .force("y", d3.forceY(height / 2))
+//                            .force("collision", d3.forceCollide().radius(20));
 
     var svg = d3.select("#graph")
 				.attr("width", width*0.85)
@@ -175,6 +178,12 @@ function drawNet(data, k,search){
 				 .text(d => { return d.name.substr(d.name.lastIndexOf(".")+1,d.name.length) });
 
     forceSimulation.on("tick", () => {
+        node.each(function(d) {
+            // 通过比较新位置和边界来确保节点在边界内
+            d.x = Math.max(20, Math.min(width*0.8, d.x));
+//            console.log(d.x,width*0.8)
+            d.y = Math.max(20, Math.min(height*0.95, d.y));
+            });
         link
             .attr("x1", d => d.source.x)
             .attr("y1", d => d.source.y)
