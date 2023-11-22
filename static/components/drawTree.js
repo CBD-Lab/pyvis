@@ -235,25 +235,28 @@ function updateNodes(source, nodes) {
     nodeEnter
      .append("path")
      .attr("class","node")
-     .attr("d", d3.symbol().type(function(d,i) {
+     .attr("d", function(d) {
       var endcase = (d.data.name).split('.')[1];
       if (endcase == 'py'){
-          return d3.symbols[0];
+          return d3.symbol().type(d3.symbols[0])();
       }
       else if (endcase == 'pyi'){
-          return d3.symbols[4];
+          return d3.symbol().type(d3.symbols[4])();
       }
       else if (endcase == 'dll'){
-          return d3.symbols[2];
+          return d3.symbol().type(d3.symbols[2])();
       }
       else if ((endcase == 'png' ) || (endcase == 'jpg')){
-          return d3.symbols[6];
+          return d3.symbol().type(d3.symbols[6])();
       }
       else{
-          return d3.symbols[5];
+          var pathdata = "M -5 -5 L -5 5 L 5 5 L 5 -2 L -1 -2 L -1 -5 Z";
+          return pathdata;
+//          return d3.symbol().type(d3.symbols[5])();
+
       }
-    }))
-//    .attr("r", 1e-6)
+    })
+//    .attr("r",1e-6)
     .style("fill", function (d) {
      return chooseColor(d.data.name)
     })
