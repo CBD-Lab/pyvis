@@ -10,9 +10,9 @@ function drawNet(data, k,search){
 							.force("link",d3.forceLink())
 							.force("charge",d3.forceManyBody().strength(-100))
 							.force("center",d3.forceCenter(width/2,height/2))
-//							.force("x", d3.forceX(width / 2))
-//                            .force("y", d3.forceY(height / 2))
-//                            .force("collision", d3.forceCollide().radius(20));
+							.force("x", d3.forceX(width / 2))
+                            .force("y", d3.forceY(height / 2))
+                            .force("collision", d3.forceCollide().radius(20));
 
     var svg = d3.select("#graph")
 				.attr("width", width*0.85)
@@ -91,18 +91,34 @@ function drawNet(data, k,search){
                                                .attr("y", - (img_h / 2 - rad + 3.5))
                                                .attr("width", img_w + 11)
                                                .attr("height", img_h + 6);
-                          var img = new Image();
-                          img.onload = function() {
-                              catpattern.attr("xlink:href", "static/pic/" + d.name + ".svg");
-                          };
-                          img.onerror = function(event) {
-                              event.preventDefault();
-                              catpattern.attr("xlink:href", "static/pic/default.png");
-                          };
-                          img.src = "static/pic/" + d.name + ".svg";
-                          return "url(#catpattern" + i + ")";
+//                          var imageUrl = "static/pic/" + d.name + ".svg";
+                          var imageUrl="static/pic/default.png"
+                          fetch(imageUrl,{method:"HEAD"})
+                            .then(response=>{
+                                if(response.ok){
+                                    var img = new Image();
+                                     img.onload = function() {
+                                        catpattern.attr("xlink:href", imageUrl);
+                                         };
+                                     img.onerror = function(event) {
+                                          event.preventDefault();
+                                          console.error("Load Image Error:", event);
+                                          catpattern.attr("xlink:href", "static/pic/default.png");
+                                      };
+                                     img.src=imageUrl
+                                      }
+                                else{
+                                    catpattern.attr("xlink:href","static/pic/default.png");
+                                }
+                            })
+                            .catch(error=>{
+                                catpattern.attr("xlink:href","static/pic/default.png");
+                            });
+                        return "url(#catpattern"+i+")";
+
 					  }
-					  else { return color[i%10]; }
+//					  else { return color[i%10]; }
+					  else { return color[d.layer%10]; }
 				  })
 				  .on("mouseenter", (d,i) => {
 					  link.style("stroke-width", l => l.source == d || l.target == d ? 4 : 1);

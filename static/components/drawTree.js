@@ -33,7 +33,7 @@ function drawTree(data,treecount){
     function initData(root) {
       // 设置第一个元素的初始位置
       root.x0 = height / 2;
-      root.y0 = 10;
+      root.y0 = width/2;
       root._children=[];
         // 计算总节点数
       const totalNodes = countNodes(root);
@@ -423,6 +423,11 @@ function updateNodes(source, nodes) {
 // 当点击时，展开当前节点的所有叶子节点
 function click(d) {
       if (d._children&&d._children.length>0) {//如果有隐藏节点，就全部展开
+         if(!d.children)
+           {
+            d.children=[];
+            d.data.children=[];
+          }
           d._children.forEach(function(_child)
           {
             d.children.push(_child);

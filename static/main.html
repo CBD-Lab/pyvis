@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<!--    #3572A5-->
+<!--    #28567C-->
+<!--    #FFDF76-->
     <!-- 引入 Vant 的样式表 -->
     <link rel="stylesheet" href="/static/vant.min.css"/>
     <link rel="stylesheet" href="/static/prism.min.css"/>
@@ -33,9 +36,9 @@
     </style>
     <style>
         :root{
-        --topcolor:#AED2FF;
-        --leftsidecolor:#E4F1FF;
-        --buttonbgcolor:#FFFFFF;
+        --topcolor:#3572A5;
+        --leftsidecolor:#3572A5;
+        --buttonbgcolor:#28567C;
         }
         .node {
           stroke-width: 1px;
@@ -98,6 +101,7 @@
         .custom-navbar .van-nav-bar__title {
             font-size:1em;
             display: flex;
+            color:white;
             align-items: center;
             justify-content: center;
             height: 100%!important;
@@ -111,31 +115,34 @@
             background-color:var(--leftsidecolor);
             display: flex;
             flex-direction: column;
-            min-height: 100vh; /* 设置最小高度为视窗高度，保证内容少时仍然占满整个屏幕 */
+            min-height: 100vh;
         }
         .flex-placeholder {
-          flex-grow: 0.6; /* 占满剩余空间，将下面的两个 van-row 推到底部 */
+          flex-grow: 0.6;
+          height:70vh;
         }
         .searchbox{
             border:1px solid var(--topcolor);
             overflow:hidden;
         }
         .searchbox .searchtext{
-            background-color:var(--buttonbgcolor);
-            border-radius: 3px;
+<!--            background-color:var(&#45;&#45;buttonbgcolor);-->
+<!--            border-radius: 3px;-->
             width:100%;
+            color:white;
            }
         .searchbox .van-haptics-feedback {
             background-color: var(--buttonbgcolor);
             border-radius: 3px;
             width:100%;
+            color:white;
             }
         .viewset .van-haptics-feedback{
             background-color:var(--buttonbgcolor);
             border:1px solid var(--topcolor);
             width:100%;
-            margin-top: 5px;
-            color:black;
+<!--            margin-top: 5px;-->
+            color:white;
             font-size:12px;
         }
         .optionbox{
@@ -167,6 +174,9 @@
             opacity:1.0;
             stroke-width:0.5;
             border-radius: 10px;
+        }
+        .forceChontrol{
+            color:white;
         }
     </style>
 </head>
@@ -281,12 +291,12 @@
                 <van-row style="margin-top:30px;">
                     <input type="checkbox" name="label" value="showOn" id="showLabel" checked>Label</input>
                 </van-row>
-                <van-row style="margin-top:30px"><input type="radio" name="flush" value="重绘" id="flush"
+                <van-row style="margin-top:30px"><input type="radio" name="flush" value="重绘" id="flush1"
                                                         onclick="javascript:location.reload()">Repaint</input>
                 </van-row>
             </div>
             <div v-show="viewSelection === 'filetree'">
-                <van-row style="margin-top:30px"><input type="radio" name="flush" value="重绘" id="flush"
+                <van-row style="margin-top:30px"><input type="radio" name="flush" value="重绘" id="flush2"
                                                         onclick="javascript:location.reload()">Repaint</input>
                 </van-row>
             </div>
@@ -305,7 +315,7 @@
                 <van-row style="margin-top: 5px;">Totally {{ mapCount.node }} nodes</van-row>
             </div>
             <div v-show="viewSelection === 'hicircle'">
-                <van-row style="margin-top:30px"><input type="radio" name="flush" value="重绘" id="flush"
+                <van-row style="margin-top:30px"><input type="radio" name="flush" value="重绘" id="flush3"
                                                         onclick="javascript:location.reload()">Repaint</input></van-row>
             </div>
             <div v-show="viewSelection === 'bubble'" >
@@ -373,7 +383,7 @@
                 viewSelection:"tree",
                 nodes:'',
                 links:'',
-                keyword:'torch',
+                keyword:'',
                 isLoading: false,
                 localValue: '',
                 singleModule: '',
@@ -464,7 +474,6 @@
                 this.clearPage();
                 this.viewSelection="net";
                 axios.get("http://127.0.0.1:5006/module?wanted=" + this.keyword).then(res=>{
-                console.log("hello")
                     onDrawNetReady(res.data, this.keyword,this.search);
                 })
                 .catch(error=>
