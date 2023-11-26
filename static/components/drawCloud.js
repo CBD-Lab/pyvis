@@ -7,7 +7,6 @@ function drawCloud(data,search,cloudCount){
         arraycolor[i] = color[i];
       }
       var hidata = d3.hierarchy(data);
-//      var worddata = hidata.descendants();
       var tree=d3.tree()
                .size([height,width*0.7]);
       var hiwords = new Array(hidata.length);
@@ -15,10 +14,8 @@ function drawCloud(data,search,cloudCount){
       var links=root.links();
       var worddata=root.descendants();
 
-      cloudCount.node = worddata.length;
-      console.log(worddata);
+      cloudCount = worddata.length;
       for (var i = 0; i < worddata.length; i++) {
-//          hiwords[i] = { text: worddata[i].data.name, size:(worddata[i].height+1)*6 };
             if(worddata[i].children)
             hiwords[i] = { text:worddata[i].data.name,size:(worddata[i].height+1)*6 ,leaf:"False",parent:worddata[i].parent,depth:worddata[i].depth};
             else
@@ -37,7 +34,7 @@ function drawCloud(data,search,cloudCount){
           .start();
 
       function draw(words) {
-  var svg=d3.select("#graph").append("svg")
+         var svg=d3.select("#graph").append("svg")
             .attr("id", "cloudsvg")
             .attr("width", width)
             .attr("height", height)
@@ -57,9 +54,7 @@ function drawCloud(data,search,cloudCount){
                  ((typeof( worddata[i].data.linkAll['pdfClass']) !== "undefined" && Object.keys(worddata[i].data.linkAll['pdfClass']).length > 0)
                  || (typeof( worddata[i].data.linkAll['gitClass']) !== "undefined" && Object.keys(worddata[i].data.linkAll['gitClass']).length > 0)
                  || (typeof( worddata[i].data.linkAll['pdfModule']) !== "undefined" && Object.keys(worddata[i].data.linkAll['pdfModule']).length > 0)))
-                 {
-
-                    return 'black';
+                 { return 'black';
                  }
                  else{
                     return color[worddata[i].depth]; }})
@@ -77,7 +72,6 @@ function drawCloud(data,search,cloudCount){
             })
             .text(function (d) { return d.text; })
             .on("mouseover", function(d,i){
-			    console.log('over',d,i);
                 d3.select(this)
                     .attr("font-weight", "bold");
                  var fullname = i.text;
@@ -87,13 +81,8 @@ function drawCloud(data,search,cloudCount){
                 fullname = point.data.name + '.' + fullname;
               }
 
-              if(fullname.substring(0,2)=='nn')
-                {
-                fullname="torch."+fullname;
-                }
-
-                var [x, y] = d3.pointer(event);
-                var text = d3.select('#svgbox').append("tooltip")
+              var [x, y] = d3.pointer(event);
+              var text = d3.select('#svgbox').append("tooltip")
                             .html(fullname)
                             .style("left", (width*0.2) + "px")
                             .style("top", (height*0.2) + "px")
@@ -109,20 +98,12 @@ function drawCloud(data,search,cloudCount){
                 d3.select('#svgbox').selectAll("tooltip").remove();
               })
             .on("click", (d, i) => {
-//                var nodecolor = d3.select(this).property('fill');
-//                console.log('nodec',nodecolor);
              var fullname = i.text.split('.', 1)[0];
               var point = i;
               while (point.depth >= 0 && point.parent) {
                 point = point.parent;
                 fullname = point.data.name + '.' + fullname;
               }
-
-              if(fullname.substring(0,2)=='nn')
-                {
-                fullname="torch."+fullname;
-                }
-              console.log('cloudname',d, i, fullname);
 
               fetch('http://127.0.0.1:5006/leafCode?wanted=' + fullname)
                 .then(response => response.text())
@@ -135,25 +116,20 @@ function drawCloud(data,search,cloudCount){
 
                   var drag=d3.drag()
                           .on("start", function (event) {
-                            // 记录拖拽开始时的位置
                             var startX = event.x;
                             var startY = event.y;
 
-                            // 获取当前提示框的位置
                             var currentLeft = parseFloat(tips.style("left"));
                             var currentTop = parseFloat(tips.style("top"));
 
-                            // 计算鼠标相对于提示框左上角的偏移
                             offsetX = startX - currentLeft;
                             offsetY = startY - currentTop;
                           })
                           .on("drag", function (event) {
-                            // 随鼠标移动，更新提示框位置
                             tips.style("left", (event.x - offsetX) + "px")
                               .style("top", (event.y - offsetY) + "px");
                           });
 
-                        // 将拖拽行为绑定到要拖拽的元素上
                         tips.call(drag);
 
                   tips.append("span")
@@ -177,12 +153,54 @@ function drawCloud(data,search,cloudCount){
             .data(arraycolor)
             .enter()
             .append("rect")
-            .attr("x", (d, i) => (i * 20 + width * 0.8))
-            .attr("y", 20)
+            .attr("x", 1100)
+            .attr("y", (d, i) => (i * 20 + height * 0.1))
             .attr("width", 18)
             .attr("height", 18)
-            .attr("opacity", 0.8)
-            .attr("fill", (d, i) => arraycolor[i]);
+            .attr("opacity", 0.9)
+            .attr("fill", (d, i) => arraycolor[i])
+            .on("click", function(d, i) {
+                var currentOpacity = d3.select(this).attr("opacity");
+                let currentLayer=0;
+                for(k=0;k<10;k++)
+                {
+                    if(color[k]==i){
+                        currentLayer=k;
+                        break;}
+                }
+            var allLayerOpacities = [];
+
+            svg.selectAll("text").nodes().forEach(function(textNode,i) {
+                var opacity = d3.select(textNode).attr("opacity");
+                // 仅保存每一层级的第一个 opacity 值
+                allLayerOpacities[hiwords[i].depth] = opacity;
+            });
+                if(currentOpacity!=0.9){//点击显示当前层级词云数据
+                    d3.select(this).attr("opacity","0.9");
+                    svg.selectAll("text").attr("opacity", function (d,i) {
+                            if (d.depth === currentLayer) {
+                                return 0.8;
+                            }
+                            else
+                            {
+                                return allLayerOpacities[d.depth];
+                            }
+                        })
+                    }
+                else//点击隐藏当前词云数据
+                    {
+                    svg.selectAll("text").attr("opacity", function (d,i) {
+                            if (d.depth === currentLayer) {
+                                return 0; // 设置透明度为 0，隐藏元素
+                            }
+                            else
+                            {
+                                return allLayerOpacities[d.depth];
+                            }
+                        })
+                    d3.select(this).attr("opacity","0.1");
+                    }
+            });
 
           var info = d3.select("svg").append("text")
             .attr("x", width * 0.7)
@@ -190,7 +208,6 @@ function drawCloud(data,search,cloudCount){
             .attr("font-size", "20px")
             .attr("font-weight", "bold")
             .attr("fill", color[2])
-            .text("Totally " + worddata.length+" Nodes")
 
         }
 }

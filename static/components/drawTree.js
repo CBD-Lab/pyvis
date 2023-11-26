@@ -271,16 +271,17 @@ function updateNodes(source, nodes) {
       else if ((endcase == 'png' ) || (endcase == 'jpg')){
           return d3.symbol().type(d3.symbols[6])();
       }
-      else{
+      else if(d.children||d._children){
           var pathdata = "M -5 -5 L -5 5 L 5 5 L 5 -2 L -1 -2 L -1 -5 Z";
           return pathdata;
-//          return d3.symbol().type(d3.symbols[5])();
-
       }
-    })
-//    .attr("r",1e-6)
+      else//for unknown type of file
+      {
+          return d3.symbol().type(d3.symbols[5])();
+          }
+        })
     .style("fill", function (d) {
-     return chooseColor(d.data.name)
+     return chooseColor(d.data.name,d.children||d._children)
     })
     .attr("opacity",function(d)
     {
@@ -307,7 +308,7 @@ function updateNodes(source, nodes) {
       return d.data.name;
     })
      .attr("stroke", function(d){
-        return chooseColor(d.data.name);
+        return chooseColor(d.data.name,d.children||d._children);
     })
      .attr("stroke-width","0.3px")
      .on("click",function(event,d)
@@ -331,7 +332,7 @@ function updateNodes(source, nodes) {
       return d.data.fileCount==0||!hasFile?'':d.data.fileCount;
     })
      .attr("stroke", function(d){
-        return chooseColor(d.data.name);
+        return chooseColor(d.data.name,d.children||d._children);
     })
      .attr("stroke-width","0.3px")
 
@@ -398,7 +399,7 @@ function updateNodes(source, nodes) {
     .select("path.node")
     .attr("r", 10)
     .style("fill", function (d) {
-        return chooseColor(d.data.name);
+        return chooseColor(d.data.name,d.children||d._children);
     })
     .attr("cursor", "pointer");
 
@@ -536,7 +537,7 @@ function buildJsonTree(fullname, data) {
 
   return tree;
 }
-function chooseColor(fullname)
+function chooseColor(fullname,isFolder)
 {
   var endcase = (fullname).split('.')[1];
       if (endcase == 'py'){
@@ -551,8 +552,12 @@ function chooseColor(fullname)
       else if ((endcase == 'png' ) || (endcase == 'jpg')){
           return color[6];
       }
-      else{
+      else if(isFolder){
           return color[5];
+      }
+      else
+      {
+      return color[7];
       }
 }
 

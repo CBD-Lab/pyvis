@@ -4,7 +4,7 @@ var nodeweight;
 var nodelayer;
 
 
-function drawNet(data, k,search){
+function drawNet(data, k,search,netCount){
     var forceSimulation = d3.forceSimulation()
 							.force("link",d3.forceLink())
 							.force("charge",d3.forceManyBody().strength(-100))
@@ -19,7 +19,8 @@ function drawNet(data, k,search){
     var module = "pylibs.json"
     var nodes = data.nodes;
     var links = data.links;
-
+    netCount.node=nodes.length;
+    netCount.link=links.length;
     nodeweight = new Array(nodes.length);
     nodehasclass = new Array(nodes.length);
     nodehasfunction = new Array(nodes.length);
@@ -131,7 +132,6 @@ function drawNet(data, k,search){
 					      })
 					  }
 					  else{
-					       console.log(d,i);
 					       const tooltipContent=`<div style="background-color:grey">Name:${i.name}</div><div>Location:${i.file}</div><div>Layer:${i.layer}</div>${i.hasfunction ? `<div>Function:${i.myfunction}</div>` : ''}${i.hasclass ? `<div>Class:${i.myclass}</div>` : ''}`;
 					       tooltip.html(tooltipContent).style("display","block");
 					  }
@@ -290,9 +290,9 @@ function selectit(type){
     return null;
 }
 
-window.onDrawNetReady = function(data, k,search) {
+window.onDrawNetReady = function(data, k,search,netCount) {
     // 执行绘图逻辑
-    drawNet(data, k,search);
+    drawNet(data, k,search,netCount);
 }
 window.onNetfunction = function(type) {
     selectit(type);

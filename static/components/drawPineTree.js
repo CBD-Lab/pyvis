@@ -58,7 +58,7 @@ function drawPineTree(data,pineCount) {
 		.attr("fill", color[2])
 		.text("Nodes=" + data.children.length);
 
-    pineCount.node = data.children.length;
+    pineCount = data.children.length;
 	var length = 100;
 	var rate = 0.6;
 	var x0 = width / 2;
