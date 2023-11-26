@@ -1,4 +1,4 @@
-function drawCloud(data,search,cloudCount){
+function drawCloud(data,search,cloudcount){
       var width = (window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth) * 0.84;
       var height = (window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight) * 0.89;
 
@@ -14,7 +14,7 @@ function drawCloud(data,search,cloudCount){
       var links=root.links();
       var worddata=root.descendants();
 
-      cloudCount = worddata.length;
+      cloudcount.node = worddata.length;
       for (var i = 0; i < worddata.length; i++) {
             if(worddata[i].children)
             hiwords[i] = { text:worddata[i].data.name,size:(worddata[i].height+1)*6 ,leaf:"False",parent:worddata[i].parent,depth:worddata[i].depth};
@@ -212,8 +212,8 @@ function drawCloud(data,search,cloudCount){
         }
 }
 
-window.onDrawCloudReady = function(data,search,cloudCount) {
+window.onDrawCloudReady = function(data,search,cloudcount) {
     console.log('drawTree.js is ready');
     // 执行绘图逻辑
-    drawCloud(data,search,cloudCount);
+    drawCloud(data,search,cloudcount);
 }

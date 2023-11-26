@@ -334,7 +334,7 @@ function drawBubble(data,bubbleCount) {
         // 处理错误
         });
     }
-     bubbleCount = nodes.length;
+     bubbleCount.node = nodes.length;
      d3.select("input[id=showPdf]").on("change", function () {
         console.log('sp',gits);
         if (pdfchange == 0)

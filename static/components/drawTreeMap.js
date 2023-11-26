@@ -19,7 +19,7 @@ function drawTreeMap(data, flag, pdf, mapCount) {
     //console.log(treedata);
     nodes = treedata.leaves();
 
-    mapCount = nodes.length;
+    mapCount.node = nodes.length;
 
     var gc = svg.selectAll("g")
         .data(nodes)
