@@ -2,15 +2,10 @@ function drawMatrixGraph(graph){
     function trim(str){
         return str.replace(/\s|\xA0/g,"");
     }
-    console.log(graph);
     var nodes=graph.nodes;
     var links=graph.links;
-//                var svgbox = document.getElementById("graph").getBBox();
-//                var netw = svgbox.width;
-//                var neth = svgbox.height;
     var neth=height;
     var netw=width;
-    console.log(neth,netw);
 
     var svg = d3.select("#graph")
         .attr("width", netw)
@@ -25,7 +20,6 @@ function drawMatrixGraph(graph){
        .attr("stroke","#777")
        .attr("fill","#FFF");
 
-    //console.log(nodes,links);
     var nodecount=nodes.length;
     var edgecount=links.length;
     var nodeweight=new Array(nodes.length);
@@ -55,29 +49,13 @@ function drawMatrixGraph(graph){
                  .attr("font-weight","bold")
                  .attr("text-anchor","right")
                  .attr("x",(d,i)=>{
-                    //console.log(d,i);
-                    var tt=trim(d.name);//去字符串首尾空格
                     return 5;
                  })
                  .attr("y",(d,i)=>{return R*5+i*R*2})
                  .text((d)=>{return d.name;})
                  .style("cursor", "pointer")
                  .on("click", (d, i) => {
-                      console.log(d, i);
-                      var fullname = i.name.split('.', 1)[0];
-                      var point = i;
-                      while (point.depth >= 0 && point.parent) {
-                        point = point.parent;
-                        fullname = point.name + '.' + fullname;
-                      }
-
-                      if (point.name == "nn")
-                        fullname = "torch." + fullname;
-                      else
-                        fullname = fullname;
-
-                      console.log(d, i, fullname);
-                      fetch('http://127.0.0.1:5006/leafCode?wanted=' + fullname)
+                      fetch('http://127.0.0.1:5006/leafCode?wanted=' + i.name)
                         .then(response => response.text())
                         .then(data => {
                           const language = 'python';
@@ -97,8 +75,6 @@ function drawMatrixGraph(graph){
                           tips.append("div")
                             .attr("class", "content")
                             .html('<pre><code class="language-python">' + highlightedCode + '</code></pre>');
-
-                          console.log(data);
                         })
                         .catch(error => {
                           console.error('Error executing Python script:', error);
@@ -109,12 +85,10 @@ function drawMatrixGraph(graph){
                       .attr("fill","#F00")
                       .attr("font-size","20px");
                     nodeLeft.filter( function(t){ 	//过滤器
-                         //console.log(t,"zuo+",i,);
                          return t.name== i.name;
                     })
                     .attr("r",R*1.5);
                     node.filter( function(t){ 	//过滤器
-                         //console.log("shang+");
                          return t.name== i.name;
                     })
                     .attr("r",R*1.5);
@@ -134,14 +108,12 @@ function drawMatrixGraph(graph){
                  })
                  .on("mousedown", function(d,i){
                     textlist.filter( function(t){ 	//过滤器
-                            //console.log(t.index,i)
                              return t.name != i.name;
                         })
                         .attr("fill","#000")
                         .attr("font-size",""+R*2+"px");
                     link.filter(function(l){ 	//过滤器
                          textlist.filter(function(t,m){ 	//过滤器
-                                //console.log('link',l,i,t,m)
                                 if (i.name == t.name){
                                     iid = m;
                                 }
@@ -150,9 +122,9 @@ function drawMatrixGraph(graph){
                          .attr("fill","rgb(255, 127, 14)")
                          .attr("font-size",""+R*2+"px");
                          return l.source == iid;//以当前text做头
-                    })
-                    .attr("fill","rgb(255,127,14)")   //橙色（依赖其他的.py模块）
-                    .attr("stroke-width",1);
+                        })
+                        .attr("fill","rgb(255,127,14)")   //橙色（依赖其他的.py模块）
+                        .attr("stroke-width",1);
                     link.filter( function(l){ 	//过滤器
                          textlist.filter( function(t,m){ 	//过滤器
                                 return (m==l.source)&&(l.target == iid);
@@ -160,14 +132,14 @@ function drawMatrixGraph(graph){
                          .attr("fill","rgb(44,160,44)")
                          .attr("font-size",""+R*2+"px");
                          return l.target == iid;//以当前text做尾
-                    })
-                    .attr("fill","rgb(44,160,44)")   //绿色（被其他.py模块依赖）
-                    .attr("stroke-width",1);
+                        })
+                        .attr("fill","rgb(44,160,44)")   //绿色（被其他.py模块依赖）
+                        .attr("stroke-width",1);
 
                     link.filter(function(l){ 	//过滤器
                              return l.source.index != iid && l.target.index != iid;
                         })
-                        .attr("fill","FFFFFF")
+                        .attr("fill","rgb(255,127,14)")
                         .attr("stroke-width",1);
 
                     textlist.filter( function(t,m){ 	//过滤器
@@ -175,7 +147,6 @@ function drawMatrixGraph(graph){
                         })
                         .attr("fill","#F00")
                         .attr("font-size","18px");
-                    //console.log('iid',iid);
                 });
 
     var link = svg.selectAll(".link")
@@ -183,7 +154,6 @@ function drawMatrixGraph(graph){
           .enter().append("rect")
           .attr("class", "link")
           .attr("x", (d,i)=>{
-                //console.log(d,i)
                 return width/5+R+d.source*R*2})
           .attr("y", (d,i)=>{return 3*R+d.target*R*2})
           .attr("width",Math.abs(2*R-1))
@@ -192,15 +162,12 @@ function drawMatrixGraph(graph){
           .on("mouseover", function(d,i){
                     d3.select(this)
                       .attr("fill","#F00");
-//                                  .attr("stroke",null);
 
                     nodeLeft.filter( function(t,m){ 	//过滤器
-                         //console.log(i,t,m)
                          return m== i.target;
                     })
                     .attr("r",R*1.5);
                     node.filter(function(t,m){ 	//过滤器
-                         //console.log("111",d.source.index);
                          return m == i.source;
                     })
                     .attr("r",R*1.5);
@@ -278,12 +245,11 @@ function drawMatrixGraph(graph){
                     .attr("fill","#000")
                     .attr("dx",0);
                 link.filter( function(l) {
-                         textlist.filter( function(t,m) {
-                                //console.log(i,t,m,n);
-                                if (i.name == t.name){
-                                    iid = m;
-                                }
-                                return (m==l.target)&&(l.source == iid);
+                     textlist.filter( function(t,m) {
+                            if (i.name == t.name){
+                                iid = m;
+                            }
+                            return (m==l.target)&&(l.source == iid);
                          })
                          .attr("fill","rgb(255, 127, 14)")
                          .attr("font-size",""+R*2+"px")
@@ -306,14 +272,13 @@ function drawMatrixGraph(graph){
                 link.filter( function(l) {
                          return l.source != iid && l.target != iid;
                     })
-                    .attr("fill","lightgray")
+                    .attr("fill","rgb(255,127,14)")
                     .attr("stroke-width",1);
                 textlist.filter( function(t,m){
                         return(m==iid)
                     })
                     .attr("fill","#F00")
                     .attr("font-size","18px");
-                console.log('nodiid',iid);
           });
 
     var nodeLeft = svg.selectAll(".nodeLeft")
@@ -328,21 +293,7 @@ function drawMatrixGraph(graph){
           .attr("stroke-width",0.5)
           .style("cursor", "pointer")
           .on("click", (d, i) => {
-          console.log(d, i);
-          var fullname = i.name.split('.', 1)[0];
-          var point = i;
-          while (point.depth >= 0 && point.parent) {
-            point = point.parent;
-            fullname = point.name + '.' + fullname;
-          }
-
-          if (point.name == "nn")
-            fullname = "torch." + fullname;
-          else
-            fullname = fullname;
-
-          console.log(d, i, fullname);
-          fetch('http://127.0.0.1:5006/leafCode?wanted=' + fullname)
+          fetch('http://127.0.0.1:5006/leafCode?wanted=' + i.name)
             .then(response => response.text())
             .then(data => {
               const language = 'python';
@@ -362,8 +313,6 @@ function drawMatrixGraph(graph){
               tips.append("div")
                 .attr("class", "content")
                 .html('<pre><code class="language-python">' + highlightedCode + '</code></pre>');
-
-              console.log(data);
             })
             .catch(error => {
               console.error('Error executing Python script:', error);
@@ -425,9 +374,8 @@ function drawMatrixGraph(graph){
                 link.filter(function(l) { 	//过滤器
                          return l.source != iid && l.target != iid;
                     })
-                    .attr("fill","heightgray")//为什么不是heightgray
+                    .attr("fill","rgb(255,127,14)")
                     .attr("stroke-width",1);
-                console.log('leftiid',iid);
           });
 
 

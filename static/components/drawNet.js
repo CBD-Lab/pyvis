@@ -5,7 +5,6 @@ var nodelayer;
 
 
 function drawNet(data, k,search){
-//    console.log(search);
     var forceSimulation = d3.forceSimulation()
 							.force("link",d3.forceLink())
 							.force("charge",d3.forceManyBody().strength(-100))
@@ -21,7 +20,6 @@ function drawNet(data, k,search){
     var nodes = data.nodes;
     var links = data.links;
 
-//    console.log('check',nodes);
     nodeweight = new Array(nodes.length);
     nodehasclass = new Array(nodes.length);
     nodehasfunction = new Array(nodes.length);
@@ -57,7 +55,7 @@ function drawNet(data, k,search){
                    .attr("class", "tooltip")
                    .style("left", "20vw")
                    .style("top", "20vh")
-                   .style("width", "40vw")
+                   .style("width", "60vw")
                    .style("background-color", "#E4F1FF")
                    .style("font-family", "Consolas")
                    .style("white-space", "pre-line")
@@ -121,28 +119,31 @@ function drawNet(data, k,search){
 					  else { return color[d.layer%10]; }
 				  })
 				  .on("mouseenter", (d,i) => {
-					  link.style("stroke-width", l => l.source == d || l.target == d ? 4 : 1);
+					  link.style("stroke-width", l => l.source.name == i.name || l.target.name == i.name ? 4 : 1);
 					  var point = i;
 					  fullname = point.name;
 					  if(fullname.lastIndexOf('.') == -1) {
 					      fetch('http://127.0.0.1:5006/pylibsInfo?wanted=' + fullname)
 					      .then(response => response.json())  // 使用json()方法提取JSON数据
 					      .then(data => {
-					          console.log(typeof(data), data.Name, data['Name']);
 					          const tooltipContent = `<div style="background-color:grey">Name:${data.Name}</div><div>Version:${data.Version}</div><div>Summary:${data.Summary}</div><div>Author:${data.Author}</div><div>License:${data.License}</div><div>Location:${data.Location}</div>`;
 					          tooltip.html(tooltipContent).style("display","block");
 					      })
 					  }
+					  else{
+					       console.log(d,i);
+					       const tooltipContent=`<div style="background-color:grey">Name:${i.name}</div><div>Location:${i.file}</div><div>Layer:${i.layer}</div>${i.hasfunction ? `<div>Function:${i.myfunction}</div>` : ''}${i.hasclass ? `<div>Class:${i.myclass}</div>` : ''}`;
+					       tooltip.html(tooltipContent).style("display","block");
+					  }
 				  })
 				  .on("mouseleave", d => {
-				      tooltip.style("display", "none");
+				      tooltip.style("display","none");
 				      link.style("stroke-width", 1)
 				  })
 				  .style("cursor", "pointer")
 				  .on("click", (d, i) => {
 					  var point = i;
                       fullname=point.name;
-				      console.log(point,fullname);
 				      if(fullname.lastIndexOf('.')!=-1)
 				      {
 					  fetch('http://127.0.0.1:5006/leafCode?wanted=' + fullname)
@@ -173,6 +174,7 @@ function drawNet(data, k,search){
 
 						  else
 						  {
+						  d3.select("#tooltip").remove()
 						    search(i.name);
 						  }
 				  })
@@ -193,7 +195,6 @@ function drawNet(data, k,search){
         node.each(function(d) {
             // 通过比较新位置和边界来确保节点在边界内
             d.x = Math.max(20, Math.min(width*0.8, d.x));
-//            console.log(d.x,width*0.8)
             d.y = Math.max(20, Math.min(height*0.95, d.y));
             });
         link
@@ -214,24 +215,20 @@ function drawNet(data, k,search){
         forceSimulation.alpha(1).restart();
     });
     d3.select("input[id=chargescale]").on("change", function() {
-        console.log(this.value)
         forceSimulation.force("charge").strength(-this.value);
         forceSimulation.alpha(1).restart();
     });
     d3.select("input[id=nodescale]").on("change", function() {
-        console.log(this.value);
         var scale=this.value;
         node.attr("r",d=>{
             return Math.floor(scale*d.weight+3);
         })
         texts.attr("font-size",d=>{
             var fontsize=""+Math.floor(scale*d.weight+3)+"px";
-            console.log(fontsize);
             return fontsize;
         })
         link.attr("stroke-width",d=>{
             var edgesize=""+Math.floor(scale+1)+"px";
-            console.log(edgesize);
             return edgesize;
         })
         radius=10*scale;
@@ -269,28 +266,23 @@ function drawNet(data, k,search){
 
 function selectit(type){
     var nodes = document.getElementsByClassName("node");
-    console.log('获得正确',nodes);
     if (type == "equalr") {
-        console.log("equalr");
         r = 10;
         for (i=0; i<nodes.length; i++) {
             nodes[i].setAttribute("r",r);
         }
     }
     else if (type == "showclass") {
-        console.log("show-class");
         for (i=0; i<nodes.length; i++) {
             nodes[i].setAttribute("r",nodehasclass[i]);
         }
     }
     else if (type == "showfunction") {
-        console.log("show-function");
         for (i=0; i<nodes.length; i++) {
             nodes[i].setAttribute("r",nodehasfunction[i]);
         }
     }
     else {
-        console.log("edge-count");
         for(i=0; i<nodes.length; i++) {
             nodes[i].setAttribute("r",nodeweight[i]);
         }

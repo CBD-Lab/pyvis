@@ -34,15 +34,14 @@ function drawBubble(data,bubbleCount) {
         .enter()
         .append("g")
         .attr("transform", d => `translate(${d.x},${d.y})`);
-      var circles = gc.append("circle")
+     var circles = gc.append("circle")
         .attr("cx", 0)
         .attr("cy", 0)
         .attr("r", d => d.r)
         .attr("fill", d => color[d.depth])
         .attr("opacity", 0.7)
         .style("cursor", "pointer")
-        .on("mouseenter", (event, d,i) => {
-            console.log(d,i,'1');
+        .on("mouseenter", (event, d) => {
           d3.select(this.d)
             .attr("stroke", "#555")
             .attr("stroke-width", 0.5);
@@ -52,11 +51,7 @@ function drawBubble(data,bubbleCount) {
             point = point.parent;
             fullname = point.data.name + '.' + fullname;
           }
-
-          if (point.data.name == "nn")
-            fullname = "torch." + fullname;
-          else
-            fullname = fullname;
+          fullname = fullname;
           tooltip.html(fullname)
                  .style("left", event.pageX + "px")
                  .style("top", event.pageY + "px")
@@ -228,10 +223,6 @@ function drawBubble(data,bubbleCount) {
 
         })
         .each(function(d) {
-//            console.log('111',d.data);
-//            if (d.data.linkAll.length > 0){
-//                console.log('pdf',d);
-//            }
             if(d.data.linkAll && typeof( d.data.linkAll['pdfClass']) !== "undefined" && Object.keys(d.data.linkAll['pdfClass']).length > 0)
             {
                 for (key in d.data.linkAll['pdfClass']){
@@ -241,7 +232,6 @@ function drawBubble(data,bubbleCount) {
             }
             if(d.data.linkAll && typeof( d.data.linkAll['gitClass']) !== "undefined" && Object.keys(d.data.linkAll['gitClass']).length > 0)
             {
-//                console.log("带有pdf的文件为：",d.data.name);
                 for (key in d.data.linkAll['gitClass']){
                     gits.set(key,d.data.linkAll['gitClass'][key]);
                 }
@@ -249,7 +239,6 @@ function drawBubble(data,bubbleCount) {
             }
             if (d.data.linkAll && typeof(d.data.linkAll["pdfModule"]) !== "undefined" && d.data.linkAll["pdfModule"].length > 0)
             {
-                console.log('文件本身有pdf',d.data.name);
                 var fullname = d.data.name.split('.', 1)[0];
                 var point = d;
                 while (point.depth >= 0 && point.parent) {
@@ -257,17 +246,22 @@ function drawBubble(data,bubbleCount) {
                     fullname = point.data.name + '.' + fullname;
                 }
 
-                if (point.data.name == "nn")
-                    fullname = "torch." + fullname;
-                else
-                    fullname = fullname;
+
+                fullname = fullname;
                 console.log('pm',fullname);
                 pdfs.set(fullname,d.data.linkAll['pdfModule'][0])
             }
-//            console.log('pg',pdfs,gits);
-
             });
-
+    console.log(circles)
+    circles.append("text")
+        .attr("x", 0)
+        .attr("y", 0)
+        .attr("dy", ".35em")
+        .style("text-anchor", "middle")
+        .style("fill", "black")
+        .text(d => {
+            return d.data.name;
+        });
     function pdfgitclick(classname){
         console.log('pgc',classname);
         fetch('http://127.0.0.1:5006/classVariable?wanted=' + classname)
@@ -340,13 +334,8 @@ function drawBubble(data,bubbleCount) {
         // 处理错误
         });
     }
-     console.log('count1',bubbleCount);
-//     bubbleCount.bubblePdf = pdfs.size;
-//     bubbleCount.bubbleGit = gits.size;
      bubbleCount.node = nodes.length;
-     console.log('count',bubbleCount);
-
-    d3.select("input[id=showPdf]").on("change", function () {
+     d3.select("input[id=showPdf]").on("change", function () {
         console.log('sp',gits);
         if (pdfchange == 0)
 			pdfchange = 1;
