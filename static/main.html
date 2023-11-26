@@ -118,8 +118,9 @@
             min-height: 100vh;
         }
         .flex-placeholder {
-          flex-grow: 0.6;
-          height:70vh;
+          display:flex;
+          flex-direction: column;
+          height:90vh;
         }
         .searchbox{
             border:1px solid var(--topcolor);
@@ -131,7 +132,11 @@
             width:100%;
             color:white;
            }
-        .searchbox .van-haptics-feedback {
+        .filesearchbox
+        {
+            margin-top:auto;
+        }
+        .filesearchbox .van-haptics-feedback {
             background-color: var(--buttonbgcolor);
             border-radius: 3px;
             width:100%;
@@ -249,7 +254,7 @@
                     </van-button>
                 </van-col>
             </van-row>
-            <!--力导向图控制区-->
+            <!--图像控制区-->
             <div v-show="viewSelection === 'net' || viewSelection === 'class'">
                 <van-row style="margin-top:20px;font-size:12px">Node Radius</van-row>
                 <van-row><input style="position:relative;top:3px;" type="range" id="nodescale" min="0.5" max="10"
@@ -337,11 +342,8 @@
                   <van-row>Show {{ treecount.treeShowNodeCount }} nodes</van-row>
                 </div>
             </div>
-<!--            <van-row style="margin: 10vh 0 1vh 1vh; font-size: 16px; display: flex; align-items: flex-end;">-->
-<!--                <div>Current Environment Path:</div>-->
-<!--            </van-row>-->
-            <div style="display: flex; flex-direction: column;">
-                <van-row class="searchbox">
+            <div style="display: flex; flex-direction: column;" class="filesearchbox">
+                <van-row >
                     <van-col offset="0" span="16">
                         <van-field v-model="singleModule" placeholder="Single Module Name"></van-field>
                     </van-col>
@@ -349,7 +351,7 @@
                         <van-button class="van-haptics-feedback" @click="searchSingle()">ExtractSingle</van-button>
                     </van-col>
                 </van-row>
-                <van-row class="searchbox">
+                <van-row>
                     <van-col offset="0" span="16">
                         <van-field v-model="localValue" readonly></van-field>
                     </van-col>
@@ -502,7 +504,6 @@
                 this.viewSelection="tree";
                 axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
                     onDrawTreeReady(res.data,this.treecount);
-                    console.log(this.treecount);
                     this.drawTreeReady=1;
                 });
             },
@@ -511,7 +512,6 @@
                 var that = this;
                 this.viewSelection="pinetree";
                 axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
-                    console.log(res.data);
                     onDrawPineTreeReady(res.data,this.pinecount);
                 });
             },

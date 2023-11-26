@@ -15,6 +15,7 @@ function drawTree(data,treecount){
                             .style("height",100);
 
      var svg = d3.select("#graph")
+//                .style("margin-left", 100 + "px")
                 .attr("width", width*0.85)
                 .attr("height", height)
                 .on("click", function () {
@@ -27,13 +28,12 @@ function drawTree(data,treecount){
      var links=root.links();
      var nodes=root.descendants();
      var i=0, duration=750;
-//     var treemap = d3.tree().size([height, width]);
      initData(root);
    /********************* 2. 数据初始化绑定（包括数据更新） *********************/
     function initData(root) {
       // 设置第一个元素的初始位置
       root.x0 = height / 2;
-      root.y0 = width/2;
+      root.y0 = 100;
       root._children=[];
         // 计算总节点数
       const totalNodes = countNodes(root);
@@ -226,7 +226,7 @@ function updateLinks(source, links) {
 function updateNodes(source, nodes) {
   // 给节点添加id，用于选择集索引
   var mynode = svg.selectAll("g.node").data(nodes, function (d,i) {
-      if(d.id)//问题1出在这里我哭...分配的新节点的id不能跟之前的节点id重合，不然会错乱显示
+      if(d.id)
       {
         return d.id
       }
@@ -242,14 +242,13 @@ function updateNodes(source, nodes) {
         return d.id
         }
   });
-
   // 添加enter操作，添加类名为node的group元素
   var nodeEnter = mynode
     .enter()
     .append("g")
     .attr("class", "node")
     .attr("transform", function (d) {
-      return "translate(" + source.y0 + "," + source.x0 + ")";
+      return "translate(" + (source.y0+200) + "," + source.x0 + ")";
     });
 
 
@@ -492,7 +491,7 @@ function updateChart(source) {
       var nodes = treeData.descendants(),
       links = treeData.descendants().slice(1);
       nodes.forEach(function (d) {
-        d.y = d.depth * width/(root.height+2);
+        d.y = d.depth * width/(root.height+2)+60;//在此改变节点的水平位置
       });
 
       // node交互和绘制
@@ -626,7 +625,7 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,pdfClass,gitClass)
     gc.append("rect")
         .attr("width", "620px")
         .attr("height", "30px")
-        .attr("fill", "grey")
+        .attr("fill", "#3572A5")
         .attr("opacity","0.9")
     gc.append("rect")
         .attr("width", "620px")
@@ -650,11 +649,13 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,pdfClass,gitClass)
     gc.append("text")
         .attr("x", "0px")
         .attr("y", "20px")
+        .attr("fill","white")
         .attr("font-size", "15px")
         .text("build-in classes");
     gc.append("text")
         .attr("x", "300px")
         .attr("y", "20px")
+        .attr("fill","white")
         .attr("font-size", "15px")
         .text("build-out classes");
     var datain=gc.selectAll(".textin")
@@ -724,7 +725,7 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,pdfClass,gitClass)
 
         .on("mouseover",function(d,i)
             {  d3.select(this)
-                .attr("fill", "red")
+                .attr("fill", "#28567C")
                 .attr("font-weight","bold");
             })
         .on("mouseleave",function(d,i)
@@ -824,7 +825,7 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,pdfClass,gitClass)
             .attr("cy",d=>d.y+35)
             .attr("r",5)
             .attr("opacity",0.5)
-            .attr("stroke","#555");
+            .attr("fill","#FFDF76");
 
     var nodetxt=gc.selectAll(".textout")
             .data(nodesout)
@@ -840,7 +841,7 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,pdfClass,gitClass)
             .text(d=>d.data.name)
             .on("mouseover",function(d,i)
             {  d3.select(this)
-                .attr("fill", "red")
+                .attr("fill", "#28567C")
                 .attr("font-weight","bold");
             })
             .on("mouseleave",function(d,i)
