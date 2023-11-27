@@ -251,7 +251,7 @@ function drawBubble(data,bubbleCount) {
                 console.log('pm',fullname);
                 pdfs.set(fullname,d.data.linkAll['pdfModule'][0])
             }
-            });
+        });
     console.log(circles)
     circles.append("text")
         .attr("x", 0)
@@ -335,7 +335,7 @@ function drawBubble(data,bubbleCount) {
         });
     }
      bubbleCount.node = nodes.length;
-     d3.select("input[id=showPdf]").on("change", function () {
+     d3.select("input[id=showPdf1]").on("change", function () {
         console.log('sp',gits);
         if (pdfchange == 0)
 			pdfchange = 1;
@@ -344,7 +344,7 @@ function drawBubble(data,bubbleCount) {
 	    if(pdfchange==1){
             var pdfinfo = d3.select('#svgbox').append("div")
                         .attr("class", "tooltip")
-                        .attr('id','pdfshow')
+                        .attr('id','pdfshow1')
                         .style("left", (width * 0.2) + "px")
                         .style("top", (height * 0.15) + "px")
                         .style("background-color", "white")
@@ -352,37 +352,53 @@ function drawBubble(data,bubbleCount) {
                         .style("padding", "5px")
                         .style("box-shadow", "0px 2px 4px rgba(0, 0, 0, 0.1)")
                         .style('list-style','none');
+            pdfinfo.append("foreignObject")
+                    .attr("height", "12px")
+                    .append("xhtml:div")
+                    .style("display", "flex")
+                    .style("align-items", "center")
+                    .style("margin", 0)
+                    .style("padding", 0)
+                    .html('<img src="http://127.0.0.1:5006/get_svg/pdf.svg" style="width: 8px; height: 15px; margin-right: 5px;"/>')
+                    .append("span")
+                    .attr("class", "close")
+                    .attr("color", "red")
+                    .text("x")
+                    .style("position", "absolute")
+                    .style('right',"0")
+                    .on("click", () => {
+                      pdfinfo.remove();
+                      d3.select("input#showPdf1").property("checked", false);
+                      pdfchange = 0;
+                    });
 
-            pdfs.forEach((value, key) => {
-                console.log('vk', value, key);
+            if (pdfs.size == 0){
                 pdfinfo.append('text')
                     .attr("stroke-family", "仿宋")
                     .attr("font-size", "10px")
-                    .text(key)
-                    .on("click",function()
-                    {
-//                        console.log(d);
-                        window.open(value, '_blank');
-                    });
-                pdfinfo.append('br');
-            });
+                    .text("no PDF!");
+            }
+            else{
+                pdfs.forEach((value, key) => {
+                    console.log('vk', value, key);
+                    pdfinfo.append('text')
+                        .attr("stroke-family", "仿宋")
+                        .attr("font-size", "10px")
+                        .text(key)
+                        .on("click",function()
+                        {
+    //                        console.log(d);
+                            pdfgitclick(key);
+                        });
+                    pdfinfo.append('br');
+                });
+            }
         }
         else{
-            d3.select('#pdfshow').remove();
+            d3.select('#pdfshow1').remove();
         }
-//         d3.select('#svgbox').append("div")
-//            .attr("class", "tooltip")
-//
-//            .data(Object.entries(gits)) // 将Map的键值对转换为数组
-//            .enter()
-//            .append("p") // 添加p元素用于显示键值对
-//            .text(function(d) {
-//                console.log(d);
-//                return d[0] + ": " + d[1]; // 设置p元素的文本内容为键值对
-////                return 'ceshi';
-//            });
 	});
-	d3.select("input[id=showGit]").on("change", function () {
+	d3.select("input[id=showGit1]").on("change", function () {
 //        console.log('sp',gits);
         if (gitchange == 0)
 			gitchange = 1;
@@ -391,7 +407,7 @@ function drawBubble(data,bubbleCount) {
 	    if(gitchange==1){
             var gitinfo = d3.select('#svgbox').append("div")
                         .attr("class", "tooltip")
-                        .attr('id','gitshow')
+                        .attr('id','gitshow1')
                         .style("left", (width * 0.2) + "px")
                         .style("top", (height * 0.15) + "px")
                         .style("background-color", "white")
@@ -399,23 +415,49 @@ function drawBubble(data,bubbleCount) {
                         .style("padding", "5px")
                         .style("box-shadow", "0px 2px 4px rgba(0, 0, 0, 0.1)")
                         .style('list-style','none');
-
-            gits.forEach((value, key) => {
-                console.log('vk', value, key);
+            gitinfo.append("foreignObject")
+                    .attr("height", "12px")
+                    .append("xhtml:div")
+                    .style("display", "flex")
+                    .style("align-items", "center")
+                    .style("margin", 0)
+                    .style("padding", 0)
+                    .html('<img src="http://127.0.0.1:5006/get_svg/github.svg" style="width: 10px; height: 10px; margin-right: 5px;"/>')
+                    .append("span")
+                    .attr("class", "close")
+                    .attr("color", "red")
+                    .text("x")
+                    .style("position", "absolute")
+                    .style('right',"0")
+                    .on("click", () => {
+                      gitinfo.remove();
+                      d3.select("input#showGit1").property("checked", false);
+                      gitchange = 0;
+                    });
+            if (gits.size == 0){
                 gitinfo.append('text')
                     .attr("stroke-family", "仿宋")
                     .attr("font-size", "10px")
-                    .text(key)
-                    .on("click",function()
-                    {
-//                        console.log(d);
-                        window.open(value, '_blank');
-                    });
-                gitinfo.append('br');
-            });
+                    .text("no GitHub files!");
+            }
+            else{
+                gits.forEach((value, key) => {
+                    console.log('vk', value, key);
+                    gitinfo.append('text')
+                        .attr("stroke-family", "仿宋")
+                        .attr("font-size", "10px")
+                        .text(key)
+                        .on("click",function()
+                        {
+    //                        console.log(d);
+                            pdfgitclick(key);
+                        });
+                    gitinfo.append('br');
+                });
+            }
         }
         else{
-            d3.select('#gitshow').remove();
+            d3.select('#gitshow1').remove();
         }
 	});
 }
