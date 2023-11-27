@@ -256,14 +256,14 @@
             </van-row>
             <!--图像控制区-->
             <div v-show="viewSelection === 'net' || viewSelection === 'class'">
-                <van-row style="margin-top:20px;font-size:12px">Node Radius</van-row>
+                <van-row style="margin-top:10px;font-size:12px">Node Radius</van-row>
                 <van-row><input style="position:relative;top:3px;" type="range" id="nodescale" min="0.5" max="10"
                                 value="1">
                 </van-row>
-                <van-row style="margin-top:20px;font-size:12px">Edge Length</van-row>
+                <van-row style="margin-top:10px;font-size:12px">Edge Length</van-row>
                 <van-row><input style="position:relative;top:3px;" type="range" id="edgescale" min="50" max="500"
                                 value="150"></van-row>
-                <van-row style="margin-top:20px;font-size:12px">Charge</van-row>
+                <van-row style="margin-top:10px;font-size:12px">Charge</van-row>
                 <van-row><input style="position:relative;top:3px;" type="range" id="chargescale" min="5" max="1000"
                                 value="600"></van-row>
                 <div v-show="viewSelection === 'class' ">
@@ -272,7 +272,7 @@
                 </van-row>
                 </div>
                 <div v-show="viewSelection === 'net' ">
-                <van-row style="margin-top:30px;font-size:12px">
+                <van-row style="margin-top:10px;font-size:12px">
                     <van-col span="24"><input type="radio" name="flush" value="重绘" id="flush" onclick="javascript:location.reload()">Repaint</input></van-col>
                     <van-col span="12"><input type="radio" name="radio" value="edgecount" id="radio1" checked @click="selectit()">Edge-Count</input></van-col>
                     <van-col span="12"><input type="radio" name="radio" value="equalr" id="radio2" @click="selectit()">Equal-Radius</input></van-col>
@@ -285,22 +285,30 @@
             </div>
 
             <div v-show="viewSelection === 'pinetree'">
-                <van-row>Totally {{ pinecount.node}} nodes</van-row>
-                <van-row style="margin-top:20px;margin-left: 5px;">Length</van-row>
+                <van-row style="margin-top:10px;">Totally {{ pinecount.node }} nodes</van-row>
+                <van-row style="margin-top:10px;margin-left: 5px;">Length</van-row>
                 <van-row>
                     <input style="position:relative;top:3px;margin-left: 5px;" type="range" id="lengthscale" min="30"
                            max="1000" value="200">
                 </van-row>
-                <van-row style="margin-top:20px;margin-left: 5px;">Angel</van-row>
+                <van-row style="margin-top:10px;margin-left: 5px;">Angel</van-row>
                 <van-row>
                     <input style="position:relative;top:3px;margin-left: 5px;" type="range" id="anglescale"
                            min="Math.PI" max="Math.PI*2" value="0">
                 </van-row>
-                <van-row style="margin-top:30px;">
+                <van-row style="margin-top:10px;">
                     <input type="checkbox" name="label" value="showOn" id="showLabel" checked>Label</input>
                 </van-row>
-                <van-row style="margin-top:30px"><input type="radio" name="flush" value="重绘" id="flush1"
+                <van-row style="margin-top:10px"><input type="radio" name="flush" value="重绘" id="flush1"
                                                         onclick="javascript:location.reload()">Repaint</input>
+                </van-row>
+                <van-row style="margin-top:10px;">
+                    <van-col span="12">
+                        <input type="checkbox" name="label" value="showOn" id="showPdf3" >PDF</input>
+                    </van-col>
+                    <van-col span="12">
+                        <input type="checkbox" name="label" value="showOn" id="showGit3" >GitHub</input>
+                    </van-col>
                 </van-row>
             </div>
             <div v-show="viewSelection === 'filetree'">
@@ -327,14 +335,26 @@
                                                         onclick="javascript:location.reload()">Repaint</input></van-row>
             </div>
             <div v-show="viewSelection === 'bubble'" >
+                <van-row style="margin-top:30px;">Totally {{ bubblecount.node }} nodes</van-row>
                 <van-row style="margin-top:30px;">
-                    <input type="checkbox" name="label" value="showOn" id="showPdf" >show-pdf</input>
-                    <input type="checkbox" name="label" value="showOn" id="showGit" >show-git</input>
+                    <van-col span="12">
+                        <input type="checkbox" name="label" value="showOn" id="showPdf1" >PDF</input>
+                    </van-col>
+                    <van-col span="12">
+                        <input type="checkbox" name="label" value="showOn" id="showGit1" >GitHub</input>
+                    </van-col>
                 </van-row>
-                <van-row>Totally {{ bubblecount.node }} nodes</van-row>
             </div>
              <div v-show="viewSelection === 'cloud'" >
-                <van-row>Totally {{cloudcount.node}} nodes</van-row>
+                <van-row style="margin-top:30px;">Totally {{cloudcount.node }} nodes</van-row>
+                 <van-row style="margin-top:30px;">
+                    <van-col span="12">
+                        <input type="checkbox" name="label" value="showOn" id="showPdf2" >PDF</input>
+                    </van-col>
+                    <van-col span="12">
+                        <input type="checkbox" name="label" value="showOn" id="showGit2" >GitHub</input>
+                    </van-col>
+                </van-row>
             </div>
             <div v-show="viewSelection === 'tree'&&drawTreeReady==1">
                 <div style="margin-top: 30px;">
@@ -398,7 +418,6 @@
                   treeNodeCount: 0,
                   treeShowNodeCount: 0,
                 },
-                drawTreeReady:0,
                 bubblecount: {
                     node:0
                 },
@@ -414,7 +433,7 @@
                 netcount: {
                     node: 0,
                     link: 0,
-                    },
+                }
             };
         },
         methods: {
