@@ -90,7 +90,6 @@ function drawNet(data, k,search,netCount){
                                                .attr("y", - (img_h / 2 - rad + 3.5))
                                                .attr("width", img_w + 11)
                                                .attr("height", img_h + 6);
-//                          var imageUrl = "static/pic/" + d.name + ".svg";
                           var imageUrl="static/pic/default.png"
                           fetch(imageUrl,{method:"HEAD"})
                             .then(response=>{
@@ -120,25 +119,29 @@ function drawNet(data, k,search,netCount){
 					  else { return color[d.layer%10]; }
 				  })
 				  .on("mouseenter", (d,i) => {
-					  link.style("stroke-width", l => l.source.name == i.name || l.target.name == i.name ? 4 : 1);
+					  link.style("stroke-width", l => l.source.name == i.name || l.target.name == i.name ? 2 : 1)
+					        .style("stroke", l => l.source.name == i.name || l.target.name == i.name ?color[i.layer%10]:"grey")
 					  var point = i;
 					  fullname = point.name;
 					  if(fullname.lastIndexOf('.') == -1) {
 					      fetch('http://127.0.0.1:5006/pylibsInfo?wanted=' + fullname)
 					      .then(response => response.json())  // 使用json()方法提取JSON数据
-					      .then(data => {
+					      .then(data => {//显示根节点模块信息
 					          const tooltipContent = `<div style="background-color:grey">Name:${data.Name}</div><div>Version:${data.Version}</div><div>Summary:${data.Summary}</div><div>Author:${data.Author}</div><div>License:${data.License}</div><div>Location:${data.Location}</div>`;
-					          tooltip.html(tooltipContent).style("display","block");
+					          tooltip.html(tooltipContent).style("display","block")
+					            .style("background-color", "#E4F1FF");
 					      })
 					  }
-					  else{
+					  else{//显示非根节点模块信息
 					       const tooltipContent=`<div style="background-color:grey">Name:${i.name}</div><div>Location:${i.file}</div><div>Layer:${i.layer}</div>${i.hasfunction ? `<div>Function:${i.myfunction}</div>` : ''}${i.hasclass ? `<div>Class:${i.myclass}</div>` : ''}`;
-					       tooltip.html(tooltipContent).style("display","block");
+					       tooltip.html(tooltipContent).style("display","block")
+                                .style("background-color", "#FFDF76");
 					  }
 				  })
 				  .on("mouseleave", d => {
 				      tooltip.style("display","none");
 				      link.style("stroke-width", 1)
+				            .style("stroke", "grey");
 				  })
 				  .style("cursor", "pointer")
 				  .on("click", (d, i) => {

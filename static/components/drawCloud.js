@@ -22,12 +22,15 @@ function drawCloud(data,search,cloudcount){
       var worddata=root.descendants();
 
       cloudcount.node = worddata.length;
+      var depth=0;
       for (var i = 0; i < worddata.length; i++) {
             if(worddata[i].children)
             hiwords[i] = { text:worddata[i].data.name,size:(worddata[i].height+1)*6 ,leaf:"False",parent:worddata[i].parent,depth:worddata[i].depth};
             else
+            {
+            depth=worddata[i].depth;
             hiwords[i] = { text: worddata[i].data.name, size:(worddata[i].height+1)*6 ,leaf:"True" ,parent:worddata[i].parent,depth:worddata[i].depth};
-        }
+        }}
       var wc = d3.layout.cloud()
           .size([width*0.85, height])
           .words(hiwords)
@@ -156,20 +159,17 @@ function drawCloud(data,search,cloudcount){
                 });
             })
             .each(function(d,i) {
-                console.log('cloud',d,i);
                 if(worddata[i].data.linkAll && typeof( worddata[i].data.linkAll['pdfClass']) !== "undefined" && Object.keys(worddata[i].data.linkAll['pdfClass']).length > 0)
                 {
                     for (key in worddata[i].data.linkAll['pdfClass']){
                         pdfs.set(key,worddata[i].data.linkAll['pdfClass'][key]);
                     }
-//                    console.log('d',d);
                 }
                 if(worddata[i].data.linkAll && typeof( worddata[i].data.linkAll['gitClass']) !== "undefined" && Object.keys(worddata[i].data.linkAll['gitClass']).length > 0)
                 {
                     for (key in worddata[i].data.linkAll['gitClass']){
                         gits.set(key,worddata[i].data.linkAll['gitClass'][key]);
                     }
-//                    console.log('e',d);
                 }
                 if (worddata[i].data.linkAll && typeof(worddata[i].data.linkAll["pdfModule"]) !== "undefined" && worddata[i].data.linkAll["pdfModule"].length > 0)
                 {
@@ -180,13 +180,12 @@ function drawCloud(data,search,cloudcount){
                         fullname = point.data.name + '.' + fullname;
                     }
                     fullname = fullname;
-//                    console.log('pm',fullname);
                     pdfs.set(fullname,worddata[i].data.linkAll['pdfModule'][0])
                 }
             });
 
-          var colorrec = d3.select("svg").selectAll('rect')
-            .data(arraycolor)
+         var colorrec = d3.select("svg").selectAll('rect')
+            .data(arraycolor.splice(0,depth+1))
             .enter()
             .append("rect")
             .attr("x", 1100)
@@ -194,7 +193,7 @@ function drawCloud(data,search,cloudcount){
             .attr("width", 18)
             .attr("height", 18)
             .attr("opacity", 0.9)
-            .attr("fill", (d, i) => arraycolor[i])
+            .attr("fill", (d, i) => d)
             .on("click", function(d, i) {
                 var currentOpacity = d3.select(this).attr("opacity");
                 let currentLayer=0;
@@ -208,7 +207,6 @@ function drawCloud(data,search,cloudcount){
 
             svg.selectAll("text").nodes().forEach(function(textNode,i) {
                 var opacity = d3.select(textNode).attr("opacity");
-                // 仅保存每一层级的第一个 opacity 值
                 allLayerOpacities[hiwords[i].depth] = opacity;
             });
                 if(currentOpacity!=0.9){//点击显示当前层级词云数据

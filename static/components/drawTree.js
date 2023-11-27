@@ -262,10 +262,19 @@ function updateNodes(source, nodes) {
           return d3.symbol().type(d3.symbols[0])();
       }
       else if (endcase == 'pyi'){
-          return d3.symbol().type(d3.symbols[4])();
+          return d3.symbol().type(d3.symbols[1])();
       }
       else if (endcase == 'dll'){
           return d3.symbol().type(d3.symbols[2])();
+      }
+      else if (endcase == 'pxd'){
+          return d3.symbol().type(d3.symbols[3])();
+      }
+//      else if (endcase == 'h'){
+//          return d3.symbol().type(d3.symbols[4])();
+//      }
+      else if (endcase == 'c'){
+          return d3.symbol().type(d3.symbols[5])();
       }
       else if ((endcase == 'png' ) || (endcase == 'jpg')){
           return d3.symbol().type(d3.symbols[6])();
@@ -276,15 +285,16 @@ function updateNodes(source, nodes) {
       }
       else//for unknown type of file
       {
-          return d3.symbol().type(d3.symbols[5])();
+          return d3.symbol().type(d3.symbols[4])();
           }
         })
+
     .style("fill", function (d) {
      return chooseColor(d.data.name,d.children||d._children)
     })
     .attr("opacity",function(d)
     {
-        return (d._children) &&(!d.children) ? 0.9:0.1;
+        return d._children ? 0.1:0.9;
     })
     .on("click", function(event,d)
     {
@@ -543,20 +553,29 @@ function chooseColor(fullname,isFolder)
           return color[0];
       }
       else if (endcase == 'pyi'){
-          return color[4];
+          return color[1];
       }
       else if (endcase == 'dll'){
           return color[2];
       }
       else if ((endcase == 'png' ) || (endcase == 'jpg')){
+          return color[3];
+      }
+      else if (endcase == 'pxd'){
+          return color[4];
+      }
+//      else if (endcase == 'h'){
+//          return color[5];
+//      }
+      else if (endcase == 'c'){
           return color[6];
       }
       else if(isFolder){
-          return color[5];
+          return color[7];
       }
       else
       {
-      return color[7];
+      return color[8];
       }
 }
 
