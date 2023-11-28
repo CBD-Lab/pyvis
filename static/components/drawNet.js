@@ -123,7 +123,7 @@ function drawNet(data, k,search,netCount){
 					        .style("stroke", l => l.source.name == i.name || l.target.name == i.name ?color[i.layer%10]:"grey")
 					  var point = i;
 					  fullname = point.name;
-					  if(fullname.lastIndexOf('.') == -1) {
+					  if(fullname.lastIndexOf('.') == -1) {//显示根节点信息
 					      fetch('http://127.0.0.1:5006/pylibsInfo?wanted=' + fullname)
 					      .then(response => response.json())  // 使用json()方法提取JSON数据
 					      .then(data => {//显示根节点模块信息
@@ -147,7 +147,8 @@ function drawNet(data, k,search,netCount){
 				  .on("click", (d, i) => {
 					  var point = i;
                       fullname=point.name;
-				      if(fullname.lastIndexOf('.')!=-1)
+                      console.log(fullname);
+				      if(fullname.lastIndexOf('.')!=-1)//如果是目录的话就加载源代码
 				      {
 					  fetch('http://127.0.0.1:5006/leafCode?wanted=' + fullname)
 						  .then(response => response.text())
@@ -158,7 +159,29 @@ function drawNet(data, k,search,netCount){
 										   .append("div")
 										   .attr("class", "popup");
 
-							  tips.append("span")
+
+						      var drag=d3.drag()
+                                  .on("start", function (event) {
+                                    // 记录拖拽开始时的位置
+                                    var startX = event.x;
+                                    var startY = event.y;
+
+                                    // 获取当前提示框的位置
+                                    var currentLeft = parseFloat(tips.style("left"));
+                                    var currentTop = parseFloat(tips.style("top"));
+
+                                    // 计算鼠标相对于提示框左上角的偏移
+                                    offsetX = startX - currentLeft;
+                                    offsetY = startY - currentTop;
+                                  })
+                                  .on("drag", function (event) {
+                                    // 随鼠标移动，更新提示框位置
+                                    tips.style("left", (event.x - offsetX) + "px")
+                                      .style("top", (event.y - offsetY) + "px");
+                                  });
+                              tips.call(drag);
+
+                              tips.append("span")
 								  .attr("class", "close")
 								  .attr("color", "red")
 								  .text("x")
@@ -177,8 +200,8 @@ function drawNet(data, k,search,netCount){
 
 						  else
 						  {
-						  d3.select("#tooltip").remove()
-						    search(i.name);
+                              d3.select("#tooltip").remove()
+//                              search(i.name);//这里是默认点击如果没有获取包就触发search操作，暂时不保留
 						  }
 				  })
 				  .call(drag());

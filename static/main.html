@@ -115,7 +115,7 @@
             background-color:var(--leftsidecolor);
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
+            min-height: 90vh;
         }
         .flex-placeholder {
           display:flex;
@@ -124,14 +124,18 @@
         }
         .searchbox{
             border:1px solid var(--topcolor);
-            overflow:hidden;
         }
         .searchbox .searchtext{
-<!--            background-color:var(&#45;&#45;buttonbgcolor);-->
-<!--            border-radius: 3px;-->
             width:100%;
             color:white;
            }
+        .searchbox .van-haptics-feedback{
+            background-color: var(--buttonbgcolor);
+            border-radius: 3px;
+            width:100%;
+            color:white;
+            font-size:12px;
+        }
         .filesearchbox
         {
             margin-top:auto;
@@ -147,7 +151,6 @@
             background-color:var(--buttonbgcolor);
             border:1px solid var(--topcolor);
             width:100%;
-<!--            margin-top: 5px;-->
             color:white;
             font-size:12px;
         }
@@ -157,6 +160,14 @@
             width:99%;
             color:black;
             font-size:12px;
+        }
+        .nodeMessage{
+            border:2px solid var(--buttonbgcolor);
+            border-radius:4px;
+            margin:20px 0px 0px 0px;
+            background-color:white;
+            width:200px;
+            text-align:center;
         }
         .popup {
             position:absolute;
@@ -272,6 +283,8 @@
                 </van-row>
                 </div>
                 <div v-show="viewSelection === 'net' ">
+                    <van-row class="nodeMessage">Totally {{netcount.node }} nodes</van-row>
+                    <van-row class="nodeMessage">Totally {{netcount.link }} links</van-row>
                 <van-row style="margin-top:10px;font-size:12px">
                     <van-col span="24"><input type="radio" name="flush" value="重绘" id="flush" onclick="javascript:location.reload()">Repaint</input></van-col>
                     <van-col span="12"><input type="radio" name="radio" value="edgecount" id="radio1" checked @click="selectit()">Edge-Count</input></van-col>
@@ -279,13 +292,12 @@
                     <van-col span="12"><input type="radio" name="radio" value="showclass" id="radio3" @click="selectit()">Show-Class</input></van-col>
                     <van-col span="12"><input type="radio" name="radio" value="showfunction" id="radio4" @click="selectit()">Show-Function</input></van-col>
                 </van-row>
-                    <van-row>Totally {{netcount.node }} nodes</van-row>
-                    <van-row>Totally {{netcount.link }} links</van-row>
+
                 </div>
             </div>
 
             <div v-show="viewSelection === 'pinetree'">
-                <van-row style="margin-top:10px;">Totally {{ pinecount.node }} nodes</van-row>
+                <van-row class="nodeMessage" style="margin-top:10px;">Totally {{ pinecount.node }} nodes</van-row>
                 <van-row style="margin-top:10px;margin-left: 5px;">Length</van-row>
                 <van-row>
                     <input style="position:relative;top:3px;margin-left: 5px;" type="range" id="lengthscale" min="30"
@@ -318,6 +330,8 @@
                 <van-row style="margin-top: 5px;">Totally {{ filetreeCount.node }} nodes</van-row>
             </div>
             <div v-show="viewSelection === 'treemap'">
+                <van-row class="nodeMessage" style="margin-top: 5px;">Totally {{ mapcount.node }} nodes</van-row>
+
                 <van-row style="margin-top:20px;margin-left: 5px;">Length</van-row>
                 <van-row>
                     <input style="position:relative;top:3px;margin-left: 5px;" type="range" id="length" min="100"
@@ -329,14 +343,14 @@
                 <van-row style="margin-top:10px">
                     <van-checkbox v-model="checked2" style="margin-left: 5px;" class="van-haptics-feedback" @click="viewpdf()" type="primary">PDF</van-checkbox>
                 </van-row>
-                <van-row style="margin-top: 5px;">Totally {{ mapcount.node }} nodes</van-row>
             </div>
             <div v-show="viewSelection === 'hicircle'">
                 <van-row style="margin-top:30px"><input type="radio" name="flush" value="重绘" id="flush3"
                                                         onclick="javascript:location.reload()">Repaint</input></van-row>
             </div>
             <div v-show="viewSelection === 'bubble'" >
-                <van-row style="margin-top:30px;">Totally {{ bubblecount.node }} nodes</van-row>
+                <van-row class="nodeMessage">Totally {{ bubblecount.node }} nodes</van-row>
+
                 <van-row style="margin-top:30px;">
                     <van-col span="12">
                         <input type="checkbox" name="label" value="showOn" id="showPdf1" >PDF</input>
@@ -347,7 +361,7 @@
                 </van-row>
             </div>
              <div v-show="viewSelection === 'cloud'" >
-                <van-row style="margin-top:30px;">Totally {{cloudcount.node }} nodes</van-row>
+                <van-row class="nodeMessage">Totally {{cloudcount.node }} nodes</van-row>
                  <van-row style="margin-top:30px;">
                     <van-col span="12">
                         <input type="checkbox" name="label" value="showOn" id="showPdf2" >PDF</input>
@@ -359,8 +373,8 @@
             </div>
             <div v-show="viewSelection === 'tree'&&drawTreeReady==1">
                 <div style="margin-top: 30px;">
-                  <van-row>Totally {{ treecount.treeNodeCount }} nodes</van-row>
-                  <van-row>Show {{ treecount.treeShowNodeCount }} nodes</van-row>
+                  <van-row class="nodeMessage">Totally {{ treecount.treeNodeCount }} nodes</van-row>
+                  <van-row class="nodeMessage">Show {{ treecount.treeShowNodeCount }} nodes</van-row>
                 </div>
             </div>
             <div style="display: flex; flex-direction: column;" class="filesearchbox">
@@ -671,7 +685,6 @@
                 }
             },
             searchSingle() {
-                console.log("search single");
                 var that = this;
                 fetch("/single?wanted=" + this.singleModule).then(res => {
                         if (res.ok) {
