@@ -10,13 +10,14 @@ function drawTreeMap(data, flag, pdf, mapCount) {
     var treemap = d3.treemap()
         .size([width, height]);
 
-    //console.log(data);
+    console.log("data:",data);
     var hidata = d3.hierarchy(data)
-        .sum(d => d.value)
+        .sum(d => Math.sqrt(Math.sqrt(d.value)))
         .sort((a, b) => b.value - a.value);
-    //console.log(hidata);
+    console.log("hidata",hidata);
     var treedata = treemap(hidata);
-    //console.log(treedata);
+    console.log("treedata:",treedata);
+
     nodes = treedata.leaves();
 
     mapCount.node = nodes.length;
@@ -235,10 +236,10 @@ function drawTreeMap(data, flag, pdf, mapCount) {
 
     d3.select("input[id=length]").on("change", function () { //修改width和height以实现对矩形块进行缩放
 		var newScale = +this.value; // 获取输入框的值并转换为数字
-        width = width * newScale * 0.01;
-        height = height * newScale * 0.01;
-        svg.attr("width", width)
-            .attr("height", height);
+        var width1 = width * newScale * 0.01;
+        var height1 = height * newScale * 0.01;
+        svg.attr("width", width1)
+            .attr("height", height1);
         // 更新矩形块的宽度和高度
         
         rect.attr("transform", function (d) { return "translate(" + d.x0 * newScale * 0.01 + "," + d.y0 * newScale * 0.01 + ")"; })

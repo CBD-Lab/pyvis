@@ -1,4 +1,4 @@
-function drawFileTree(data) {
+function drawFileTree(data, filetreeCount) {
   var padding = { left: 80, right: 50, top: 20, bottom: 20 };
   var svg = d3.select("#graph")
     .attr("width", width + padding.left + padding.right)
@@ -30,7 +30,8 @@ function drawFileTree(data) {
     //应用布局，计算节点和连线
     var nodes = root.descendants();
     var links = root.links();
-
+    
+    filetreeCount.node = nodes.length;
     //重新计算节点的y坐标
     nodes.forEach(function (d) { d.y = d.depth * 120; });
 
@@ -184,7 +185,54 @@ function drawFileTree(data) {
       .on("mouseout", function (event, d) {
         d3.select(this)
           .text(d => d.data.name)
-      })
+      });
+
+      enterNodes
+      .each(function(d) {
+          if(d.data.linkAll
+          &&
+          ((typeof( d.data.linkAll['pdfClass']) !== "undefined" && Object.keys(d.data.linkAll['pdfClass']).length > 0)||(typeof( d.data.linkAll['gitClass']) !== "undefined" && Object.keys(d.data.linkAll['gitClass']).length > 0)))
+          {
+            d3.select(this)
+              .append("foreignObject")
+              .attr("class","fileBox")
+              .attr("width", "8px")
+              .attr("height", "15px")
+              .attr("x", function(event,d) {
+                return d.children || d._children ? -30 : 100 ;
+              })
+              .attr("y",-10)
+               .append("xhtml:div")
+               .style("margin", 0)
+               .style("padding", 0)
+               .html('<img src="http://127.0.0.1:5006/get_svg/fileBox.svg" width="100%" height="100%" />')
+               .on("click",function(event,d)
+               {
+                  textclick(event,d);
+               })
+
+          }
+          if (d.data.linkAll && typeof(d.data.linkAll["pdfModule"]) !== "undefined" && d.data.linkAll["pdfModule"].length > 0) {
+          d3.select(this)
+              .append("foreignObject")
+              .attr("width", "8px")
+              .attr("height", "15px")
+              .attr("x", function(event,d) {
+                return d.children || d._children ? -30 : 20+100;
+              })
+              .attr("y",-10)
+               .append("xhtml:div")
+               .style("margin", 0)
+               .style("padding", 0)
+               .html('<img src="http://127.0.0.1:5006/get_svg/pdf.svg" width="100%" height="100%" />')
+               .on("click",function()
+               {
+                  var link = d.data.linkAll['pdfModule'];
+                  window.open(link, '_blank');
+               })
+
+          }
+    });
 
     //2. 节点的 Update 部分的处理办法
     var updateNodes = nodeUpdate.transition()
@@ -284,7 +332,7 @@ function drawFileTree(data) {
 
 }
 
-window.onDrawFileTreeReady = function (data) {
+window.onDrawFileTreeReady = function (data, filetreeCount) {
   // 执行绘图逻辑
-  drawFileTree(data);
+  drawFileTree(data, filetreeCount);
 }

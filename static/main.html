@@ -315,6 +315,7 @@
                 <van-row style="margin-top:30px"><input type="radio" name="flush" value="重绘" id="flush2"
                                                         onclick="javascript:location.reload()">Repaint</input>
                 </van-row>
+                <van-row style="margin-top: 5px;">Totally {{ filetreeCount.node }} nodes</van-row>
             </div>
             <div v-show="viewSelection === 'treemap'">
                 <van-row style="margin-top:20px;margin-left: 5px;">Length</van-row>
@@ -433,6 +434,9 @@
                 netcount: {
                     node: 0,
                     link: 0,
+                },
+                filetreeCount:{
+                    node:0
                 }
             };
         },
@@ -549,7 +553,7 @@
                 var that = this;
                 this.viewSelection="filetree";
                 axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
-                    onDrawFileTreeReady(res.data);
+                    onDrawFileTreeReady(res.data,this.filetreeCount);
                 });
             },
             bubblevis() {
