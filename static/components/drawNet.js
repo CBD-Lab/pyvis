@@ -4,7 +4,7 @@ var nodeweight;
 var nodelayer;
 
 
-function drawNet(data, k,search,netCount){
+function drawNet(data, k, search, netCount){
     var forceSimulation = d3.forceSimulation()
 							.force("link",d3.forceLink())
 							.force("charge",d3.forceManyBody().strength(-100))
@@ -19,8 +19,8 @@ function drawNet(data, k,search,netCount){
     var module = "pylibs.json"
     var nodes = data.nodes;
     var links = data.links;
-    netCount.node=nodes.length;
-    netCount.link=links.length;
+    netCount.node = nodes.length;
+    netCount.link = links.length;
     nodeweight = new Array(nodes.length);
     nodehasclass = new Array(nodes.length);
     nodehasfunction = new Array(nodes.length);
@@ -124,7 +124,7 @@ function drawNet(data, k,search,netCount){
 					  var point = i;
 					  fullname = point.name;
 					  if(fullname.lastIndexOf('.') == -1) {//显示根节点信息
-					      fetch('http://127.0.0.1:5006/pylibsInfo?wanted=' + fullname)
+					      fetch('http://127.0.0.1:5006/info?wanted=' + fullname)
 					      .then(response => response.json())  // 使用json()方法提取JSON数据
 					      .then(data => {//显示根节点模块信息
 					          const tooltipContent = `<div style="background-color:grey">Name:${data.Name}</div><div>Version:${data.Version}</div><div>Summary:${data.Summary}</div><div>Author:${data.Author}</div><div>License:${data.License}</div><div>Location:${data.Location}</div>`;
@@ -316,9 +316,9 @@ function selectit(type){
     return null;
 }
 
-window.onDrawNetReady = function(data, k,search,netCount) {
+window.onDrawNetReady = function(data, k, search, netCount) {
     // 执行绘图逻辑
-    drawNet(data, k,search,netCount);
+    drawNet(data, k, search, netCount);
 }
 window.onNetfunction = function(type) {
     selectit(type);

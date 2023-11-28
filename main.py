@@ -8,7 +8,7 @@ from flask import Flask, request, jsonify, send_from_directory, send_file
 from flask_cors import CORS
 import inspect
 import importlib
-from extract import basicFunction, pylibsNet, pyNet, pyClass, pylibsInfo, pyTree, pylibsTree
+from extract import basicFunction, pylibsNet, pyNet, pyClass, pyreverseClass, pylibsInfo, pyTree, pylibsTree
 
 app = Flask(__name__)
 CORS(app)
@@ -164,7 +164,7 @@ def localPath():
 def single():
     single_module = request.args.get('wanted', type=str).lower()
     if (single_module is None) or (single_module == "undefined") or (single_module == ""):
-        single_module = 'numpy'
+        single_module = 'flask'
 
     if os.path.isfile('static/netjson/' + single_module + '.json'):
         os.remove('static/netjson/' + single_module + '.json')
@@ -176,6 +176,7 @@ def single():
     if os.path.isfile('static/netjson/' + single_module + 'class.json'):
         os.remove('static/netjson/' + single_module + 'class.json')
     pyClass.getClassNet(path, single_module)
+    # pyreverseClass.getPyreverseClass(single_module)
 
     return jsonify({'message': 'Tasks completed successfully'})
 
@@ -201,6 +202,7 @@ def userPath():
             pylibsNet.pylibs(user_path)
             pyNet.pyNetAll(user_path)
             pyClass.getClassNetAll(user_path)
+            # pyreverseClass.getPyreverseClassAll()
             shutil.rmtree('static/netjson')
             os.rename('static/netjson_tmp', 'static/netjson')
             if os.path.isfile('pylibsInfo.json'):
@@ -242,8 +244,8 @@ def get_svg(filename):
 
 
 # 获得整体包的信息
-@app.route("/pylibsInfo", methods=["GET"])
-def pylibsInfo():
+@app.route("/info", methods=["GET"])
+def info():
     module_name = request.args.get("wanted", type=str)
     filedir = 'pylibsInfo.json'
     # print(send_from_directory(filedir))

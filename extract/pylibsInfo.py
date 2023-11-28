@@ -13,7 +13,7 @@ def readpackages():
     with open(filename, 'r', encoding='utf-8') as f:
         line = f.readline()
         while line:
-            pylibsNet.append(line.split(" ")[0])
+            pylibsNet.append(line.split(" ")[0].replace(".py", ""))
             line = f.readline()
             i = i + 1
         print("i", i)
@@ -27,25 +27,23 @@ def parse_pip_show_output(output):
         match = re.match(r"([^:]+): (.+)$", line)
         if match:
             key, value = match.groups()
-            result[key.replace("-", " ").strip()] = value.strip()
+            modified_key = ''.join(word.capitalize() for word in key.split('-'))
+            result[modified_key.strip()] = value.strip()
     return result
 
 
 def showInfo(path):
-    package_names = readpackages()
-    print("package_names", package_names)
-
-    for package_name in package_names:
-        filename = package_name.replace(".py", "")
+    packages_name = readpackages()
+    print("packages_name", packages_name)
+    for package_name in packages_name:
         print("package_name：", package_name)
         try:
-            command = [path + 'pip3', 'show', filename]
+            command = [path + 'pip3', 'show', package_name]
             result = subprocess.check_output(command, text=True)
             package_info = parse_pip_show_output(result)
-            infojson[filename] = package_info
-
+            infojson[package_name] = package_info
         except Exception as e:
-            print(f"Error in package {filename}: {e}. Skipping...")
+            print(f"Error in package {package_name}: {e}. Skipping...")
 
     with open('pylibsInfo.json', 'w', encoding='utf-8') as f:
         json.dump(infojson, f, ensure_ascii=False, indent=4)
