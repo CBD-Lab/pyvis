@@ -540,7 +540,7 @@
                 this.clearPage();
                 this.viewSelection="class";
                 if (this.keyword == "" || this.keyword == "undefined" || this.keyword == "None")
-                    this.keyword = "numpy"
+                    this.keyword = "flask"
                 axios.get("http://127.0.0.1:5006/module?wanted=" + this.keyword + "class").then(res=>{
                     onDrawNetReady(res.data);
                 });

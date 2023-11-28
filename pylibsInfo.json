@@ -3,28 +3,28 @@
         "Name": "absl-py",
         "Version": "1.1.0",
         "Summary": "Abseil Python Common Libraries, see https://github.com/abseil/abseil-py.",
-        "Home page": "https://github.com/abseil/abseil-py",
+        "HomePage": "https://github.com/abseil/abseil-py",
         "Author": "The Abseil Authors",
         "License": "Apache 2.0",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
-        "Required by": "tensorboard, tensorflow-gpu"
+        "RequiredBy": "tensorboard, tensorflow-gpu"
     },
     "astor": {
         "Name": "astor",
         "Version": "0.8.1",
         "Summary": "Read/rewrite/write Python ASTs",
-        "Home page": "https://github.com/berkerpeksag/astor",
+        "HomePage": "https://github.com/berkerpeksag/astor",
         "Author": "Patrick Maupin",
-        "Author email": "pmaupin@gmail.com",
+        "AuthorEmail": "pmaupin@gmail.com",
         "License": "BSD-3-Clause",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
-        "Required by": "tensorflow-gpu"
+        "RequiredBy": "tensorflow-gpu"
     },
     "astunparse": {
         "Name": "astunparse",
         "Version": "1.6.3",
         "Summary": "An AST unparser for Python",
-        "Home page": "https://github.com/simonpercivall/astunparse",
+        "HomePage": "https://github.com/simonpercivall/astunparse",
         "License": "BSD",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
         "Requires": "six, wheel"
@@ -33,66 +33,66 @@
         "Name": "cachetools",
         "Version": "4.2.4",
         "Summary": "Extensible memoizing collections and decorators",
-        "Home page": "https://github.com/tkem/cachetools/",
+        "HomePage": "https://github.com/tkem/cachetools/",
         "Author": "Thomas Kemmer",
-        "Author email": "tkemmer@computer.org",
+        "AuthorEmail": "tkemmer@computer.org",
         "License": "MIT",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
-        "Required by": "google-auth"
+        "RequiredBy": "google-auth"
     },
     "certifi": {
         "Name": "certifi",
         "Version": "2022.6.15",
         "Summary": "Python package for providing Mozilla's CA Bundle.",
-        "Home page": "https://github.com/certifi/python-certifi",
+        "HomePage": "https://github.com/certifi/python-certifi",
         "Author": "Kenneth Reitz",
-        "Author email": "me@kennethreitz.com",
+        "AuthorEmail": "me@kennethreitz.com",
         "License": "MPL-2.0",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
-        "Required by": "requests"
+        "RequiredBy": "requests"
     },
     "cffi": {
         "Name": "cffi",
         "Version": "1.15.1",
         "Summary": "Foreign Function Interface for Python calling C code.",
-        "Home page": "http://cffi.readthedocs.org",
+        "HomePage": "http://cffi.readthedocs.org",
         "Author": "Armin Rigo, Maciej Fijalkowski",
-        "Author email": "python-cffi@googlegroups.com",
+        "AuthorEmail": "python-cffi@googlegroups.com",
         "License": "MIT",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
         "Requires": "pycparser",
-        "Required by": "cryptography"
+        "RequiredBy": "cryptography"
     },
     "charset-normalizer": {
         "Name": "charset-normalizer",
         "Version": "2.0.12",
         "Summary": "The Real First Universal Charset Detector. Open, modern and actively maintained alternative to Chardet.",
-        "Home page": "https://github.com/ousret/charset_normalizer",
+        "HomePage": "https://github.com/ousret/charset_normalizer",
         "Author": "Ahmed TAHRI @Ousret",
-        "Author email": "ahmed.tahri@cloudnursery.dev",
+        "AuthorEmail": "ahmed.tahri@cloudnursery.dev",
         "License": "MIT",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
-        "Required by": "requests"
+        "RequiredBy": "requests"
     },
     "click": {
         "Name": "click",
         "Version": "8.1.3",
         "Summary": "Composable command line interface toolkit",
-        "Home page": "https://palletsprojects.com/p/click/",
+        "HomePage": "https://palletsprojects.com/p/click/",
         "Author": "Armin Ronacher",
-        "Author email": "armin.ronacher@active-4.com",
+        "AuthorEmail": "armin.ronacher@active-4.com",
         "License": "BSD-3-Clause",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
         "Requires": "colorama, importlib-metadata",
-        "Required by": "face-recognition, Flask"
+        "RequiredBy": "face-recognition, Flask"
     },
     "cmake": {
         "Name": "cmake",
         "Version": "3.22.4",
         "Summary": "CMake is an open-source, cross-platform family of tools designed to build, test and package software",
-        "Home page": "https://cmake.org/",
+        "HomePage": "https://cmake.org/",
         "Author": "Jean-Christophe Fillion-Robin",
-        "Author email": "jchris.fillionr@kitware.com",
+        "AuthorEmail": "jchris.fillionr@kitware.com",
         "License": "Apache 2.0",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages"
     },
@@ -100,54 +100,54 @@
         "Name": "colorama",
         "Version": "0.4.4",
         "Summary": "Cross-platform colored terminal text.",
-        "Home page": "https://github.com/tartley/colorama",
+        "HomePage": "https://github.com/tartley/colorama",
         "Author": "Jonathan Hartley",
-        "Author email": "tartley@tartley.com",
+        "AuthorEmail": "tartley@tartley.com",
         "License": "BSD",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
-        "Required by": "click"
+        "RequiredBy": "click"
     },
     "cryptography": {
         "Name": "cryptography",
         "Version": "38.0.1",
         "Summary": "cryptography is a package which provides cryptographic recipes and primitives to Python developers.",
-        "Home page": "https://github.com/pyca/cryptography",
+        "HomePage": "https://github.com/pyca/cryptography",
         "Author": "The Python Cryptographic Authority and individual contributors",
-        "Author email": "cryptography-dev@python.org",
+        "AuthorEmail": "cryptography-dev@python.org",
         "License": "BSD-3-Clause OR Apache-2.0",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
         "Requires": "cffi",
-        "Required by": "jwt"
+        "RequiredBy": "jwt"
     },
     "cycler": {
         "Name": "cycler",
         "Version": "0.11.0",
         "Summary": "Composable style cycles",
-        "Home page": "https://github.com/matplotlib/cycler",
+        "HomePage": "https://github.com/matplotlib/cycler",
         "Author": "Thomas A Caswell",
-        "Author email": "matplotlib-users@python.org",
+        "AuthorEmail": "matplotlib-users@python.org",
         "License": "BSD",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
-        "Required by": "matplotlib"
+        "RequiredBy": "matplotlib"
     },
     "dlib": {
         "Name": "dlib",
         "Version": "19.24.0",
         "Summary": "A toolkit for making real world machine learning and data analysis applications",
-        "Home page": "https://github.com/davisking/dlib",
+        "HomePage": "https://github.com/davisking/dlib",
         "Author": "Davis King",
-        "Author email": "davis@dlib.net",
+        "AuthorEmail": "davis@dlib.net",
         "License": "Boost Software License",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
-        "Required by": "face-recognition"
+        "RequiredBy": "face-recognition"
     },
     "face-recognition": {
         "Name": "face-recognition",
         "Version": "1.3.0",
         "Summary": "Recognize faces from Python or from the command line",
-        "Home page": "https://github.com/ageitgey/face_recognition",
+        "HomePage": "https://github.com/ageitgey/face_recognition",
         "Author": "Adam Geitgey",
-        "Author email": "ageitgey@gmail.com",
+        "AuthorEmail": "ageitgey@gmail.com",
         "License": "MIT license",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
         "Requires": "Click, dlib, face-recognition-models, numpy, Pillow"
@@ -156,32 +156,32 @@
         "Name": "face-recognition-models",
         "Version": "0.3.0",
         "Summary": "Models used by the face_recognition package.",
-        "Home page": "https://github.com/ageitgey/face_recognition_models",
+        "HomePage": "https://github.com/ageitgey/face_recognition_models",
         "Author": "Adam Geitgey",
-        "Author email": "ageitgey@gmail.com",
+        "AuthorEmail": "ageitgey@gmail.com",
         "License": "MIT license",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
-        "Required by": "face-recognition"
+        "RequiredBy": "face-recognition"
     },
     "Flask": {
         "Name": "Flask",
         "Version": "2.2.2",
         "Summary": "A simple framework for building complex web applications.",
-        "Home page": "https://palletsprojects.com/p/flask",
+        "HomePage": "https://palletsprojects.com/p/flask",
         "Author": "Armin Ronacher",
-        "Author email": "armin.ronacher@active-4.com",
+        "AuthorEmail": "armin.ronacher@active-4.com",
         "License": "BSD-3-Clause",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
         "Requires": "click, importlib-metadata, itsdangerous, Jinja2, Werkzeug",
-        "Required by": "Flask-Cors, Flask-Login, Flask-SQLAlchemy"
+        "RequiredBy": "Flask-Cors, Flask-Login, Flask-SQLAlchemy"
     },
     "Flask-Cors": {
         "Name": "Flask-Cors",
         "Version": "3.0.10",
         "Summary": "A Flask extension adding a decorator for CORS support",
-        "Home page": "https://github.com/corydolphin/flask-cors",
+        "HomePage": "https://github.com/corydolphin/flask-cors",
         "Author": "Cory Dolphin",
-        "Author email": "corydolphin@gmail.com",
+        "AuthorEmail": "corydolphin@gmail.com",
         "License": "MIT",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
         "Requires": "Flask, Six"
@@ -190,9 +190,9 @@
         "Name": "Flask-Login",
         "Version": "0.6.2",
         "Summary": "User authentication and session management for Flask.",
-        "Home page": "https://github.com/maxcountryman/flask-login",
+        "HomePage": "https://github.com/maxcountryman/flask-login",
         "Author": "Matthew Frazier",
-        "Author email": "leafstormrush@gmail.com",
+        "AuthorEmail": "leafstormrush@gmail.com",
         "License": "MIT",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
         "Requires": "Flask, Werkzeug"
@@ -201,7 +201,7 @@
         "Name": "Flask-SQLAlchemy",
         "Version": "3.0.0",
         "Summary": "Add SQLAlchemy support to your Flask application.",
-        "Author email": "Armin Ronacher <armin.ronacher@active-4.com>",
+        "AuthorEmail": "Armin Ronacher <armin.ronacher@active-4.com>",
         "License": "BSD-3-Clause",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
         "Requires": "Flask, SQLAlchemy"
@@ -210,9 +210,9 @@
         "Name": "flatbuffers",
         "Version": "1.12",
         "Summary": "The FlatBuffers serialization format for Python",
-        "Home page": "https://google.github.io/flatbuffers/",
+        "HomePage": "https://google.github.io/flatbuffers/",
         "Author": "FlatBuffers Contributors",
-        "Author email": "me@rwinslow.com",
+        "AuthorEmail": "me@rwinslow.com",
         "License": "Apache 2.0",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages"
     },
@@ -220,43 +220,43 @@
         "Name": "fonttools",
         "Version": "4.37.4",
         "Summary": "Tools to manipulate font files",
-        "Home page": "http://github.com/fonttools/fonttools",
+        "HomePage": "http://github.com/fonttools/fonttools",
         "Author": "Just van Rossum",
-        "Author email": "just@letterror.com",
+        "AuthorEmail": "just@letterror.com",
         "License": "MIT",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
-        "Required by": "matplotlib"
+        "RequiredBy": "matplotlib"
     },
     "gast": {
         "Name": "gast",
         "Version": "0.3.3",
         "Summary": "Python AST that abstracts the underlying Python version",
-        "Home page": "https://github.com/serge-sans-paille/gast/",
+        "HomePage": "https://github.com/serge-sans-paille/gast/",
         "Author": "serge-sans-paille",
-        "Author email": "serge.guelton@telecom-bretagne.eu",
+        "AuthorEmail": "serge.guelton@telecom-bretagne.eu",
         "License": "BSD 3-Clause",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
-        "Required by": "tensorflow-gpu"
+        "RequiredBy": "tensorflow-gpu"
     },
     "google-auth": {
         "Name": "google-auth",
         "Version": "1.35.0",
         "Summary": "Google Authentication Library",
-        "Home page": "https://github.com/googleapis/google-auth-library-python",
+        "HomePage": "https://github.com/googleapis/google-auth-library-python",
         "Author": "Google Cloud Platform",
-        "Author email": "googleapis-packages@google.com",
+        "AuthorEmail": "googleapis-packages@google.com",
         "License": "Apache 2.0",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
         "Requires": "cachetools, pyasn1-modules, rsa, setuptools, six",
-        "Required by": "google-auth-oauthlib"
+        "RequiredBy": "google-auth-oauthlib"
     },
     "google-auth-oauthlib": {
         "Name": "google-auth-oauthlib",
         "Version": "0.4.6",
         "Summary": "Google Authentication Library",
-        "Home page": "https://github.com/GoogleCloudPlatform/google-auth-library-python-oauthlib",
+        "HomePage": "https://github.com/GoogleCloudPlatform/google-auth-library-python-oauthlib",
         "Author": "Google Cloud Platform",
-        "Author email": "jonwayne+google-auth@google.com",
+        "AuthorEmail": "jonwayne+google-auth@google.com",
         "License": "Apache 2.0",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
         "Requires": "google-auth, requests-oauthlib"
@@ -265,90 +265,90 @@
         "Name": "google-pasta",
         "Version": "0.2.0",
         "Summary": "pasta is an AST-based Python refactoring library",
-        "Home page": "https://github.com/google/pasta",
+        "HomePage": "https://github.com/google/pasta",
         "Author": "Nick Smith",
-        "Author email": "smithnick@google.com",
+        "AuthorEmail": "smithnick@google.com",
         "License": "Apache 2.0",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
         "Requires": "six",
-        "Required by": "tensorflow-gpu"
+        "RequiredBy": "tensorflow-gpu"
     },
     "greenlet": {
         "Name": "greenlet",
         "Version": "1.1.3.post0",
         "Summary": "Lightweight in-process concurrent programming",
-        "Home page": "https://greenlet.readthedocs.io/",
+        "HomePage": "https://greenlet.readthedocs.io/",
         "Author": "Alexey Borzenkov",
-        "Author email": "snaury@gmail.com",
+        "AuthorEmail": "snaury@gmail.com",
         "License": "MIT License",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
-        "Required by": "SQLAlchemy"
+        "RequiredBy": "SQLAlchemy"
     },
     "grpcio": {
         "Name": "grpcio",
         "Version": "1.47.0",
         "Summary": "HTTP/2-based RPC framework",
-        "Home page": "https://grpc.io",
+        "HomePage": "https://grpc.io",
         "Author": "The gRPC Authors",
-        "Author email": "grpc-io@googlegroups.com",
+        "AuthorEmail": "grpc-io@googlegroups.com",
         "License": "Apache License 2.0",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
         "Requires": "six",
-        "Required by": "tensorboard, tensorflow-gpu"
+        "RequiredBy": "tensorboard, tensorflow-gpu"
     },
     "h5py": {
         "Name": "h5py",
         "Version": "2.10.0",
         "Summary": "Read and write HDF5 files from Python",
-        "Home page": "http://www.h5py.org",
+        "HomePage": "http://www.h5py.org",
         "Author": "Andrew Collette",
-        "Author email": "andrew.collette@gmail.com",
+        "AuthorEmail": "andrew.collette@gmail.com",
         "License": "BSD",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
         "Requires": "numpy, six",
-        "Required by": "Keras, Keras-Applications"
+        "RequiredBy": "Keras, Keras-Applications"
     },
     "idna": {
         "Name": "idna",
         "Version": "3.3",
         "Summary": "Internationalized Domain Names in Applications (IDNA)",
-        "Home page": "https://github.com/kjd/idna",
+        "HomePage": "https://github.com/kjd/idna",
         "Author": "Kim Davies",
-        "Author email": "kim@cynosure.com.au",
+        "AuthorEmail": "kim@cynosure.com.au",
         "License": "BSD-3-Clause",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
-        "Required by": "requests"
+        "RequiredBy": "requests"
     },
     "importlib-metadata": {
         "Name": "importlib-metadata",
         "Version": "4.11.3",
         "Summary": "Read metadata from Python packages",
-        "Home page": "https://github.com/python/importlib_metadata",
+        "HomePage": "https://github.com/python/importlib_metadata",
         "Author": "Jason R. Coombs",
-        "Author email": "jaraco@jaraco.com",
+        "AuthorEmail": "jaraco@jaraco.com",
         "License": "UNKNOWN",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
         "Requires": "typing-extensions, zipp",
-        "Required by": "click, Flask, Markdown, SQLAlchemy"
+        "RequiredBy": "click, Flask, Markdown, SQLAlchemy"
     },
     "itsdangerous": {
         "Name": "itsdangerous",
         "Version": "2.1.2",
         "Summary": "Safely pass data to untrusted environments and back.",
-        "Home page": "https://palletsprojects.com/p/itsdangerous/",
+        "HomePage": "https://palletsprojects.com/p/itsdangerous/",
         "Author": "Armin Ronacher",
-        "Author email": "armin.ronacher@active-4.com",
+        "AuthorEmail": "armin.ronacher@active-4.com",
         "License": "BSD-3-Clause",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
-        "Required by": "Flask"
+        "RequiredBy": "Flask"
     },
     "jieba": {
         "Name": "jieba",
         "Version": "0.42.1",
         "Summary": "Chinese Words Segmentation Utilities",
-        "Home page": "https://github.com/fxsjy/jieba",
+        "HomePage": "https://github.com/fxsjy/jieba",
         "Author": "Sun, Junyi",
-        "Author email": "ccnusjy@gmail.com",
+        "AuthorEmail": "ccnusjy@gmail.com",
         "License": "MIT",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages"
     },
@@ -356,21 +356,21 @@
         "Name": "Jinja2",
         "Version": "3.1.2",
         "Summary": "A very fast and expressive template engine.",
-        "Home page": "https://palletsprojects.com/p/jinja/",
+        "HomePage": "https://palletsprojects.com/p/jinja/",
         "Author": "Armin Ronacher",
-        "Author email": "armin.ronacher@active-4.com",
+        "AuthorEmail": "armin.ronacher@active-4.com",
         "License": "BSD-3-Clause",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
         "Requires": "MarkupSafe",
-        "Required by": "Flask"
+        "RequiredBy": "Flask"
     },
     "jwt": {
         "Name": "jwt",
         "Version": "1.3.1",
         "Summary": "JSON Web Token library for Python 3.",
-        "Home page": "https://github.com/GehirnInc/python-jwt",
+        "HomePage": "https://github.com/GehirnInc/python-jwt",
         "Author": "Kohei YOSHIDA",
-        "Author email": "kohei.yoshida@gehirn.co.jp",
+        "AuthorEmail": "kohei.yoshida@gehirn.co.jp",
         "License": "UNKNOWN",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
         "Requires": "cryptography"
@@ -379,9 +379,9 @@
         "Name": "Keras",
         "Version": "2.3.1",
         "Summary": "Deep Learning for humans",
-        "Home page": "https://github.com/keras-team/keras",
+        "HomePage": "https://github.com/keras-team/keras",
         "Author": "Francois Chollet",
-        "Author email": "francois.chollet@gmail.com",
+        "AuthorEmail": "francois.chollet@gmail.com",
         "License": "MIT",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
         "Requires": "h5py, keras-applications, keras-preprocessing, numpy, pyyaml, scipy, six"
@@ -390,43 +390,43 @@
         "Name": "Keras-Applications",
         "Version": "1.0.8",
         "Summary": "Reference implementations of popular deep learning models",
-        "Home page": "https://github.com/keras-team/keras-applications",
+        "HomePage": "https://github.com/keras-team/keras-applications",
         "Author": "Keras Team",
         "License": "MIT",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
         "Requires": "h5py, numpy",
-        "Required by": "Keras, tensorflow-gpu"
+        "RequiredBy": "Keras, tensorflow-gpu"
     },
     "Keras-Preprocessing": {
         "Name": "Keras-Preprocessing",
         "Version": "1.1.2",
         "Summary": "Easy data preprocessing and data augmentation for deep learning models",
-        "Home page": "https://github.com/keras-team/keras-preprocessing",
+        "HomePage": "https://github.com/keras-team/keras-preprocessing",
         "Author": "Keras Team",
         "License": "MIT",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
         "Requires": "numpy, six",
-        "Required by": "Keras, tensorflow-gpu"
+        "RequiredBy": "Keras, tensorflow-gpu"
     },
     "kiwisolver": {
         "Name": "kiwisolver",
         "Version": "1.4.4",
         "Summary": "A fast implementation of the Cassowary constraint solver",
-        "Author email": "The Nucleic Development Team <sccolbert@gmail.com>",
+        "AuthorEmail": "The Nucleic Development Team <sccolbert@gmail.com>",
         "License": "=========================",
-        "New or Revised BSD), as follows": "",
+        "new or revised bsd), as follows": "",
         "to indicate the copyright and license terms": "",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
         "Requires": "typing-extensions",
-        "Required by": "matplotlib"
+        "RequiredBy": "matplotlib"
     },
     "libclang": {
         "Name": "libclang",
         "Version": "14.0.1",
         "Summary": "Clang Python Bindings, mirrored from the official LLVM repo: https://github.com/llvm/llvm-project/tree/main/clang/bindings/python, to make the installation process easier.",
-        "Home page": "https://github.com/sighingnow/libclang",
+        "HomePage": "https://github.com/sighingnow/libclang",
         "Author": "Tao He",
-        "Author email": "sighingnow@gmail.com",
+        "AuthorEmail": "sighingnow@gmail.com",
         "License": "Apache License 2.0",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages"
     },
@@ -434,63 +434,63 @@
         "Name": "Markdown",
         "Version": "3.3.7",
         "Summary": "Python implementation of Markdown.",
-        "Home page": "https://Python-Markdown.github.io/",
+        "HomePage": "https://Python-Markdown.github.io/",
         "Author": "Manfred Stienstra, Yuri takhteyev and Waylan limberg",
-        "Author email": "python.markdown@gmail.com",
+        "AuthorEmail": "python.markdown@gmail.com",
         "License": "BSD License",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
         "Requires": "importlib-metadata",
-        "Required by": "tensorboard"
+        "RequiredBy": "tensorboard"
     },
     "MarkupSafe": {
         "Name": "MarkupSafe",
         "Version": "2.1.1",
         "Summary": "Safely add untrusted strings to HTML/XML markup.",
-        "Home page": "https://palletsprojects.com/p/markupsafe/",
+        "HomePage": "https://palletsprojects.com/p/markupsafe/",
         "Author": "Armin Ronacher",
-        "Author email": "armin.ronacher@active-4.com",
+        "AuthorEmail": "armin.ronacher@active-4.com",
         "License": "BSD-3-Clause",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
-        "Required by": "Jinja2, Werkzeug"
+        "RequiredBy": "Jinja2, Werkzeug"
     },
     "matplotlib": {
         "Name": "matplotlib",
         "Version": "3.5.3",
         "Summary": "Python plotting package",
-        "Home page": "https://matplotlib.org",
+        "HomePage": "https://matplotlib.org",
         "Author": "John D. Hunter, Michael Droettboom",
-        "Author email": "matplotlib-users@python.org",
+        "AuthorEmail": "matplotlib-users@python.org",
         "License": "PSF",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
         "Requires": "cycler, fonttools, kiwisolver, numpy, packaging, pillow, pyparsing, python-dateutil",
-        "Required by": "wordcloud"
+        "RequiredBy": "wordcloud"
     },
     "numpy": {
         "Name": "numpy",
         "Version": "1.21.6",
         "Summary": "NumPy is the fundamental package for array computing with Python.",
-        "Home page": "https://www.numpy.org",
+        "HomePage": "https://www.numpy.org",
         "Author": "Travis E. Oliphant et al.",
         "License": "BSD",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
-        "Required by": "face-recognition, h5py, Keras, Keras-Applications, Keras-Preprocessing, matplotlib, opencv-contrib-python, opencv-python, opt-einsum, pandas, scipy, tensorboard, tensorflow-gpu, wordcloud, wxPython"
+        "RequiredBy": "face-recognition, h5py, Keras, Keras-Applications, Keras-Preprocessing, matplotlib, opencv-contrib-python, opencv-python, opt-einsum, pandas, scipy, tensorboard, tensorflow-gpu, wordcloud, wxPython"
     },
     "oauthlib": {
         "Name": "oauthlib",
         "Version": "3.2.0",
         "Summary": "A generic, spec-compliant, thorough implementation of the OAuth request-signing logic",
-        "Home page": "https://github.com/oauthlib/oauthlib",
+        "HomePage": "https://github.com/oauthlib/oauthlib",
         "Author": "The OAuthlib Community",
-        "Author email": "idan@gazit.me",
+        "AuthorEmail": "idan@gazit.me",
         "License": "BSD",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
-        "Required by": "requests-oauthlib"
+        "RequiredBy": "requests-oauthlib"
     },
     "opencv-contrib-python": {
         "Name": "opencv-contrib-python",
         "Version": "4.6.0.66",
         "Summary": "Wrapper package for OpenCV python bindings.",
-        "Home page": "https://github.com/skvark/opencv-python",
+        "HomePage": "https://github.com/skvark/opencv-python",
         "License": "MIT",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
         "Requires": "numpy"
@@ -499,7 +499,7 @@
         "Name": "opencv-python",
         "Version": "4.5.5.64",
         "Summary": "Wrapper package for OpenCV python bindings.",
-        "Home page": "https://github.com/skvark/opencv-python",
+        "HomePage": "https://github.com/skvark/opencv-python",
         "License": "MIT",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
         "Requires": "numpy"
@@ -508,9 +508,9 @@
         "Name": "opt-einsum",
         "Version": "3.3.0",
         "Summary": "Optimizing numpys einsum function",
-        "Home page": "https://github.com/dgasmith/opt_einsum",
+        "HomePage": "https://github.com/dgasmith/opt_einsum",
         "Author": "Daniel Smith",
-        "Author email": "dgasmith@icloud.com",
+        "AuthorEmail": "dgasmith@icloud.com",
         "License": "MIT",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
         "Requires": "numpy"
@@ -519,21 +519,21 @@
         "Name": "packaging",
         "Version": "21.3",
         "Summary": "Core utilities for Python packages",
-        "Home page": "https://github.com/pypa/packaging",
+        "HomePage": "https://github.com/pypa/packaging",
         "Author": "Donald Stufft and individual contributors",
-        "Author email": "donald@stufft.io",
+        "AuthorEmail": "donald@stufft.io",
         "License": "BSD-2-Clause or Apache-2.0",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
         "Requires": "pyparsing",
-        "Required by": "matplotlib"
+        "RequiredBy": "matplotlib"
     },
     "pandas": {
         "Name": "pandas",
         "Version": "1.3.5",
         "Summary": "Powerful data structures for data analysis, time series, and statistics",
-        "Home page": "https://pandas.pydata.org",
+        "HomePage": "https://pandas.pydata.org",
         "Author": "The Pandas Development Team",
-        "Author email": "pandas-dev@python.org",
+        "AuthorEmail": "pandas-dev@python.org",
         "License": "BSD-3-Clause",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
         "Requires": "numpy, python-dateutil, pytz"
@@ -542,20 +542,20 @@
         "Name": "Pillow",
         "Version": "9.1.0",
         "Summary": "Python Imaging Library (Fork)",
-        "Home page": "https://python-pillow.org",
+        "HomePage": "https://python-pillow.org",
         "Author": "Alex Clark (PIL Fork Author)",
-        "Author email": "aclark@python-pillow.org",
+        "AuthorEmail": "aclark@python-pillow.org",
         "License": "HPND",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
-        "Required by": "face-recognition, matplotlib, pyocr, wordcloud, wxPython"
+        "RequiredBy": "face-recognition, matplotlib, pyocr, wordcloud, wxPython"
     },
     "pip": {
         "Name": "pip",
         "Version": "22.3.1",
         "Summary": "The PyPA recommended tool for installing Python packages.",
-        "Home page": "https://pip.pypa.io/",
+        "HomePage": "https://pip.pypa.io/",
         "Author": "The pip developers",
-        "Author email": "distutils-sig@python.org",
+        "AuthorEmail": "distutils-sig@python.org",
         "License": "MIT",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages"
     },
@@ -570,52 +570,52 @@
         "Name": "protobuf",
         "Version": "3.19.4",
         "Summary": "Protocol Buffers",
-        "Home page": "https://developers.google.com/protocol-buffers/",
+        "HomePage": "https://developers.google.com/protocol-buffers/",
         "License": "3-Clause BSD License",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
-        "Required by": "tensorboard, tensorflow-gpu"
+        "RequiredBy": "tensorboard, tensorflow-gpu"
     },
     "pyasn1": {
         "Name": "pyasn1",
         "Version": "0.4.8",
         "Summary": "ASN.1 types and codecs",
-        "Home page": "https://github.com/etingof/pyasn1",
+        "HomePage": "https://github.com/etingof/pyasn1",
         "Author": "Ilya Etingof",
-        "Author email": "etingof@gmail.com",
+        "AuthorEmail": "etingof@gmail.com",
         "License": "BSD",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
-        "Required by": "pyasn1-modules, rsa"
+        "RequiredBy": "pyasn1-modules, rsa"
     },
     "pyasn1-modules": {
         "Name": "pyasn1-modules",
         "Version": "0.2.8",
         "Summary": "A collection of ASN.1-based protocols modules.",
-        "Home page": "https://github.com/etingof/pyasn1-modules",
+        "HomePage": "https://github.com/etingof/pyasn1-modules",
         "Author": "Ilya Etingof",
-        "Author email": "etingof@gmail.com",
+        "AuthorEmail": "etingof@gmail.com",
         "License": "BSD-2-Clause",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
         "Requires": "pyasn1",
-        "Required by": "google-auth"
+        "RequiredBy": "google-auth"
     },
     "pycparser": {
         "Name": "pycparser",
         "Version": "2.21",
         "Summary": "C parser in Python",
-        "Home page": "https://github.com/eliben/pycparser",
+        "HomePage": "https://github.com/eliben/pycparser",
         "Author": "Eli Bendersky",
-        "Author email": "eliben@gmail.com",
+        "AuthorEmail": "eliben@gmail.com",
         "License": "BSD",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
-        "Required by": "cffi"
+        "RequiredBy": "cffi"
     },
     "PyMySQL": {
         "Name": "PyMySQL",
         "Version": "1.0.2",
         "Summary": "Pure Python MySQL Driver",
-        "Home page": "https://github.com/PyMySQL/PyMySQL/",
+        "HomePage": "https://github.com/PyMySQL/PyMySQL/",
         "Author": "yutaka.matsubara",
-        "Author email": "yutaka.matsubara@gmail.com",
+        "AuthorEmail": "yutaka.matsubara@gmail.com",
         "License": "\"MIT\"",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages"
     },
@@ -623,9 +623,9 @@
         "Name": "pyocr",
         "Version": "0.8.3",
         "Summary": "A Python wrapper for OCR engines (Tesseract, Cuneiform, etc)",
-        "Home page": "https://gitlab.gnome.org/World/OpenPaperwork/pyocr",
+        "HomePage": "https://gitlab.gnome.org/World/OpenPaperwork/pyocr",
         "Author": "Jerome Flesch",
-        "Author email": "jflesch@openpaper.work",
+        "AuthorEmail": "jflesch@openpaper.work",
         "License": "GPLv3+",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
         "Requires": "Pillow"
@@ -634,143 +634,143 @@
         "Name": "pyparsing",
         "Version": "3.0.9",
         "Summary": "pyparsing module - Classes and methods to define and execute parsing grammars",
-        "Author email": "Paul McGuire <ptmcg.gm+pyparsing@gmail.com>",
+        "AuthorEmail": "Paul McGuire <ptmcg.gm+pyparsing@gmail.com>",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
-        "Required by": "matplotlib, packaging"
+        "RequiredBy": "matplotlib, packaging"
     },
     "python-dateutil": {
         "Name": "python-dateutil",
         "Version": "2.8.2",
         "Summary": "Extensions to the standard Python datetime module",
-        "Home page": "https://github.com/dateutil/dateutil",
+        "HomePage": "https://github.com/dateutil/dateutil",
         "Author": "Gustavo Niemeyer",
-        "Author email": "gustavo@niemeyer.net",
+        "AuthorEmail": "gustavo@niemeyer.net",
         "License": "Dual License",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
         "Requires": "six",
-        "Required by": "matplotlib, pandas"
+        "RequiredBy": "matplotlib, pandas"
     },
     "pytz": {
         "Name": "pytz",
         "Version": "2022.6",
         "Summary": "World timezone definitions, modern and historical",
-        "Home page": "http://pythonhosted.org/pytz",
+        "HomePage": "http://pythonhosted.org/pytz",
         "Author": "Stuart Bishop",
-        "Author email": "stuart@stuartbishop.net",
+        "AuthorEmail": "stuart@stuartbishop.net",
         "License": "MIT",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
-        "Required by": "pandas"
+        "RequiredBy": "pandas"
     },
     "PyYAML": {
         "Name": "PyYAML",
         "Version": "6.0",
         "Summary": "YAML parser and emitter for Python",
-        "Home page": "https://pyyaml.org/",
+        "HomePage": "https://pyyaml.org/",
         "Author": "Kirill Simonov",
-        "Author email": "xi@resolvent.net",
+        "AuthorEmail": "xi@resolvent.net",
         "License": "MIT",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
-        "Required by": "Keras"
+        "RequiredBy": "Keras"
     },
     "requests": {
         "Name": "requests",
         "Version": "2.28.0",
         "Summary": "Python HTTP for Humans.",
-        "Home page": "https://requests.readthedocs.io",
+        "HomePage": "https://requests.readthedocs.io",
         "Author": "Kenneth Reitz",
-        "Author email": "me@kennethreitz.org",
+        "AuthorEmail": "me@kennethreitz.org",
         "License": "Apache 2.0",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
         "Requires": "certifi, charset-normalizer, idna, urllib3",
-        "Required by": "requests-oauthlib"
+        "RequiredBy": "requests-oauthlib"
     },
     "requests-oauthlib": {
         "Name": "requests-oauthlib",
         "Version": "1.3.1",
         "Summary": "OAuthlib authentication support for Requests.",
-        "Home page": "https://github.com/requests/requests-oauthlib",
+        "HomePage": "https://github.com/requests/requests-oauthlib",
         "Author": "Kenneth Reitz",
-        "Author email": "me@kennethreitz.com",
+        "AuthorEmail": "me@kennethreitz.com",
         "License": "ISC",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
         "Requires": "oauthlib, requests",
-        "Required by": "google-auth-oauthlib"
+        "RequiredBy": "google-auth-oauthlib"
     },
     "rsa": {
         "Name": "rsa",
         "Version": "4.8",
         "Summary": "Pure-Python RSA implementation",
-        "Home page": "https://stuvel.eu/rsa",
+        "HomePage": "https://stuvel.eu/rsa",
         "Author": "Sybren A. St眉vel",
-        "Author email": "sybren@stuvel.eu",
+        "AuthorEmail": "sybren@stuvel.eu",
         "License": "Apache-2.0",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
         "Requires": "pyasn1",
-        "Required by": "google-auth"
+        "RequiredBy": "google-auth"
     },
     "scipy": {
         "Name": "scipy",
         "Version": "1.4.1",
         "Summary": "SciPy: Scientific Library for Python",
-        "Home page": "https://www.scipy.org",
+        "HomePage": "https://www.scipy.org",
         "License": "BSD",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
         "Requires": "numpy",
-        "Required by": "Keras"
+        "RequiredBy": "Keras"
     },
     "setuptools": {
         "Name": "setuptools",
         "Version": "47.1.0",
         "Summary": "Easily download, build, install, upgrade, and uninstall Python packages",
-        "Home page": "https://github.com/pypa/setuptools",
+        "HomePage": "https://github.com/pypa/setuptools",
         "Author": "Python Packaging Authority",
-        "Author email": "distutils-sig@python.org",
+        "AuthorEmail": "distutils-sig@python.org",
         "License": "UNKNOWN",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
-        "Required by": "google-auth, tensorboard"
+        "RequiredBy": "google-auth, tensorboard"
     },
     "six": {
         "Name": "six",
         "Version": "1.16.0",
         "Summary": "Python 2 and 3 compatibility utilities",
-        "Home page": "https://github.com/benjaminp/six",
+        "HomePage": "https://github.com/benjaminp/six",
         "Author": "Benjamin Peterson",
-        "Author email": "benjamin@python.org",
+        "AuthorEmail": "benjamin@python.org",
         "License": "MIT",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
-        "Required by": "astunparse, Flask-Cors, google-auth, google-pasta, grpcio, h5py, Keras, Keras-Preprocessing, python-dateutil, tensorboard, tensorflow-gpu, wxPython"
+        "RequiredBy": "astunparse, Flask-Cors, google-auth, google-pasta, grpcio, h5py, Keras, Keras-Preprocessing, python-dateutil, tensorboard, tensorflow-gpu, wxPython"
     },
     "SQLAlchemy": {
         "Name": "SQLAlchemy",
         "Version": "1.4.41",
         "Summary": "Database Abstraction Library",
-        "Home page": "https://www.sqlalchemy.org",
+        "HomePage": "https://www.sqlalchemy.org",
         "Author": "Mike Bayer",
-        "Author email": "mike_mp@zzzcomputing.com",
+        "AuthorEmail": "mike_mp@zzzcomputing.com",
         "License": "MIT",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
         "Requires": "greenlet, importlib-metadata",
-        "Required by": "Flask-SQLAlchemy"
+        "RequiredBy": "Flask-SQLAlchemy"
     },
     "tensorboard": {
         "Name": "tensorboard",
         "Version": "1.14.0",
         "Summary": "TensorBoard lets you watch Tensors Flow",
-        "Home page": "https://github.com/tensorflow/tensorboard",
+        "HomePage": "https://github.com/tensorflow/tensorboard",
         "Author": "Google Inc.",
-        "Author email": "packages@tensorflow.org",
+        "AuthorEmail": "packages@tensorflow.org",
         "License": "Apache 2.0",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
         "Requires": "absl-py, grpcio, markdown, numpy, protobuf, setuptools, six, werkzeug, wheel",
-        "Required by": "tensorflow-gpu"
+        "RequiredBy": "tensorflow-gpu"
     },
     "tensorboard-data-server": {
         "Name": "tensorboard-data-server",
         "Version": "0.6.1",
         "Summary": "Fast data loading for TensorBoard",
-        "Home page": "https://github.com/tensorflow/tensorboard/tree/master/tensorboard/data/server",
+        "HomePage": "https://github.com/tensorflow/tensorboard/tree/master/tensorboard/data/server",
         "Author": "Google Inc.",
-        "Author email": "packages@tensorflow.org",
+        "AuthorEmail": "packages@tensorflow.org",
         "License": "Apache 2.0",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages"
     },
@@ -778,9 +778,9 @@
         "Name": "tensorboard-plugin-wit",
         "Version": "1.8.1",
         "Summary": "What-If Tool TensorBoard plugin.",
-        "Home page": "https://whatif-tool.dev",
+        "HomePage": "https://whatif-tool.dev",
         "Author": "Google Inc.",
-        "Author email": "packages@tensorflow.org",
+        "AuthorEmail": "packages@tensorflow.org",
         "License": "Apache 2.0",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages"
     },
@@ -788,20 +788,20 @@
         "Name": "tensorflow-estimator",
         "Version": "1.14.0",
         "Summary": "TensorFlow Estimator.",
-        "Home page": "https://www.tensorflow.org/",
+        "HomePage": "https://www.tensorflow.org/",
         "Author": "Google Inc.",
-        "Author email": "UNKNOWN",
+        "AuthorEmail": "UNKNOWN",
         "License": "Apache 2.0",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
-        "Required by": "tensorflow-gpu"
+        "RequiredBy": "tensorflow-gpu"
     },
     "tensorflow-gpu": {
         "Name": "tensorflow-gpu",
         "Version": "1.14.0",
         "Summary": "TensorFlow is an open source machine learning framework for everyone.",
-        "Home page": "https://www.tensorflow.org/",
+        "HomePage": "https://www.tensorflow.org/",
         "Author": "Google Inc.",
-        "Author email": "packages@tensorflow.org",
+        "AuthorEmail": "packages@tensorflow.org",
         "License": "Apache 2.0",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
         "Requires": "absl-py, astor, gast, google-pasta, grpcio, keras-applications, keras-preprocessing, numpy, protobuf, six, tensorboard, tensorflow-estimator, termcolor, wheel, wrapt"
@@ -810,29 +810,29 @@
         "Name": "tensorflow-io-gcs-filesystem",
         "Version": "0.26.0",
         "Summary": "TensorFlow IO",
-        "Home page": "https://github.com/tensorflow/io",
+        "HomePage": "https://github.com/tensorflow/io",
         "Author": "Google Inc.",
-        "Author email": "opensource@google.com",
+        "AuthorEmail": "opensource@google.com",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages"
     },
     "termcolor": {
         "Name": "termcolor",
         "Version": "1.1.0",
         "Summary": "ANSII Color formatting for output in terminal.",
-        "Home page": "http://pypi.python.org/pypi/termcolor",
+        "HomePage": "http://pypi.python.org/pypi/termcolor",
         "Author": "Konstantin Lepa",
-        "Author email": "konstantin.lepa@gmail.com",
+        "AuthorEmail": "konstantin.lepa@gmail.com",
         "License": "MIT",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
-        "Required by": "tensorflow-gpu"
+        "RequiredBy": "tensorflow-gpu"
     },
     "torch": {
         "Name": "torch",
         "Version": "1.12.1",
         "Summary": "Tensors and Dynamic neural networks in Python with strong GPU acceleration",
-        "Home page": "https://pytorch.org/",
+        "HomePage": "https://pytorch.org/",
         "Author": "PyTorch Team",
-        "Author email": "packages@pytorch.org",
+        "AuthorEmail": "packages@pytorch.org",
         "License": "BSD-3",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
         "Requires": "typing-extensions"
@@ -841,28 +841,28 @@
         "Name": "typing_extensions",
         "Version": "4.2.0",
         "Summary": "Backported and Experimental Type Hints for Python 3.7+",
-        "Author email": "\"Guido van Rossum, Jukka Lehtosalo, 艁ukasz Langa, Michael Lee\" <levkivskyi@gmail.com>",
+        "AuthorEmail": "\"Guido van Rossum, Jukka Lehtosalo, 艁ukasz Langa, Michael Lee\" <levkivskyi@gmail.com>",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
-        "Required by": "importlib-metadata, kiwisolver, torch"
+        "RequiredBy": "importlib-metadata, kiwisolver, torch"
     },
     "urllib3": {
         "Name": "urllib3",
         "Version": "1.26.9",
         "Summary": "HTTP library with thread-safe connection pooling, file post, and more.",
-        "Home page": "https://urllib3.readthedocs.io/",
+        "HomePage": "https://urllib3.readthedocs.io/",
         "Author": "Andrey Petrov",
-        "Author email": "andrey.petrov@shazow.net",
+        "AuthorEmail": "andrey.petrov@shazow.net",
         "License": "MIT",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
-        "Required by": "requests"
+        "RequiredBy": "requests"
     },
     "Wand": {
         "Name": "Wand",
         "Version": "0.6.10",
         "Summary": "Ctypes-based simple MagickWand API binding for Python",
-        "Home page": "http://wand-py.org/",
+        "HomePage": "http://wand-py.org/",
         "Author": "Hong Minhee",
-        "Author email": "hongminhee@member.fsf.org",
+        "AuthorEmail": "hongminhee@member.fsf.org",
         "License": "MIT License",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages"
     },
@@ -870,32 +870,32 @@
         "Name": "Werkzeug",
         "Version": "2.2.2",
         "Summary": "The comprehensive WSGI web application library.",
-        "Home page": "https://palletsprojects.com/p/werkzeug/",
+        "HomePage": "https://palletsprojects.com/p/werkzeug/",
         "Author": "Armin Ronacher",
-        "Author email": "armin.ronacher@active-4.com",
+        "AuthorEmail": "armin.ronacher@active-4.com",
         "License": "BSD-3-Clause",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
         "Requires": "MarkupSafe",
-        "Required by": "Flask, Flask-Login, tensorboard"
+        "RequiredBy": "Flask, Flask-Login, tensorboard"
     },
     "wheel": {
         "Name": "wheel",
         "Version": "0.37.1",
         "Summary": "A built-package format for Python",
-        "Home page": "https://github.com/pypa/wheel",
+        "HomePage": "https://github.com/pypa/wheel",
         "Author": "Daniel Holth",
-        "Author email": "dholth@fastmail.fm",
+        "AuthorEmail": "dholth@fastmail.fm",
         "License": "MIT",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
-        "Required by": "astunparse, tensorboard, tensorflow-gpu"
+        "RequiredBy": "astunparse, tensorboard, tensorflow-gpu"
     },
     "wordcloud": {
         "Name": "wordcloud",
         "Version": "1.8.2.2",
         "Summary": "A little word cloud generator",
-        "Home page": "https://github.com/amueller/word_cloud",
+        "HomePage": "https://github.com/amueller/word_cloud",
         "Author": "Andreas Mueller",
-        "Author email": "t3kcit+wordcloud@gmail.com",
+        "AuthorEmail": "t3kcit+wordcloud@gmail.com",
         "License": "MIT",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
         "Requires": "matplotlib, numpy, pillow"
@@ -904,20 +904,20 @@
         "Name": "wrapt",
         "Version": "1.14.1",
         "Summary": "Module for decorators, wrappers and monkey patching.",
-        "Home page": "https://github.com/GrahamDumpleton/wrapt",
+        "HomePage": "https://github.com/GrahamDumpleton/wrapt",
         "Author": "Graham Dumpleton",
-        "Author email": "Graham.Dumpleton@gmail.com",
+        "AuthorEmail": "Graham.Dumpleton@gmail.com",
         "License": "BSD",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
-        "Required by": "tensorflow-gpu"
+        "RequiredBy": "tensorflow-gpu"
     },
     "wxPython": {
         "Name": "wxPython",
         "Version": "4.1.1",
         "Summary": "Cross platform GUI toolkit for Python, \"Phoenix\" version",
-        "Home page": "http://wxPython.org/",
+        "HomePage": "http://wxPython.org/",
         "Author": "Robin Dunn",
-        "Author email": "robin@alldunn.com",
+        "AuthorEmail": "robin@alldunn.com",
         "License": "wxWindows Library License (https://opensource.org/licenses/wxwindows.php)",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
         "Requires": "numpy, pillow, six"
@@ -926,11 +926,11 @@
         "Name": "zipp",
         "Version": "3.8.0",
         "Summary": "Backport of pathlib-compatible object wrapper for zip files",
-        "Home page": "https://github.com/jaraco/zipp",
+        "HomePage": "https://github.com/jaraco/zipp",
         "Author": "Jason R. Coombs",
-        "Author email": "jaraco@jaraco.com",
+        "AuthorEmail": "jaraco@jaraco.com",
         "License": "UNKNOWN",
         "Location": "d:\\python\\python3.7.8\\lib\\site-packages",
-        "Required by": "importlib-metadata"
+        "RequiredBy": "importlib-metadata"
     }
 }

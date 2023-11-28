@@ -9,7 +9,7 @@ import inspect
 import importlib
 from extract import basicFunction
 from extract import pylibsNet, pylibsTree
-from extract import pyNet, pyTree, pyClass
+from extract import pyNet, pyTree, pyreverseClass
 
 app = Flask(__name__)
 CORS(app)
@@ -180,7 +180,7 @@ def single():
     pyTree.pyTree(path, single_module)
     if os.path.isfile('static/netjson/' + single_module + 'class.json'):
         os.remove('static/netjson/' + single_module + 'class.json')
-    pyClass.getClassNet(path, single_module)
+    pyreverseClass.getClassNet(path, single_module)
 
     return jsonify({'message': 'Tasks completed successfully'})
 
@@ -217,7 +217,7 @@ def userPath():
             print(f"An error occurred while emptying the folder：{e}")
         pylibsNet.pylibs(user_path)
         pyNet.pyNetAll(user_path)
-        pyClass.getClassNetAll(user_path)
+        pyreverseClass.getClassNetAll(user_path)
 
     try:
         shutil.rmtree('static/treejson')
