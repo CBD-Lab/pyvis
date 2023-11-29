@@ -115,7 +115,9 @@ function drawPineTree(data,pineCount) {
                         .style("border-radius", "5px")
                         .style("padding", "5px")
                         .style("box-shadow", "0px 2px 4px rgba(0, 0, 0, 0.1)")
-                        .style('list-style','none');
+                        .style('list-style','none')
+                        .style("cursor", "pointer");
+                        
             pdfinfo.append("foreignObject")
                     .attr("height", "12px")
                     .append("xhtml:div")
@@ -177,7 +179,8 @@ function drawPineTree(data,pineCount) {
                         .style("border-radius", "5px")
                         .style("padding", "5px")
                         .style("box-shadow", "0px 2px 4px rgba(0, 0, 0, 0.1)")
-                        .style('list-style','none');
+                        .style('list-style','none')
+                        .style("cursor", "pointer");
 
             gitinfo.append("foreignObject")
                     .attr("height", "12px")
@@ -202,7 +205,8 @@ function drawPineTree(data,pineCount) {
                 gitinfo.append('text')
                     .attr("stroke-family", "仿宋")
                     .attr("font-size", "10px")
-                    .text("no GitHub files!");
+                    .text("no GitHub files!")
+                    
             }
             else{
                 gits.forEach((value, key) => {

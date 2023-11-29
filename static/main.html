@@ -326,24 +326,36 @@
                 </van-row>
             </div>
             <div v-show="viewSelection === 'filetree'">
-                <van-row style="margin-top:30px"><input type="radio" name="flush" value="重绘" id="flush2"
+                <van-row class="nodeMessage" style="margin-top:10px;">Totally {{ filetreeCount.node }} nodes</van-row>
+                <van-row style="margin-top:10px;">
+                    <van-col span="12">
+                        <input type="checkbox" name="label" value="showOn" id="showPdf5" >PDF</input>
+                    </van-col>
+                    <van-col span="12">
+                        <input type="checkbox" name="label" value="showOn" id="showGit5" >GitHub</input>
+                    </van-col>
+                </van-row>
+                <van-row style="margin-top:10px"><input type="radio" name="flush" value="重绘" id="flush2"
                                                         onclick="javascript:location.reload()">Repaint</input>
                 </van-row>
-                <van-row style="margin-top: 5px;">Totally {{ filetreeCount.node }} nodes</van-row>
             </div>
             <div v-show="viewSelection === 'treemap'">
-                <van-row class="nodeMessage" style="margin-top: 5px;">Totally {{ mapcount.node }} nodes</van-row>
-
-                <van-row style="margin-top:20px;margin-left: 5px;">Length</van-row>
+                <van-row class="nodeMessage" style="margin-top:10px;">Totally {{ mapcount.node }} nodes</van-row>
+                <van-row style="margin-top:10px;margin-left: 5px;">Length</van-row>
                 <van-row>
                     <input style="position:relative;top:3px;margin-left: 5px;" type="range" id="length" min="100"
                            max="300" value="100">
                 </van-row>
-                <van-row style="margin-top:30px">
+                <van-row style="margin-top:10px">
                     <van-checkbox v-model="checked" style="margin-left: 5px;" class="van-haptics-feedback" @click="changemap()" type="primary">Exchange</van-checkbox>
                 </van-row>
-                <van-row style="margin-top:10px">
-                    <van-checkbox v-model="checked2" style="margin-left: 5px;" class="van-haptics-feedback" @click="viewpdf()" type="primary">PDF</van-checkbox>
+                <van-row style="margin-top:10px;">
+                    <van-col span="12">
+                        <input type="checkbox" name="label" value="showOn" id="showPdf4" >PDF</input>
+                    </van-col>
+                    <van-col span="12">
+                        <input type="checkbox" name="label" value="showOn" id="showGit4" >GitHub</input>
+                    </van-col>
                 </van-row>
             </div>
             <div v-show="viewSelection === 'hicircle'">
