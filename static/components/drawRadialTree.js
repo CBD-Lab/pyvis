@@ -1,4 +1,4 @@
-function drawFileTree(data, filetreeCount) {
+function drawRadialTree(data, radialTreeCount) {
   var padding = { left: 80, right: 50, top: 20, bottom: 20 };
   var svg = d3.select("#graph")
     .attr("width", width + padding.left + padding.right)
@@ -36,7 +36,7 @@ function drawFileTree(data, filetreeCount) {
     var nodes = root.descendants();
     var links = root.links();
     
-    filetreeCount.node = nodes.length;
+    radialTreeCount.node = nodes.length;
     //重新计算节点的y坐标
     nodes.forEach(function (d) { d.y = d.depth * 120; });
 
@@ -516,7 +516,7 @@ function pdfgitclick(classname){
 
 }
 
-window.onDrawFileTreeReady = function (data, filetreeCount) {
+window.onDrawRadialTreeReady = function (data, radialTreeCount) {
   // 执行绘图逻辑
-  drawFileTree(data, filetreeCount);
+  drawRadialTree(data, radialTreeCount);
 }

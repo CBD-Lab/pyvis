@@ -19,7 +19,7 @@
     <script type="text/javascript" src="/static/components/drawMatrix.js"></script>
     <script type="text/javascript" src="/static/components/drawTree.js"></script>
     <script type="text/javascript" src="/static/components/drawPineTree.js"></script>
-    <script type="text/javascript" src="/static/components/drawFileTree.js"></script>
+    <script type="text/javascript" src="/static/components/drawRadialTree.js"></script>
     <script type="text/javascript" src="/static/components/drawBubble.js"></script>
     <script type="text/javascript" src="/static/components/drawCloud.js"></script>
     <script type="text/javascript" src="/static/components/drawTreeMap.js"></script>
@@ -244,7 +244,7 @@
                     <van-button class="van-haptics-feedback" @click="pinetreevis()" type="primary">PineTree</van-button>
                 </van-col>
                 <van-col span="8">
-                    <van-button class="van-haptics-feedback" @click="filetreevis()" type="primary">FileTree</van-button>
+                    <van-button class="van-haptics-feedback" @click="radialtreevis()" type="primary">RadialTree</van-button>
                 </van-col>
                 <van-col span="8">
                     <van-button class="van-haptics-feedback" @click="bubblevis()" type="primary">Bubble</van-button>
@@ -325,8 +325,8 @@
                     </van-col>
                 </van-row>
             </div>
-            <div v-show="viewSelection === 'filetree'">
-                <van-row class="nodeMessage" style="margin-top:10px;">Totally {{ filetreeCount.node }} nodes</van-row>
+            <div v-show="viewSelection === 'radialtree'">
+                <van-row class="nodeMessage" style="margin-top:10px;">Totally {{ radialTreeCount.node }} nodes</van-row>
                 <van-row style="margin-top:10px;">
                     <van-col span="12">
                         <input type="checkbox" name="label" value="showOn" id="showPdf5" >PDF</input>
@@ -463,7 +463,7 @@
                     node: 0,
                     link: 0,
                 },
-                filetreeCount:{
+                radialTreeCount:{
                     node:0
                 }
             };
@@ -507,8 +507,8 @@
                     case "pinetree":
                         this.pinetreevis();
                         break;
-                    case "filetree":
-                        this.filetreevis();
+                    case "radialtree":
+                        this.radialtreevis();
                         break;
                     case "bubble":
                         this.bubblevis();
@@ -575,12 +575,12 @@
                     onDrawPineTreeReady(res.data,this.pinecount);
                 });
             },
-            filetreevis() {
+            radialtreevis() {
                 this.clearPage();
                 var that = this;
-                this.viewSelection="filetree";
+                this.viewSelection="radialtree";
                 axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
-                    onDrawFileTreeReady(res.data,this.filetreeCount);
+                    onDrawRadialTreeReady(res.data,this.radialTreeCount);
                 });
             },
             bubblevis() {
