@@ -19,6 +19,7 @@ function drawNet(data, k, search, netCount){
     var module = "pylibs.json"
     var nodes = data.nodes;
     var links = data.links;
+    console.log(nodes,links)
     netCount.node = nodes.length;
     netCount.link = links.length;
     nodeweight = new Array(nodes.length);
@@ -79,59 +80,29 @@ function drawNet(data, k, search, netCount){
 					  return d.weight*2+5;
 				  })
 				  .attr("fill", (d, i) => {
-				   console.log(d.weight);
-					  if (k == "pylibsNet" || k== "" || k == "undefined" || k == "None") {
-//					      var defs = svg.append("defs").attr("id", "imgdefs");
-//                          var catpattern = defs.append("pattern")
-//                                               .attr("id", "catpattern" + i)
-//                                               .attr("height", 1)
-//                                               .attr("width", 1)
-//                                               .append("image")
-//                                               .attr("x", - (img_w / 2 - rad + 5.8))
-//                                               .attr("y", - (img_h / 2 - rad + 3.5))
-//                                               .attr("width", img_w + 11)
-//                                               .attr("height", img_h + 6);
-//                          var imageUrl="static/pic/default.png"
-//                          fetch(imageUrl,{method:"HEAD"})
-//                            .then(response=>{
-//                                if(response.ok){
-//                                    var img = new Image();
-//                                     img.onload = function() {
-//                                        catpattern.attr("xlink:href", imageUrl);
-//                                         };
-//                                     img.onerror = function(event) {
-//                                          event.preventDefault();
-//                                          console.error("Load Image Error:", event);
-//                                          catpattern.attr("xlink:href", "static/pic/default.png");
-//                                      };
-//                                     img.src=imageUrl
-//                                      }
-//                                else{
-//                                    catpattern.attr("xlink:href","static/pic/default.png");
-//                                }
-//                            })
-//                            .catch(error=>{
-//                                catpattern.attr("xlink:href","static/pic/default.png");
-//                            });
-//                        return "url(#catpattern"+i+")";
+				   console.log(d,k);
+					  if (k == "pylibsNet" || k== "" || k == "undefined" || k == "None"||typeof(d.myparent)!='undefined') {
 					  return color[d.weight%10];
 					  }
-//					  else { return color[i%10]; }
 					  else { return color[d.layer%10]; }
 				  })
 				  .on("mouseenter", (d,i) => {
 					  link.style("stroke-width", l => l.source.name == i.name || l.target.name == i.name ? 3 : 1)
-					  if(i.layer){
-					  console.log(i.name);
+					  if(i.layer){//是模块类型的net'数据
 					        link.style("stroke", l => l.source.name == i.name || l.target.name == i.name ?color[i.layer%10]:"grey");}
-					  else
+					  else//是pylibsnet数据或者class数据
 					  {
-					        console.log(i.name)
 					        link.style("stroke", l => l.source.name == i.name || l.target.name == i.name ?color[i.weight%10]:"grey");}
 
 					  var point = i;
 					  fullname = point.name;
-					  if(fullname.lastIndexOf('.') == -1) {//显示根节点信息
+					  if(typeof(i.myparent)!='undefined')
+					  {
+					        const tooltipContent = `<div style="background-color:grey">Name:${i.name}</div>${i.myparent ?`<div>Parent:${i.myparent}</div>`:''}${i.attributes&&i.attributes.length>0 ?`<div>Attributes:${i.attributes}</div>`:''}${i.methods&&i.methods.length>0?`<div>Methods:${i.methods}</div>`:''}`;
+					          tooltip.html(tooltipContent).style("display","block")
+					            .style("background-color", "#E4F1FF");
+					  }
+					  else if(fullname.lastIndexOf('.') == -1) {//显示根节点信息
 					      fetch('http://127.0.0.1:5006/info?wanted=' + fullname)
 					      .then(response => response.json())  // 使用json()方法提取JSON数据
 					      .then(data => {//显示根节点模块信息
@@ -140,6 +111,7 @@ function drawNet(data, k, search, netCount){
 					            .style("background-color", "#E4F1FF");
 					      })
 					  }
+
 					  else{//显示非根节点模块信息
 					       const tooltipContent=`<div style="background-color:grey">Name:${i.name}</div><div>Location:${i.file}</div><div>Layer:${i.layer}</div>${i.hasfunction ? `<div>Function:${i.myfunction}</div>` : ''}${i.hasclass ? `<div>Class:${i.myclass}</div>` : ''}`;
 					       tooltip.html(tooltipContent).style("display","block")

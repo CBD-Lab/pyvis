@@ -267,7 +267,7 @@
             </van-row>
             <!--图像控制区-->
 
-                <div v-show="viewSelection === 'net' ">
+                <div v-show="viewSelection === 'net'|| viewSelection === 'class' ">
                     <van-row class="nodeMessage">Totally {{netcount.node }} nodes</van-row>
                     <van-row class="nodeMessage">Totally {{netcount.link }} links</van-row>
                 <van-row style="margin-top:10px;font-size:12px">
@@ -544,7 +544,7 @@
                 if (this.keyword == "" || this.keyword == "undefined" || this.keyword == "None")
                     this.keyword = "flask"
                 axios.get("http://127.0.0.1:5006/module?wanted=" + this.keyword + "class").then(res=>{
-                    onDrawNetReady(res.data);
+                    onDrawNetReady(res.data, this.keyword,this.search,this.netcount);
                 });
             },
             treevis() {
