@@ -24,7 +24,7 @@ def get_classes(path, pname):
             if os.path.isfile(os.path.join(path, f)):
                 if (pathlib.Path(f).suffix == ".py") and (not f.startswith("_") or f.startswith("__")):
                     modulepath = os.path.splitext(os.path.join(path, f))[0]
-                    modulepath = modulepath[modulepath.find(r"site-packages") + 14:len(modulepath)]
+                    modulepath = modulepath[len(pathGV):len(modulepath)]
                     modulepath = modulepath.replace('\\', '.')
                     print("-----------" + modulepath)
                     # import_statement = "import " + modulepath
@@ -102,8 +102,10 @@ def get_path(libname):
 
 
 def getClassNet(pname):
+    global pathGV
     init()
     path = get_path(pname)
+    pathGV = path[:-len(pname)]
     myclasses = get_classes(path, pname)
     print("-----5----")
     print(myclasses)
@@ -132,6 +134,7 @@ def readpackages():
 
 
 def getClassNetAll():
+    global pathGV
     packages_name = readpackages()
     print("packages_name: ", packages_name)
     for package_name in packages_name:
@@ -140,6 +143,7 @@ def getClassNetAll():
         print("package_name: ", package_name)
         try:
             path = get_path(pname)
+            pathGV = path[:-len(pname)]
             get_classes(path, pname)
             get_links(myclasses, nodes)
 

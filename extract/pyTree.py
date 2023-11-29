@@ -9,8 +9,6 @@ from distutils.log import Log
 
 from . import basicFunction
 
-pathGV = ""  # 全局变量
-
 
 def print_files(path, tree):
     child = []
@@ -29,9 +27,9 @@ def print_files(path, tree):
                     # classNameAll = ''
                     class_obj = None
                     fsize = os.path.getsize(os.path.join(path, f))  # file size
-                    modulepath = os.path.splitext(os.path.join(path, f))[0]  # file path  # 加个条件
-                    modulepath = modulepath[len(pathGV):len(modulepath)]  # 加全局变量
-                    modulepath = modulepath.replace('\\', '.')  # 文件名不会包含\
+                    modulepath = os.path.splitext(os.path.join(path, f))[0]  # file path
+                    modulepath = modulepath[len(pathGV):len(modulepath)]
+                    modulepath = modulepath.replace('\\', '.')
                     # import_statement = "import " + modulepath
                     docs = ""
                     try:
@@ -124,6 +122,7 @@ def get_path(libname):
 
 
 def pyTree(moduleName):
+    global pathGV
     pytree = {"name": moduleName, "children": ""}
     exec("import " + moduleName)
     path = get_path(moduleName)
@@ -148,6 +147,7 @@ def readpackages():
 
 
 def pyTreeAll():
+    global pathGV
     packages_name = readpackages()
     print("packages_name", packages_name)
     for package_name in packages_name:
@@ -157,7 +157,7 @@ def pyTreeAll():
             pytree = {"name": moduleName, "children": ""}
             exec("import " + moduleName)
             path = get_path(moduleName)
-            pathGV = path + "\\"
+            pathGV = path[:-len(moduleName)]
             print_files(path, pytree)
             f = open('static/treejson_tmp/' + moduleName + '.json', 'w')
             f.write(json.dumps(pytree))
