@@ -168,8 +168,8 @@ def single():
     pyNet.pyNet(single_module)
     pyTree.pyTree(single_module)
     pyClass.getClassNet(single_module)
-    if not os.path.exists('static/dot'):
-        os.makedirs('static/dot', exist_ok=True)
+    # if not os.path.exists('static/dot'):
+    #     os.makedirs('static/dot', exist_ok=True)
     # pyreverseClass.getPyreverseClass(single_module)  # 有bug
 
     return jsonify({'message': 'Tasks completed successfully'})
@@ -196,9 +196,9 @@ def userPath():
             pylibsNet.pylibs(user_path)
             pyNet.pyNetAll()
             pyClass.getClassNetAll()
-            if os.path.exists('static/dot'):
-                shutil.rmtree('static/dot')
-            os.makedirs('static/dot', exist_ok=True)
+            # if os.path.exists('static/dot'):
+            #     shutil.rmtree('static/dot')
+            # os.makedirs('static/dot', exist_ok=True)
             # pyreverseClass.getPyreverseClassAll()  # 有bug
             shutil.rmtree('static/netjson')
             os.rename('static/netjson_tmp', 'static/netjson')
