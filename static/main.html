@@ -373,7 +373,7 @@
                     </van-col>
                 </van-row>
             </div>
-            <div v-show="viewSelection === 'tree'&&drawTreeReady==1">
+            <div v-show="viewSelection === 'tree'">
                 <div style="margin-top: 30px;">
                   <van-row class="nodeMessage">Totally {{ treecount.treeNodeCount }} nodes</van-row>
                   <van-row class="nodeMessage">Show {{ treecount.treeShowNodeCount }} nodes</van-row>
@@ -553,7 +553,6 @@
                 this.viewSelection="tree";
                 axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
                     onDrawTreeReady(res.data,this.treecount);
-                    this.drawTreeReady=1;
                 });
             },
             pinetreevis() {
