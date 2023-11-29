@@ -1,3 +1,5 @@
+import importlib
+import inspect
 import os
 import pathlib
 import json
@@ -11,13 +13,10 @@ def init():
     nodes = []
     links = []
     classesjson = {'nodes': '', 'links': ''}
-    methods = []
-    attributes = []
 
 
 def get_classes(path, pname):
     exec("import " + pname)
-    print(path)
     lsdir = os.listdir(path)
     print(lsdir[0:3])
     for f in lsdir:
@@ -91,9 +90,20 @@ def get_links(myclasses, nodes):
     return links
 
 
-def getClassNet(path, pname):
+def get_path(libname):
+    libname = importlib.import_module(libname)
+    module = inspect.getmodule(libname)
+    if module:
+        module_path = os.path.abspath(module.__file__)
+        package_path = os.path.dirname(module_path)
+        return package_path
+    else:
+        return None
+
+
+def getClassNet(pname):
     init()
-    path = os.path.join(path, pname)
+    path = get_path(pname)
     myclasses = get_classes(path, pname)
     print("-----5----")
     print(myclasses)
@@ -121,17 +131,16 @@ def readpackages():
     return packages[2:]
 
 
-def getClassNetAll(path):
-    path = path[:-8] + 'Lib\site-packages'
+def getClassNetAll():
     packages_name = readpackages()
-    print("package_names: ", packages_name)
+    print("packages_name: ", packages_name)
     for package_name in packages_name:
         init()
         pname = package_name
         print("package_name: ", package_name)
         try:
-            folder_path = os.path.join(path, pname)
-            get_classes(folder_path, pname)
+            path = get_path(pname)
+            get_classes(path, pname)
             get_links(myclasses, nodes)
 
             classesjson['nodes'] = nodes

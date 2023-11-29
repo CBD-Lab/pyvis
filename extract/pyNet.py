@@ -120,7 +120,7 @@ def get_links(mymodule, pname):
                 if pname in moduleurl.__name__:
                     nextmodules.append(moduleurl.__name__)
             for n in nextmodules:
-                # print("target=",n)
+                # print("target=", n)
                 if n in mymodule:
                     links.append({'source': mymodule.index(m), 'target': mymodule.index(n)})
         except:
@@ -164,8 +164,7 @@ def readpackages():
     return packages[2:]
 
 
-def pyNetAll(path):
-    path = path[:-8] + 'Lib\site-packages'
+def pyNetAll():
     packages_name = readpackages()
     for package_name in packages_name:
         init()

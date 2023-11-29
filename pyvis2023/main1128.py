@@ -1,3 +1,4 @@
+# 尽量减少了参数path的传递
 import json
 import os
 import subprocess
@@ -165,12 +166,17 @@ def single():
     single_module = request.args.get('wanted', type=str).lower()
     if (single_module is None) or (single_module == "undefined") or (single_module == ""):
         single_module = 'flask'
+
+    if os.path.isfile('static/netjson/' + single_module + '.json'):
+        os.remove('static/netjson/' + single_module + '.json')
     pyNet.pyNet(single_module)
+    if os.path.isfile('static/treejson/' + single_module + '.json'):
+        os.remove('static/treejson/' + single_module + '.json')
     pyTree.pyTree(single_module)
+    if os.path.isfile('static/netjson/' + single_module + 'class.json'):
+        os.remove('static/netjson/' + single_module + 'class.json')
     pyClass.getClassNet(single_module)
-    if not os.path.exists('static/dot'):
-        os.makedirs('static/dot', exist_ok=True)
-    # pyreverseClass.getPyreverseClass(single_module)  # 有bug
+    # pyreverseClass.getPyreverseClass(single_module)  # 暂不执行
 
     return jsonify({'message': 'Tasks completed successfully'})
 
@@ -196,17 +202,18 @@ def userPath():
             pylibsNet.pylibs(user_path)
             pyNet.pyNetAll()
             pyClass.getClassNetAll()
-            if os.path.exists('static/dot'):
-                shutil.rmtree('static/dot')
-            os.makedirs('static/dot', exist_ok=True)
-            # pyreverseClass.getPyreverseClassAll()  # 有bug
+            # pyreverseClass.getPyreverseClassAll()  # 暂不执行
             shutil.rmtree('static/netjson')
             os.rename('static/netjson_tmp', 'static/netjson')
+            if os.path.isfile('pylibsInfo.json'):
+                os.remove('pylibsInfo.json')
             pylibsInfo.showInfo(user_path)
             print(f"Folder static/netjson successfully updated.")
         except Exception as e:
             print(f"An error occurred while updating the folder：{e}")
 
+    if os.path.isfile('pipdeptree.json'):
+        os.remove('pipdeptree.json')
     try:
         print("Performs command line operations.")
         subprocess.run(user_path + 'pipdeptree --json-tree > pipdeptree.json', shell=True, check=True)

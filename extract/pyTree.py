@@ -8,7 +8,8 @@ import traceback
 from distutils.log import Log
 
 from . import basicFunction
-import torch
+
+pathGV = ""  # 全局变量
 
 
 def print_files(path, tree):
@@ -18,19 +19,20 @@ def print_files(path, tree):
     for f in lsdir:
         if (f != '__pycache__') and (f != 'test') and (f != 'testing'):  # test and cache directory are filtered
             if os.path.isfile(os.path.join(path, f)):  # inspect file
-                if (pathlib.Path(f).suffix == ".py") and (not f.startswith("_") or f.startswith("__")):
+                if (pathlib.Path(f).suffix == ".py") and (not f.startswith("_") or f.startswith("__")) and f.count(
+                        '.') < 2:  # 加个条件，有两个.的放弃 类似于_C.cp38-win_amd64.pyd,没找到py文件带2个.的
                     linkAll = {}
                     pdfModule = []
                     fileCount = 0
                     pdfClass = []
                     gitClass = []
-                    classNameAll = ''
+                    # classNameAll = ''
                     class_obj = None
                     fsize = os.path.getsize(os.path.join(path, f))  # file size
-                    modulepath = os.path.splitext(os.path.join(path, f))[0]  # file path
-                    modulepath = modulepath[modulepath.find(r"site-packages") + 14:len(modulepath)]
-                    modulepath = modulepath.replace('\\', '.')
-                    import_statement = "import " + modulepath
+                    modulepath = os.path.splitext(os.path.join(path, f))[0]  # file path  # 加个条件
+                    modulepath = modulepath[len(pathGV):len(modulepath)]  # 加全局变量
+                    modulepath = modulepath.replace('\\', '.')  # 文件名不会包含\
+                    # import_statement = "import " + modulepath
                     docs = ""
                     try:
                         class_name = modulepath.rsplit('.', 1)[1]
@@ -38,7 +40,8 @@ def print_files(path, tree):
                         module = importlib.import_module(module_name)
                         # class_obj = getattr(module, class_name)
                         # docs = inspect.getdoc(class_obj)
-                        if hasattr(module, class_name):
+
+                        if hasattr(module, class_name):  # 用其他写法替换，参考basicFunction的is_iterable
                             class_obj = getattr(module, class_name)
                             docs = inspect.getdoc(class_obj)
                         else:
@@ -109,10 +112,22 @@ def print_files(path, tree):
         print(os.path.join(path, f))
 
 
-def pyTree(path, moduleName):
+def get_path(libname):
+    libname = importlib.import_module(libname)
+    module = inspect.getmodule(libname)
+    if module:
+        module_path = os.path.abspath(module.__file__)
+        package_path = os.path.dirname(module_path)
+        return package_path
+    else:
+        return None
+
+
+def pyTree(moduleName):
     pytree = {"name": moduleName, "children": ""}
     exec("import " + moduleName)
-    path = path + "\\" + moduleName
+    path = get_path(moduleName)
+    pathGV = path[:-len(moduleName)]
     print_files(path, pytree)
     f = open('static/treejson/' + moduleName + '.json', 'w')
     f.write(json.dumps(pytree))
@@ -132,18 +147,18 @@ def readpackages():
     return packages[2:]
 
 
-def pyTreeAll(path):
-    path = path[:-8] + 'Lib\site-packages'
+def pyTreeAll():
     packages_name = readpackages()
-    print("package_names", packages_name)
+    print("packages_name", packages_name)
     for package_name in packages_name:
         moduleName = package_name
         print("package_name: ", package_name)
         try:
             pytree = {"name": moduleName, "children": ""}
             exec("import " + moduleName)
-            folder_path = path + "\\" + moduleName
-            print_files(folder_path, pytree)
+            path = get_path(moduleName)
+            pathGV = path + "\\"
+            print_files(path, pytree)
             f = open('static/treejson_tmp/' + moduleName + '.json', 'w')
             f.write(json.dumps(pytree))
             f.close()
