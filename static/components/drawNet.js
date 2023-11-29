@@ -79,55 +79,63 @@ function drawNet(data, k, search, netCount){
 					  return d.weight*2+5;
 				  })
 				  .attr("fill", (d, i) => {
+				   console.log(d.weight);
 					  if (k == "pylibsNet" || k== "" || k == "undefined" || k == "None") {
-					      var defs = svg.append("defs").attr("id", "imgdefs");
-                          var catpattern = defs.append("pattern")
-                                               .attr("id", "catpattern" + i)
-                                               .attr("height", 1)
-                                               .attr("width", 1)
-                                               .append("image")
-                                               .attr("x", - (img_w / 2 - rad + 5.8))
-                                               .attr("y", - (img_h / 2 - rad + 3.5))
-                                               .attr("width", img_w + 11)
-                                               .attr("height", img_h + 6);
-                          var imageUrl="static/pic/default.png"
-                          fetch(imageUrl,{method:"HEAD"})
-                            .then(response=>{
-                                if(response.ok){
-                                    var img = new Image();
-                                     img.onload = function() {
-                                        catpattern.attr("xlink:href", imageUrl);
-                                         };
-                                     img.onerror = function(event) {
-                                          event.preventDefault();
-                                          console.error("Load Image Error:", event);
-                                          catpattern.attr("xlink:href", "static/pic/default.png");
-                                      };
-                                     img.src=imageUrl
-                                      }
-                                else{
-                                    catpattern.attr("xlink:href","static/pic/default.png");
-                                }
-                            })
-                            .catch(error=>{
-                                catpattern.attr("xlink:href","static/pic/default.png");
-                            });
-                        return "url(#catpattern"+i+")";
-
+//					      var defs = svg.append("defs").attr("id", "imgdefs");
+//                          var catpattern = defs.append("pattern")
+//                                               .attr("id", "catpattern" + i)
+//                                               .attr("height", 1)
+//                                               .attr("width", 1)
+//                                               .append("image")
+//                                               .attr("x", - (img_w / 2 - rad + 5.8))
+//                                               .attr("y", - (img_h / 2 - rad + 3.5))
+//                                               .attr("width", img_w + 11)
+//                                               .attr("height", img_h + 6);
+//                          var imageUrl="static/pic/default.png"
+//                          fetch(imageUrl,{method:"HEAD"})
+//                            .then(response=>{
+//                                if(response.ok){
+//                                    var img = new Image();
+//                                     img.onload = function() {
+//                                        catpattern.attr("xlink:href", imageUrl);
+//                                         };
+//                                     img.onerror = function(event) {
+//                                          event.preventDefault();
+//                                          console.error("Load Image Error:", event);
+//                                          catpattern.attr("xlink:href", "static/pic/default.png");
+//                                      };
+//                                     img.src=imageUrl
+//                                      }
+//                                else{
+//                                    catpattern.attr("xlink:href","static/pic/default.png");
+//                                }
+//                            })
+//                            .catch(error=>{
+//                                catpattern.attr("xlink:href","static/pic/default.png");
+//                            });
+//                        return "url(#catpattern"+i+")";
+					  return color[d.weight%10];
 					  }
 //					  else { return color[i%10]; }
 					  else { return color[d.layer%10]; }
 				  })
 				  .on("mouseenter", (d,i) => {
-					  link.style("stroke-width", l => l.source.name == i.name || l.target.name == i.name ? 2 : 1)
-					        .style("stroke", l => l.source.name == i.name || l.target.name == i.name ?color[i.layer%10]:"grey")
+					  link.style("stroke-width", l => l.source.name == i.name || l.target.name == i.name ? 3 : 1)
+					  if(i.layer){
+					  console.log(i.name);
+					        link.style("stroke", l => l.source.name == i.name || l.target.name == i.name ?color[i.layer%10]:"grey");}
+					  else
+					  {
+					        console.log(i.name)
+					        link.style("stroke", l => l.source.name == i.name || l.target.name == i.name ?color[i.weight%10]:"grey");}
+
 					  var point = i;
 					  fullname = point.name;
 					  if(fullname.lastIndexOf('.') == -1) {//显示根节点信息
 					      fetch('http://127.0.0.1:5006/info?wanted=' + fullname)
 					      .then(response => response.json())  // 使用json()方法提取JSON数据
 					      .then(data => {//显示根节点模块信息
-					          const tooltipContent = `<div style="background-color:grey">Name:${data.Name}</div><div>Version:${data.Version}</div><div>Summary:${data.Summary}</div><div>Author:${data.Author}</div><div>License:${data.License}</div><div>Location:${data.Location}</div>`;
+					          const tooltipContent = `<div style="background-color:grey">Name:${data.Name}</div><div>Version:${data.Version}</div><div>Summary:${data.Summary}</div><div>Author:${data.Author}</div><div>License:${data.License}</div><div>Location:${data.Location}</div>${data.RequiredBy ?`<div>Required by:${data.RequiredBy}</div>`:''}${data.Requires?`<div>Requires:${data.Requires}</div>`:''}<div>Home page:${data.HomePage}</div>`;
 					          tooltip.html(tooltipContent).style("display","block")
 					            .style("background-color", "#E4F1FF");
 					      })
@@ -147,7 +155,6 @@ function drawNet(data, k, search, netCount){
 				  .on("click", (d, i) => {
 					  var point = i;
                       fullname=point.name;
-                      console.log(fullname);
 				      if(fullname.lastIndexOf('.')!=-1)//如果是目录的话就加载源代码
 				      {
 					  fetch('http://127.0.0.1:5006/leafCode?wanted=' + fullname)
@@ -198,11 +205,11 @@ function drawNet(data, k, search, netCount){
 						  });
 						  }
 
-						  else
-						  {
-                              d3.select("#tooltip").remove()
-//                              search(i.name);//这里是默认点击如果没有获取包就触发search操作，暂时不保留
-						  }
+                  else
+                  {
+                      tooltip.style("display", "none");
+                      search(i.name);
+                  }
 				  })
 				  .call(drag());
 

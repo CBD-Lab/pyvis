@@ -266,7 +266,21 @@
                 </van-col>
             </van-row>
             <!--图像控制区-->
-            <div v-show="viewSelection === 'net' || viewSelection === 'class'">
+
+                <div v-show="viewSelection === 'net' ">
+                    <van-row class="nodeMessage">Totally {{netcount.node }} nodes</van-row>
+                    <van-row class="nodeMessage">Totally {{netcount.link }} links</van-row>
+                <van-row style="margin-top:10px;font-size:12px">
+                    <van-col span="24"><input type="radio" name="flush" value="重绘" id="flush" onclick="javascript:location.reload()">Repaint</input></van-col>
+                    <van-col span="12"><input type="radio" name="radio" value="edgecount" id="radio1" checked @click="selectit()">Edge-Count</input></van-col>
+                    <van-col span="12"><input type="radio" name="radio" value="equalr" id="radio2" @click="selectit()">Equal-Radius</input></van-col>
+                    <van-col span="12"><input type="radio" name="radio" value="showclass" id="radio3" @click="selectit()">Show-Class</input></van-col>
+                    <van-col span="12"><input type="radio" name="radio" value="showfunction" id="radio4" @click="selectit()">Show-Function</input></van-col>
+                </van-row>
+
+                </div>
+
+                 <div v-show="viewSelection === 'net' || viewSelection === 'class'">
                 <van-row style="margin-top:10px;font-size:12px">Node Radius</van-row>
                 <van-row><input style="position:relative;top:3px;" type="range" id="nodescale" min="0.5" max="10"
                                 value="1">
@@ -281,18 +295,6 @@
                 <van-row>
                     <van-col span="24"><input type="radio" name="radio" value="equalr" id="radio5" @click="selectit()">Equal-Radius</input></van-col>
                 </van-row>
-                </div>
-                <div v-show="viewSelection === 'net' ">
-                    <van-row class="nodeMessage">Totally {{netcount.node }} nodes</van-row>
-                    <van-row class="nodeMessage">Totally {{netcount.link }} links</van-row>
-                <van-row style="margin-top:10px;font-size:12px">
-                    <van-col span="24"><input type="radio" name="flush" value="重绘" id="flush" onclick="javascript:location.reload()">Repaint</input></van-col>
-                    <van-col span="12"><input type="radio" name="radio" value="edgecount" id="radio1" checked @click="selectit()">Edge-Count</input></van-col>
-                    <van-col span="12"><input type="radio" name="radio" value="equalr" id="radio2" @click="selectit()">Equal-Radius</input></van-col>
-                    <van-col span="12"><input type="radio" name="radio" value="showclass" id="radio3" @click="selectit()">Show-Class</input></van-col>
-                    <van-col span="12"><input type="radio" name="radio" value="showfunction" id="radio4" @click="selectit()">Show-Function</input></van-col>
-                </van-row>
-
                 </div>
             </div>
 
@@ -523,8 +525,8 @@
                 .catch(error=>
                 {
                  console.error("error fetching",error);
-                 this.singleModule=this.keyword;
-                 this.searchSingle();
+<!--                 this.singleModule=this.keyword;-->
+<!--                 this.searchSingle();-->
                 });
             },
             matrixvis() {
@@ -597,7 +599,6 @@
             },
 
             selectit(){
-                console.log("调用selectit方法");
                 var obj;
                 obj=document.getElementsByName("radio");
                 console.log('12',obj);
