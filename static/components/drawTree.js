@@ -224,7 +224,6 @@ function updateLinks(source, links) {
 
 /********************* 4. node交互和绘制  *********************/
 function updateNodes(source, nodes) {
-  // 给节点添加id，用于选择集索引
   var mynode = svg.selectAll("g.node").data(nodes, function (d,i) {
       if(d.id)
       {
@@ -299,13 +298,24 @@ function updateNodes(source, nodes) {
     .on("click", function(event,d)
     {
         click(d);
-    });
+    })
+    .on("mouseenter", function(event, d) {
+        d3.select(this)
+          .attr("stroke-width", "2px")  // Increase stroke width on mouse enter
+          .attr("transform", "scale(2)")  // Increase size using a scale transform
+          .style("fill","red");
+      })
+    .on("mouseleave", function(event, d) {
+        d3.select(this)
+          .attr("stroke-width", "1px")  // Revert stroke width on mouse leave
+          .attr("transform", null)  // Revert size to the original value
+          .style("fill",chooseColor(d.data.name,d.children||d._children));
+      });
+
 
   // 给每个新加的group元素添加文字说明
   nodeEnter
     .append("text")
-//    .attr("class","node")
-//    .attr("dy", ".1em")
     .attr("x", function (d) {
       return d.children || d._children ? -10 : 10;
     })
@@ -316,7 +326,7 @@ function updateNodes(source, nodes) {
     .text(function (d) {
       return d.data.name;
     })
-     .attr("stroke", function(d){
+     .attr("fill", function(d){
         return chooseColor(d.data.name,d.children||d._children);
     })
      .attr("stroke-width","0.3px")
@@ -326,6 +336,19 @@ function updateNodes(source, nodes) {
             textclick(event,d);
             }
      })
+     .on("mouseenter",function(event,d)
+     {
+          d3.select(this)
+                .style("fill", "red")
+                .style("font-size","16px")
+                .style("font-weight","bold");
+     })
+     .on("mouseleave", function (event, d) {
+            d3.select(this)
+                .style("fill", chooseColor(d.data.name,d.children||d._children)) // Revert the fill color to the original value on mouse leave
+                .style("font-size",null)
+                .style("font-weight",null);
+        });
 
       // 给每个新加的group元素添加节点的文件数说明
   nodeEnter
