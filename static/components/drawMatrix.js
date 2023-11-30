@@ -84,11 +84,11 @@ function drawMatrixGraph(graph){
                     d3.select(this)
                       .attr("fill","#F00")
                       .attr("font-size","20px");
-                    nodeLeft.filter( function(t){ 	//过滤器
+                    nodeLeft.filter( function(t){
                          return t.name== i.name;
                     })
                     .attr("r",R*1.5);
-                    node.filter( function(t){ 	//过滤器
+                    node.filter( function(t){
                          return t.name== i.name;
                     })
                     .attr("r",R*1.5);
@@ -97,23 +97,23 @@ function drawMatrixGraph(graph){
                     d3.select(this)
                       .attr("fill","#000")
                       .attr("font-size",""+R*2+"px");
-                    nodeLeft.filter( function(t){ 	//过滤器
+                    nodeLeft.filter( function(t){
                          return t.name== i.name;
                     })
                     .attr("r",R);
-                    node.filter(function(t){ 	//过滤器
+                    node.filter(function(t){
                          return t.name== i.name;
                     })
                     .attr("r",R);
                  })
                  .on("mousedown", function(d,i){
-                    textlist.filter( function(t){ 	//过滤器
+                    textlist.filter( function(t){
                              return t.name != i.name;
                         })
                         .attr("fill","#000")
                         .attr("font-size",""+R*2+"px");
-                    link.filter(function(l){ 	//过滤器
-                         textlist.filter(function(t,m){ 	//过滤器
+                    link.filter(function(l){
+                         textlist.filter(function(t,m){
                                 if (i.name == t.name){
                                     iid = m;
                                 }
@@ -121,28 +121,28 @@ function drawMatrixGraph(graph){
                          })
                          .attr("fill","rgb(255, 127, 14)")
                          .attr("font-size",""+R*2+"px");
-                         return l.source == iid;//以当前text做头
+                         return l.source == iid;  // Start with the current text
                         })
-                        .attr("fill","rgb(255,127,14)")   //橙色（依赖其他的.py模块）
+                        .attr("fill","rgb(255,127,14)")  // Orange (depends on other .py modules)
                         .attr("stroke-width",1);
-                    link.filter( function(l){ 	//过滤器
-                         textlist.filter( function(t,m){ 	//过滤器
+                    link.filter( function(l){
+                         textlist.filter( function(t,m){
                                 return (m==l.source)&&(l.target == iid);
                          })
                          .attr("fill","rgb(44,160,44)")
                          .attr("font-size",""+R*2+"px");
-                         return l.target == iid;//以当前text做尾
+                         return l.target == iid;  // End with the current text
                         })
-                        .attr("fill","rgb(44,160,44)")   //绿色（被其他.py模块依赖）
+                        .attr("fill","rgb(44,160,44)")  // Green (dependent on other .py modules)
                         .attr("stroke-width",1);
 
-                    link.filter(function(l){ 	//过滤器
+                    link.filter(function(l){
                              return l.source.index != iid && l.target.index != iid;
                         })
                         .attr("fill","rgb(255,127,14)")
                         .attr("stroke-width",1);
 
-                    textlist.filter( function(t,m){ 	//过滤器
+                    textlist.filter( function(t,m){
                              return m == iid;
                         })
                         .attr("fill","#F00")
@@ -163,16 +163,16 @@ function drawMatrixGraph(graph){
                     d3.select(this)
                       .attr("fill","#F00");
 
-                    nodeLeft.filter( function(t,m){ 	//过滤器
+                    nodeLeft.filter( function(t,m){
                          return m== i.target;
                     })
                     .attr("r",R*1.5);
-                    node.filter(function(t,m){ 	//过滤器
+                    node.filter(function(t,m){
                          return m == i.source;
                     })
                     .attr("r",R*1.5);
 
-                    textlist.filter(function(t,m){ 	//过滤器
+                    textlist.filter(function(t,m){
                         return m == i.target;
                     })
                     .attr("fill","#F00")
@@ -181,16 +181,16 @@ function drawMatrixGraph(graph){
           .on("mouseout", function(d,i){
                     d3.select(this)
                       .attr("fill","rgb(255,127,14)");
-                    nodeLeft.filter(function(t,m){ 	//过滤器
+                    nodeLeft.filter(function(t,m){
                          return m== i.target;
                     })
                     .attr("r",R);
-                    node.filter( function(t,m) { 	//过滤器
+                    node.filter( function(t,m) {
                          return m== i.source;
                     })
                     .attr("r",R);
 
-                    textlist.filter( function(t,m) { 	//过滤器
+                    textlist.filter( function(t,m) {
 
                         return m == i.target;
                     })
@@ -318,15 +318,15 @@ function drawMatrixGraph(graph){
               console.error('Error executing Python script:', error);
             });
         })
-          .on("mouseover",function(d,i) {    //加入提示框
+          .on("mouseover",function(d,i) {  // Add Cue Box
                 d3.select(this)
                  .attr("r",R*1.5);
 
-                node.filter(function(t) { 	//过滤器
+                node.filter(function(t) {
                          return t.name== i.name;
                     })
                   .attr("r",R*1.5);
-                textlist.filter( function(m){ 	//过滤器
+                textlist.filter( function(m){
                          return m.name == i.name;
                     })
                     .attr("fill","#F00")
@@ -336,18 +336,18 @@ function drawMatrixGraph(graph){
 
                 d3.select(this)
                   .attr("r",R);
-                node.filter(function(t){ 	//过滤器
+                node.filter(function(t){
                          return t.name == i.name;
                     })
                    .attr("r",R);
-                textlist.filter(function(m){ 	//过滤器
+                textlist.filter(function(m){
                          return m.name == i.name;
                     })
                     .attr("fill","#000")
                     .attr("font-size",""+R*2+"px");
           })
           .on("mousedown",function(d,i){
-                textlist.filter(function(t,m){ 	//过滤器
+                textlist.filter(function(t,m){
                          if (i.name == t.name){
                                     iid = m;
                                 }
@@ -356,30 +356,28 @@ function drawMatrixGraph(graph){
                     .attr("fill","#000")
                     .attr("font-size",R*2)
                     .attr("x",5);
-                textlist.filter(function(t){ 	//过滤器
+                textlist.filter(function(t){
                          return t.name == i.name;
                     })
                     .attr("fill","#F00")
                     .attr("font-size","18px");
-                link.filter( function(l){ 	//过滤器
+                link.filter( function(l){
                          return l.source == iid;
                     })
-                    .attr("fill","rgb(255,127,14)")   //橙色（依赖其他的.py模块）
+                    .attr("fill","rgb(255,127,14)")  // Orange (depends on other .py modules)
                     .attr("stroke-width",1);
-                link.filter(function(l){ 	//过滤器
+                link.filter(function(l){
                          return l.target == iid;
                     })
-                    .attr("fill","rgb(44,160,44)")   //绿色（被其他.py模块依赖）
+                    .attr("fill","rgb(44,160,44)")  // Green (dependent on other .py modules)
                     .attr("stroke-width",1);
-                link.filter(function(l) { 	//过滤器
+                link.filter(function(l) {
                          return l.source != iid && l.target != iid;
                     })
                     .attr("fill","rgb(255,127,14)")
                     .attr("stroke-width",1);
           });
-
-
-}//end drawMatrixGraph()
+}
 
 window.onDrawMatrixReady = function(data) {
     // 执行绘图逻辑

@@ -1,7 +1,7 @@
 function drawTree(data,treecount){
      let tooltiptree = d3.select('body')
                             .append('div')
-                            .attr("id", "tiptree") // 添加ID属性
+                            .attr("id", "tiptree") // Adding the ID attribute
                             .style('position', 'absolute')
                             .style('z-index', '25')
                             .style('color', 'black')
@@ -29,13 +29,13 @@ function drawTree(data,treecount){
      var nodes=root.descendants();
      var i=0, duration=750;
      initData(root);
-   /********************* 2. 数据初始化绑定（包括数据更新） *********************/
+   /********************* 2. Data initialization binding (including data updates) *********************/
     function initData(root) {
-      // 设置第一个元素的初始位置
+      // Sets the initial position of the first element
       root.x0 = height / 2;
       root.y0 = 100;
       root._children=[];
-        // 计算总节点数
+      // Calculate the total number of nodes
       const totalNodes = countNodes(root);
       var filecount=updateFileCount(root)
       treecount.treeNodeCount=totalNodes;
@@ -52,7 +52,7 @@ function drawTree(data,treecount){
       // 更新节点状态
       updateChart(root);
     }
-/*********************************更新整个树形结构的节点文件数目   **************************/
+/********************************* Update the number of node files for the entire tree structure **************************/
 function updateFileCount(node)
 {
     if(!node.data.fileCount)
@@ -68,23 +68,24 @@ function updateFileCount(node)
     return node.data.fileCount
 }
 
-/********************* 计算树中的节点总数 *********************/
+/********************* Calculate the total number of nodes in the tree *********************/
 function countNodes(node) {
-  let count = 1; // 初始为 1，包括当前节点
+  let count = 1;  // Initially 1, including the current node
   if (node.children) {
     node.children.forEach(function (child) {
-      count += countNodes(child); // 递归计算子节点的总数
+      count += countNodes(child);  // Recursively calculate the total number of child nodes
     });
   }
   return count;
 }
-/********************* 当文件个数为0并且节点过多的时候按照概率值模拟文件个数 *********************/
+/********************* When the number of files is 0 and there are too many nodes,
+the number of files is simulated according to the probability value. *********************/
 function pretendFileCount(node,totalNodes)
 {
     if(node.children)
     {
          node.children.forEach(function (child) {
-            pretendFileCount(child,totalNodes); // 递归处理子节点并传递额外参数
+            pretendFileCount(child,totalNodes);  // Recursively process child nodes and pass additional parameters
     });
     }
 
@@ -96,41 +97,43 @@ function pretendFileCount(node,totalNodes)
         node.data.fileCount=0;
     }
 }
-/********************* 根据树的节点个数随机关闭节点 *********************/
+/********************* Randomly close nodes based on the number of nodes in the tree *********************/
 function collapseAllNodesByProbability(node,totalNodes) {
   if (node.children) {
      node.children.forEach(function (child) {
-      collapseAllNodesByProbability(child, totalNodes); // 递归处理子节点并传递额外参数
+      collapseAllNodesByProbability(child, totalNodes); // Recursively process child nodes and pass additional parameters
     });
-    // 根据概率属性决定是否收起节点
+    // Decide whether to put away nodes based on probabilistic properties
     if (Math.random() > 100/totalNodes&node.depth!=0) {
-      node._children = node.children; // 将子节点移到 _children 中
+      node._children = node.children;  // Move child nodes into _children
       node._children.forEach(function (child) {
-      collapseAllNodesByProbability(child, totalNodes); // 递归处理子节点并传递额外参数
+      collapseAllNodesByProbability(child, totalNodes);  // Recursively process child nodes and pass additional parameters
     });
-      node.children = null; // 清空 children
+      node.children = null;  // Clear children
     }
   }
 }
-//根据节点名字来在父节点中移除
+// Remove in parent node based on node name
 function removeNodeByName(parent,nodeName)
 {
     parent.children=parent.children.filter(child=>child.data.name!==nodeName);
     parent.data.children=parent.data.children.filter(datachild=>datachild.name!=nodeName);
-    if(parent.children.length==0)  //问题2出在这里，不能把子节点里面的children设为空数组，必须设为null否则不能用d3.tree()
+    // Problem 2 appears here, you can not set the children nodes inside the children as an empty array,
+    // must be set to null otherwise you can not use d3.tree()
+    if(parent.children.length==0)
     {
         parent.children=null;
         parent.data.children=null;
     }
 }
 
-/********************* 根据树的节点及其子节点是否含有文件关闭节点 *********************/
+/********************* Depending on whether the nodes of the tree and their children contain file closure nodes *********************/
 function collapseAllNodesByFile(node) {
     if (node.children) {
-    // 创建 children 数组的副本
+    // Create a copy of the children array
     const childrenCopy = node.children.slice();
     childrenCopy.forEach(function (child) {
-      collapseAllNodesByFile(child); // 递归处理子节点并传递额外参数
+      collapseAllNodesByFile(child);  // Recursively process child nodes and pass additional parameters
     });
   }
 
@@ -138,9 +141,10 @@ function collapseAllNodesByFile(node) {
     node.data.fileCount = 0;
   }
 
-  // 目前是把当前节点作为子节点考虑是不是要收起，初始设置未如果当前节点树没有文件就收起
+  // Currently the current node is considered as a child node to consider whether or not to put away,
+  // the initial setup if the current node tree has no files to put away
   if (node.data.fileCount === 0 && node.parent) {
-    // 收起该节点
+    // Put away the node
     var parent = node.parent;
     removeNodeByName(parent, node.data.name);
 
@@ -152,40 +156,40 @@ function collapseAllNodesByFile(node) {
   }
 }
 
-/********************* 更新树的高度 *********************/
+/********************* Updating the height of the tree *********************/
 function updateHeight(node)
 {
-  let height = 0; // 初始值设置为 0
-  if(!node.children)//要么所有子节点被隐藏要么没有子节点，显示高度为0
+  let height = 0; // The initial value is set to 0
+  if(!node.children)// Either all child nodes are hidden or there are no child nodes, display height is 0
   {
 //    node._height=0;
     node.height=0
     return 0;
   }
-  else//当前节点有子节点并且有展开的节点
+  else  // The current node has children and an expanded node.
   {
      node.children.forEach(function (child) {
-     height=Math.max(height,1+updateHeight(child));//遍历所有子节点加一得到最大高度
+     height=Math.max(height,1+updateHeight(child));  // Iterate over all child nodes plus one to get maximum height
     });
 //    node._height=height;
     node.height=height;
     return height;
     }
   }
-/********************* 5. link交互和绘制  *********************/
+/********************* 5. link interaction and drawing  *********************/
 function updateLinks(source, links) {
-  // 更新数据
+  // Updated data
   var link = svg.selectAll("path.link").data(links, function (d) {
     return d.id;
   });
 
-  // 添加enter操作，添加类名为link的path元素
+  // Add the enter operation to add a path element with the class name link.
   var linkEnter = link
     .enter()
     .insert("path", "g")
     .attr("class", "link")
     .attr("fill","none")
-    // 默认位置为当前父节点的位置
+    // The default position is the position of the current parent node
     .attr("d", function (d) {
       var o = {
         x: source.x0,
@@ -194,10 +198,10 @@ function updateLinks(source, links) {
       return diagonal(o, o);
     });
 
-  // 获取update集
+  // Get the update set
   var linkUpdate = linkEnter.merge(link);
 
-  // 更新添加过渡动画
+  // Updated to add transition animation
   linkUpdate
     .transition()
     .duration(duration)
@@ -205,10 +209,9 @@ function updateLinks(source, links) {
       return diagonal(d, d.parent);
     });
 
-  // 获取exit集
+  // Getting the exit set
   var linkExit = link
     .exit()
-    // 设置过渡动画
     .transition()
     .duration(duration)
     .attr("d", function (d) {
@@ -218,11 +221,10 @@ function updateLinks(source, links) {
       };
       return diagonal(o, o);
     })
-    // 移除link
     .remove();
 }
 
-/********************* 4. node交互和绘制  *********************/
+/********************* 4. node interaction and drawing  *********************/
 function updateNodes(source, nodes) {
   var mynode = svg.selectAll("g.node").data(nodes, function (d,i) {
       if(d.id)
@@ -241,7 +243,7 @@ function updateNodes(source, nodes) {
         return d.id
         }
   });
-  // 添加enter操作，添加类名为node的group元素
+  // Add the enter operation to add a group element with class name node.
   var nodeEnter = mynode
     .enter()
     .append("g")
@@ -251,7 +253,7 @@ function updateNodes(source, nodes) {
     });
 
 
-  // 给每个新加的group元素添加cycle元素
+  // Adds a cycle element to each newly added group element.
     nodeEnter
      .append("path")
      .attr("class","node")
@@ -313,7 +315,7 @@ function updateNodes(source, nodes) {
       });
 
 
-  // 给每个新加的group元素添加文字说明
+  // Adds a text description to each newly added group element.
   nodeEnter
     .append("text")
     .attr("x", function (d) {
@@ -350,7 +352,7 @@ function updateNodes(source, nodes) {
                 .style("font-weight",null);
         });
 
-      // 给每个新加的group元素添加节点的文件数说明
+      // Description of the number of files to add nodes to each newly added group element
   nodeEnter
     .append("text")
     .attr("x", function (d) {
@@ -416,9 +418,9 @@ function updateNodes(source, nodes) {
       });
 
 
-  // 获取update集
+  // Get the update set
   var nodeUpdate = nodeEnter.merge(mynode);
-  // 设置节点的位置变化，添加过渡动画效果
+  // Set the position of the node to change, add transition animation effects
   nodeUpdate
     .transition()
     .duration(duration)
@@ -426,7 +428,7 @@ function updateNodes(source, nodes) {
       return "translate(" + d.y + "," + d.x + ")";
     });
 
-  // 更新节点的属性和样式
+  // Updating node properties and styles
   nodeUpdate
     .select("path.node")
     .attr("r", 10)
@@ -435,16 +437,14 @@ function updateNodes(source, nodes) {
     })
     .attr("cursor", "pointer");
 
-  // 获取exit操作
+  // Getting the exit operation
   var nodeExit = mynode
     .exit()
-    // 添加过渡动画
     .transition()
     .duration(duration)
     .attr("transform", function (d) {
       return "translate(" + source.y + "," + source.x + ")";
     })
-    // 移除元素
     .remove();
 
   nodeExit.select("path").attr("opacity", 1e-6);
@@ -452,10 +452,10 @@ function updateNodes(source, nodes) {
 }
 
 
-/********************* 6. 单击节点事件处理  *********************/
-// 当点击时，展开当前节点的所有叶子节点
+/********************* 6. Click node event handling  *********************/
+// When clicked, expands all leaf nodes of the current node
 function click(d) {
-      if (d._children&&d._children.length>0) {//如果有隐藏节点，就全部展开
+      if (d._children&&d._children.length>0) {// If there are hidden nodes, expand them all
          if(!d.children)
            {
             d.children=[];
@@ -468,8 +468,8 @@ function click(d) {
           })
             d._children = [];
           }
-      else {//如果已经全部展开就收缩回去
-        const childrenCopy = d.children.slice();//创建副本
+      else {// Shrink back if fully expanded
+        const childrenCopy = d.children.slice();  // Create a copy
         childrenCopy.forEach(function(child)
             {
             if(!d._children)
@@ -515,31 +515,31 @@ function textclick(event,d){
                     });
             }
 }
-  /********************* 3. 数据更新绑定  *********************/
+  /********************* 3. Data Update Binding  *********************/
 function updateChart(source) {
       treecount.treeShowNodeCount=countNodes(root);
       updateHeight(root);
       var treeData = tree(root);
-      // 计算新的Tree层级
+      // Calculate the new Tree hierarchy
       var nodes = treeData.descendants(),
       links = treeData.descendants().slice(1);
       nodes.forEach(function (d) {
-        d.y = d.depth * width/(root.height+2)+60;//在此改变节点的水平位置
+        d.y = d.depth * width/(root.height+2)+60;  // Change the horizontal position of the node here
       });
 
-      // node交互和绘制
+      // node interaction and drawing
       updateNodes(source, nodes);
-      // link交互和绘制
+      // link interaction and drawing
       updateLinks(source, links);
 
-      // 为动画过渡保存旧的位置
+      // Saving old locations for animated transitions
       nodes.forEach(function (d) {
         d.x0 = d.x;
         d.y0 = d.y;
       });
 
     }
-// 添加贝塞尔曲线的path，衔接与父节点和子节点间
+// Add a path of Bézier curves to the parent and child nodes.
 function diagonal(s, d) {
   path =
     `M ${s.y} ${s.x}
@@ -615,7 +615,7 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,pdfClass,gitClass)
     var rootout=treemini(hiout);
     var linksout=rootout.links();
     var nodesout=rootout.descendants();
-    // 创建一个数组用于存储具有重叠路径的叶子节点
+    // Create an array for storing leaf nodes with overlapping paths
     var overlappingLeafNodes = [];
     var overlappingminiNodes=[]
     for (var i = 0; i < nodesout.length; i++) {
@@ -652,8 +652,8 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,pdfClass,gitClass)
        .attr("class","rectout")
        .attr("x",d=>d.y-5)
        .attr("y",d=>d.x-5)
-       .attr("width", 10) // 设置矩形宽度
-       .attr("height", 10) // 设置矩形高度
+       .attr("width", 10) // Set the width of the rectangle
+       .attr("height", 10) // Set the height of the rectangle
        .attr("stroke", "blue")
        .attr("stroke-width", 2)
        .attr("fill", "none");
@@ -675,19 +675,19 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,pdfClass,gitClass)
         .attr("y","31px")
         .attr("fill", "#E4F1FF")
         .attr("opacity","0.9")
-    // 添加竖直分割线
+    // Adding a Vertical Dividing Line
     gc.append("line")
-        .attr("x1", "290px")  // 起始点 x 坐标
-        .attr("y1", "0")      // 起始点 y 坐标
-        .attr("x2", "290px")  // 终点 x 坐标
-        .attr("y2", "300px")  // 终点 y 坐标
-        .attr("stroke", "#AED2FF");  // 分割线颜色
+        .attr("x1", "290px")
+        .attr("y1", "0")
+        .attr("x2", "290px")
+        .attr("y2", "300px")
+        .attr("stroke", "#AED2FF");
     gc.append("line")
-        .attr("x1", "0")  // 起始点 x 坐标
-        .attr("y1", "30px")      // 起始点 y 坐标
-        .attr("x2", "620px")  // 终点 x 坐标
-        .attr("y2", "30px")  // 终点 y 坐标
-        .attr("stroke", "#AED2FF");  // 分割线颜色
+        .attr("x1", "0")
+        .attr("y1", "30px")
+        .attr("x2", "620px")
+        .attr("y2", "30px")
+        .attr("stroke", "#AED2FF");
     gc.append("text")
         .attr("x", "0px")
         .attr("y", "20px")
@@ -786,26 +786,23 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,pdfClass,gitClass)
                                       .style("width", "500px")
                     var drag=d3.drag()
                               .on("start", function (event) {
-                                // 记录拖拽开始时的位置
-                                var startX = event.x;
-                                var startY = event.y;
-
-                                // 获取当前提示框的位置
-                                var currentLeft = parseFloat(tips.style("left"));
-                                var currentTop = parseFloat(tips.style("top"));
-
-                                // 计算鼠标相对于提示框左上角的偏移
-                                offsetX = startX - currentLeft;
-                                offsetY = startY - currentTop;
-                              })
-                              .on("drag", function (event) {
-                                // 随鼠标移动，更新提示框位置
-                                tips.style("left", (event.x - offsetX) + "px")
-                                  .style("top", (event.y - offsetY) + "px");
-                              });
-
-                            // 将拖拽行为绑定到要拖拽的元素上
-                            tips.call(drag);
+                                // Record the position at the start of the drag
+                            var startX = event.x;
+                            var startY = event.y;
+                            // Get the position of the current cue box
+                            var currentLeft = parseFloat(tips.style("left"));
+                            var currentTop = parseFloat(tips.style("top"));
+                            // Calculate the mouse offset relative to the upper-left corner of the cue box
+                            offsetX = startX - currentLeft;
+                            offsetY = startY - currentTop;
+                        })
+                        .on("drag", function (event) {
+                        // Update cue box position with mouse movement
+                            tips.style("left", (event.x - offsetX) + "px")
+                                .style("top", (event.y - offsetY) + "px");
+                        });
+            // Bind the drag behavior to the element to be dragged
+            tips.call(drag);
                     var closeButton=tips.append("span")
                           .attr("class","close")
                           .attr("color","red")
@@ -813,23 +810,23 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,pdfClass,gitClass)
                           .on("click",function(){
                           d3.select(".popup").remove();
                          });
-                        // 设置关闭按钮位置
+                        // Setting the Off Button Position
                     closeButton.style("position", "fixed")
                           .style("top", "0")
                           .style("left", "0");
                     var contentContainer = tips.append("div").attr("class", "content-container");
                     var tableContainer = contentContainer.append("table").attr("class", "var-fun-container var-fun-container table-style");
                     var tableHeader = tableContainer.append("thead").append("tr");
-                    tableHeader.append("th").text("Variable"); // 表头列1
-                    tableHeader.append("th").text("Function"); // 表头列2
+                    tableHeader.append("th").text("Variable"); // Table header column 1
+                    tableHeader.append("th").text("Function"); // Table header column 2
 
-                    var tableBody = tableContainer.append("tbody"); // 创建表格主体部分
-                    var row = tableBody.append("tr"); // 创建一行
-                    row.append("td").attr("class", "contentVar").style("color", "green").html(data['var'].join("<br>")); // 第一列
-                    row.append("td").attr("class", "contentFun").style("color", "blue").html(data['fun'].join("<br>")); // 第二列
+                    var tableBody = tableContainer.append("tbody"); // Creating the main part of the form
+                    var row = tableBody.append("tr"); // Create a line
+                    row.append("td").attr("class", "contentVar").style("color", "green").html(data['var'].join("<br>"));  // first column
+                    row.append("td").attr("class", "contentFun").style("color", "blue").html(data['fun'].join("<br>"));  // second column
                     var docContainer = tips.append("div").attr("class", "contentDoc-container");
                     var textWithLinks = data['doc'];
-                    var linkRegex = /(\bhttps?:\/\/\S+\b)/g;// \b匹配单词边界，\s查找空白字符
+                    var linkRegex = /(\bhttps?:\/\/\S+\b)/g;  // \b matches word boundaries, \s looks for blank characters
 //                    var linkRegex = /(\bhttps?:\/\/\S+?(?=\s|<|\|$))/g
 
                     var textWithFormattedLinks = linkRegex?textWithLinks.replace(linkRegex, '<a href="$1" target="_blank">$1</a>'):'';
@@ -844,7 +841,6 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,pdfClass,gitClass)
 })
                     .catch(error => {
                         console.error('Error executing Python script:', error);
-                        // 处理错误
                     });
 
                     });
@@ -855,7 +851,7 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,pdfClass,gitClass)
                 .attr("stroke","#555")
                 .attr("stroke-width",0.5)
                 .attr("opacity",0.5)
-                .attr("d",d3.linkVertical()          //d3.linkHorizontal()
+                .attr("d",d3.linkVertical()          // d3.linkHorizontal()
                             .x(d=>d.x+300)
                             .y(d=>d.y+35)
                 )
@@ -905,14 +901,14 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,pdfClass,gitClass)
                   while(point.depth>=2&& point.parent)
                   {
                       point=point.parent;
-                      fullname = point.data.name +'.'+ fullname; // 使用 + 运算符连接字符串
+                      fullname = point.data.name +'.'+ fullname; // Concatenating Strings with the + Operator
                   }
               //   fullname="torch."+fullname;
               fetch('http://127.0.0.1:5006/leafCode?wanted=' + fullname)
                       .then(response => response.text())
                       .then(data => {
                        const language = 'python';
-                             // 使用 Prism.highlight 方法高亮代码字符串
+                             // Highlighting code strings with the Prism.highlight method
                        const highlightedCode = Prism.highlight(data, Prism.languages[language], language);
 
                        var tips = d3.select("body")
@@ -920,25 +916,23 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,pdfClass,gitClass)
                                       .attr("class","popup")
                        var drag=d3.drag()
                               .on("start", function (event) {
-                                // 记录拖拽开始时的位置
-                                var startX = event.x;
-                                var startY = event.y;
-
-                                // 获取当前提示框的位置
-                                var currentLeft = parseFloat(tips.style("left"));
-                                var currentTop = parseFloat(tips.style("top"));
-
-                                // 计算鼠标相对于提示框左上角的偏移
-                                offsetX = startX - currentLeft;
-                                offsetY = startY - currentTop;
-                              })
-                              .on("drag", function (event) {
-                                // 随鼠标移动，更新提示框位置
-                                tips.style("left", (event.x - offsetX) + "px")
-                                  .style("top", (event.y - offsetY) + "px");
+                                    // Record the position at the start of the drag
+                                    var startX = event.x;
+                                    var startY = event.y;
+                                    // Get the position of the current cue box
+                                    var currentLeft = parseFloat(tips.style("left"));
+                                    var currentTop = parseFloat(tips.style("top"));
+                                    // Calculate the mouse offset relative to the upper-left corner of the cue box
+                                    offsetX = startX - currentLeft;
+                                    offsetY = startY - currentTop;
+                                  })
+                                  .on("drag", function (event) {
+                                    // Update cue box position with mouse movement
+                                    tips.style("left", (event.x - offsetX) + "px")
+                                      .style("top", (event.y - offsetY) + "px");
                               });
 
-                            // 将拖拽行为绑定到要拖拽的元素上
+                            // Bind the drag behavior to the element to be dragged
                             tips.call(drag);
 
                       tips.append("span")
@@ -946,7 +940,6 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,pdfClass,gitClass)
                           .attr("color","red")
                           .text("x")
                           .on("click",function(){
-                          //tips.style("display","none");
                           tips.remove();
                          });
 
@@ -956,7 +949,6 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,pdfClass,gitClass)
                                     })
                       .catch(error => {
                           console.error('Error executing Python script:', error);
-                          // 处理错误
                       });
             });
             }

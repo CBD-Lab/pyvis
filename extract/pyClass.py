@@ -3,8 +3,8 @@ import inspect
 import os
 import pathlib
 import json
-from extract import basicFunction
 import builtins
+from . import basicFunction
 
 
 def init():
@@ -90,21 +90,10 @@ def get_links(myclasses, nodes):
     return links
 
 
-def get_path(libname):
-    libname = importlib.import_module(libname)
-    module = inspect.getmodule(libname)
-    if module:
-        module_path = os.path.abspath(module.__file__)
-        package_path = os.path.dirname(module_path)
-        return package_path
-    else:
-        return None
-
-
 def getClassNet(pname):
     global pathGV
     init()
-    path = get_path(pname)
+    path = basicFunction.get_path(pname)
     pathGV = path[:-len(pname)]
     myclasses = get_classes(path, pname)
     print("-----5----")
@@ -118,31 +107,16 @@ def getClassNet(pname):
     f.close()
 
 
-def readpackages():
-    packages = []
-    filename = 'pylibsNet.txt'
-    i = 0
-    with open(filename, 'r', encoding='utf-8') as f:
-        line = f.readline()
-        while line:
-            packages.append(line.split(" ")[0].replace(".py", "").lower())
-            line = f.readline()
-            i = i + 1
-        print("i", i)
-    print("pylibsNet before", packages)
-    return packages[2:]
-
-
 def getClassNetAll():
     global pathGV
-    packages_name = readpackages()
+    packages_name = basicFunction.readPackages()
     print("packages_name: ", packages_name)
     for package_name in packages_name:
         init()
         pname = package_name
         print("package_name: ", package_name)
         try:
-            path = get_path(pname)
+            path = basicFunction.get_path(pname)
             pathGV = path[:-len(pname)]
             get_classes(path, pname)
             get_links(myclasses, nodes)

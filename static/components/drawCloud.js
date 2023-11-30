@@ -209,7 +209,7 @@ function drawCloud(data,search,cloudcount){
                 var opacity = d3.select(textNode).attr("opacity");
                 allLayerOpacities[hiwords[i].depth] = opacity;
             });
-                if(currentOpacity!=0.9){//点击显示当前层级词云数据
+                if(currentOpacity!=0.9){  // Click to display the current level of word cloud data
                     d3.select(this).attr("opacity","0.9");
                     svg.selectAll("text").attr("opacity", function (d,i) {
                             if (d.depth === currentLayer) {
@@ -221,11 +221,11 @@ function drawCloud(data,search,cloudcount){
                             }
                         })
                     }
-                else//点击隐藏当前词云数据
+                else  // Click to hide the current word cloud data
                     {
                     svg.selectAll("text").attr("opacity", function (d,i) {
                             if (d.depth === currentLayer) {
-                                return 0; // 设置透明度为 0，隐藏元素
+                                return 0;  // Set transparency to 0 to hide the element
                             }
                             else
                             {
@@ -284,7 +284,7 @@ function drawCloud(data,search,cloudcount){
                     });
             if (pdfs.size == 0){
                 pdfinfo.append('text')
-                    .attr("stroke-family", "仿宋")
+                    .attr("stroke-family", "FangSong")
                     .attr("font-size", "10px")
                     .text("no PDF!");
             }
@@ -292,12 +292,11 @@ function drawCloud(data,search,cloudcount){
                 pdfs.forEach((value, key) => {
                     console.log('vk', value, key);
                     pdfinfo.append('text')
-                        .attr("stroke-family", "仿宋")
+                        .attr("stroke-family", "FangSong")
                         .attr("font-size", "10px")
                         .text(key)
                         .on("click",function()
                         {
-    //                        console.log(d);
                             pdfgitclick(key);
                         });
                     pdfinfo.append('br');
@@ -346,7 +345,7 @@ function drawCloud(data,search,cloudcount){
                     });
             if (gits.size == 0){
                 gitinfo.append('text')
-                    .attr("stroke-family", "仿宋")
+                    .attr("stroke-family", "FangSong")
                     .attr("font-size", "10px")
                     .text("no GitHub files !");
             }
@@ -354,12 +353,11 @@ function drawCloud(data,search,cloudcount){
                 gits.forEach((value, key) => {
                     console.log('vk', value, key);
                     gitinfo.append('text')
-                        .attr("stroke-family", "仿宋")
+                        .attr("stroke-family", "FangSong")
                         .attr("font-size", "10px")
                         .text(key)
                         .on("click",function()
                         {
-    //                        console.log(d);
                             pdfgitclick(key);
                         });
                     gitinfo.append('br');
@@ -370,7 +368,7 @@ function drawCloud(data,search,cloudcount){
             d3.select('#gitshow2').remove();
         }
 	});
-	//pdf and git click event
+	// pdf and git click event
 	function pdfgitclick(classname){
         console.log('pgc',classname);
         fetch('http://127.0.0.1:5006/classVariable?wanted=' + classname)
@@ -382,25 +380,22 @@ function drawCloud(data,search,cloudcount){
                         .style("width", "500px")
             var drag=d3.drag()
                         .on("start", function (event) {
-                            // 记录拖拽开始时的位置
+                            // Record the position at the start of the drag
                             var startX = event.x;
                             var startY = event.y;
-
-                            // 获取当前提示框的位置
+                            // Get the position of the current cue box
                             var currentLeft = parseFloat(tips.style("left"));
                             var currentTop = parseFloat(tips.style("top"));
-
-                            // 计算鼠标相对于提示框左上角的偏移
+                            // Calculate the mouse offset relative to the upper-left corner of the cue box
                             offsetX = startX - currentLeft;
                             offsetY = startY - currentTop;
                         })
                         .on("drag", function (event) {
-                        // 随鼠标移动，更新提示框位置
+                        // Update cue box position with mouse movement
                             tips.style("left", (event.x - offsetX) + "px")
                                 .style("top", (event.y - offsetY) + "px");
                         });
-
-            // 将拖拽行为绑定到要拖拽的元素上
+            // Bind the drag behavior to the element to be dragged
             tips.call(drag);
             var closeButton=tips.append("span")
                       .attr("class","close")
@@ -409,23 +404,23 @@ function drawCloud(data,search,cloudcount){
                       .on("click",function(){
                       d3.select(".popup").remove();
                       });
-            // 设置关闭按钮位置
+            // Setting the Close Button Position
             closeButton.style("position", "fixed")
                       .style("top", "0")
                       .style("left", "0");
             var contentContainer = tips.append("div").attr("class", "content-container");
             var tableContainer = contentContainer.append("table").attr("class", "var-fun-container var-fun-container table-style");
             var tableHeader = tableContainer.append("thead").append("tr");
-            tableHeader.append("th").text("Variable"); // 表头列1
-            tableHeader.append("th").text("Function"); // 表头列2
+            tableHeader.append("th").text("Variable");  // Table header column 1
+            tableHeader.append("th").text("Function");  // Table header column 2
 
-            var tableBody = tableContainer.append("tbody"); // 创建表格主体部分
-            var row = tableBody.append("tr"); // 创建一行
-            row.append("td").attr("class", "contentVar").style("color", "green").html(data['var'].join("<br>")); // 第一列
-            row.append("td").attr("class", "contentFun").style("color", "blue").html(data['fun'].join("<br>")); // 第二列
+            var tableBody = tableContainer.append("tbody");  // Creating the main part of the form
+            var row = tableBody.append("tr");  // Create a line
+            row.append("td").attr("class", "contentVar").style("color", "green").html(data['var'].join("<br>"));  // first column
+            row.append("td").attr("class", "contentFun").style("color", "blue").html(data['fun'].join("<br>"));  // second column
             var docContainer = tips.append("div").attr("class", "contentDoc-container");
             var textWithLinks = data['doc'];
-            var linkRegex = /(\bhttps?:\/\/\S+\b)/g;// \b匹配单词边界，\s查找空白字符
+            var linkRegex = /(\bhttps?:\/\/\S+\b)/g;  // \b matches word boundaries, \s looks for blank characters
             //                    var linkRegex = /(\bhttps?:\/\/\S+?(?=\s|<|\|$))/g
 
             var textWithFormattedLinks = linkRegex?textWithLinks.replace(linkRegex, '<a href="$1" target="_blank">$1</a>'):'';
@@ -440,13 +435,12 @@ function drawCloud(data,search,cloudcount){
         })
         .catch(error => {
             console.error('Error executing Python script:', error);
-        // 处理错误
         });
     }
 }
 
 window.onDrawCloudReady = function(data,search,cloudcount) {
     console.log('drawTree.js is ready');
-    // 执行绘图逻辑
+    // Execution of drawing logic
     drawCloud(data,search,cloudcount);
 }

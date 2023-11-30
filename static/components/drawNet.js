@@ -88,9 +88,9 @@ function drawNet(data, k, search, netCount){
 				  })
 				  .on("mouseenter", (d,i) => {
 					  link.style("stroke-width", l => l.source.name == i.name || l.target.name == i.name ? 3 : 1)
-					  if(i.layer){//是模块类型的net'数据
+					  if(i.layer){  // It's the net data of the module type
 					        link.style("stroke", l => l.source.name == i.name || l.target.name == i.name ?color[i.layer%10]:"grey");}
-					  else//是pylibsnet数据或者class数据
+					  else  // It's pylibsnet data or class data.
 					  {
 					        link.style("stroke", l => l.source.name == i.name || l.target.name == i.name ?color[i.weight%10]:"grey");}
 
@@ -102,17 +102,17 @@ function drawNet(data, k, search, netCount){
 					          tooltip.html(tooltipContent).style("display","block")
 					            .style("background-color", "#E4F1FF");
 					  }
-					  else if(fullname.lastIndexOf('.') == -1) {//显示根节点信息
+					  else if(fullname.lastIndexOf('.') == -1) {  // Displaying Root Node Information
 					      fetch('http://127.0.0.1:5006/info?wanted=' + fullname)
-					      .then(response => response.json())  // 使用json()方法提取JSON数据
-					      .then(data => {//显示根节点模块信息
+					      .then(response => response.json())  // Use json() method to extract JSON data
+					      .then(data => {  // Displaying Root Node Module Information
 					          const tooltipContent = `<div style="background-color:grey">Name:${data.Name}</div><div>Version:${data.Version}</div><div>Summary:${data.Summary}</div><div>Author:${data.Author}</div><div>License:${data.License}</div><div>Location:${data.Location}</div>${data.RequiredBy ?`<div>Required by:${data.RequiredBy}</div>`:''}${data.Requires?`<div>Requires:${data.Requires}</div>`:''}<div>Home page:${data.HomePage}</div>`;
 					          tooltip.html(tooltipContent).style("display","block")
 					            .style("background-color", "#E4F1FF");
 					      })
 					  }
 
-					  else{//显示非根节点模块信息
+					  else{  // Display non-root module information
 					       const tooltipContent=`<div style="background-color:grey">Name:${i.name}</div><div>Location:${i.file}</div><div>Layer:${i.layer}</div>${i.hasfunction ? `<div>Function:${i.myfunction}</div>` : ''}${i.hasclass ? `<div>Class:${i.myclass}</div>` : ''}`;
 					       tooltip.html(tooltipContent).style("display","block")
                                 .style("background-color", "#FFDF76");
@@ -127,7 +127,7 @@ function drawNet(data, k, search, netCount){
 				  .on("click", (d, i) => {
 					  var point = i;
                       fullname=point.name;
-				      if(fullname.lastIndexOf('.')!=-1)//如果是目录的话就加载源代码
+				      if(fullname.lastIndexOf('.')!=-1)  // Load the source code if it's a directory
 				      {
 					  fetch('http://127.0.0.1:5006/leafCode?wanted=' + fullname)
 						  .then(response => response.text())
@@ -141,23 +141,22 @@ function drawNet(data, k, search, netCount){
 
 						      var drag=d3.drag()
                                   .on("start", function (event) {
-                                    // 记录拖拽开始时的位置
+                                    // Record the position at the start of the drag
                                     var startX = event.x;
                                     var startY = event.y;
-
-                                    // 获取当前提示框的位置
+                                    // Get the position of the current cue box
                                     var currentLeft = parseFloat(tips.style("left"));
                                     var currentTop = parseFloat(tips.style("top"));
-
-                                    // 计算鼠标相对于提示框左上角的偏移
+                                    // Calculate the mouse offset relative to the upper-left corner of the cue box
                                     offsetX = startX - currentLeft;
                                     offsetY = startY - currentTop;
                                   })
                                   .on("drag", function (event) {
-                                    // 随鼠标移动，更新提示框位置
+                                    // Update cue box position with mouse movement
                                     tips.style("left", (event.x - offsetX) + "px")
                                       .style("top", (event.y - offsetY) + "px");
                                   });
+                              // Bind the drag behavior to the element to be dragged
                               tips.call(drag);
 
                               tips.append("span")
@@ -198,7 +197,7 @@ function drawNet(data, k, search, netCount){
 
     forceSimulation.on("tick", () => {
         node.each(function(d) {
-            // 通过比较新位置和边界来确保节点在边界内
+            // Ensure that the node is within the boundary by comparing the new position to the boundary
             d.x = Math.max(20, Math.min(width*0.8, d.x));
             d.y = Math.max(20, Math.min(height*0.95, d.y));
             });
@@ -296,7 +295,7 @@ function selectit(type){
 }
 
 window.onDrawNetReady = function(data, k, search, netCount) {
-    // 执行绘图逻辑
+    // Execution of drawing logic
     drawNet(data, k, search, netCount);
 }
 window.onNetfunction = function(type) {

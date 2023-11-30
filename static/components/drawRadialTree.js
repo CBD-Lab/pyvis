@@ -11,48 +11,47 @@ function drawRadialTree(data, radialTreeCount) {
   var pdfchange = 0;
   var gitchange = 0;
 
-  //树状图布局
+  // Tree diagram layout
   var tree = d3.tree()
     .size([2 * Math.PI, radius])
     .separation((a, b) => (a.parent == b.parent ? 1 : 2) / a.depth)
 
   var radius = width / 9;
 
-  //给第一个节点添加初始坐标x0和y0
+  // Add initial coordinates x0 and y0 to the first node
   data.x0 = 0;
   data.y0 = 0;
 
   var data0 = data;
 
-  //以第一个节点为起始节点，重绘
+  // Redraw with the first node as the starting node.
   redraw(data);
 
-  //重绘函数
   function redraw(source) {
 
-    //（1） 计算节点和连线的位置
+    // (1) Calculate the position of nodes and connecting lines
     var root = tree(d3.hierarchy(source).sort((a, b) => d3.ascending(a.data.name, b.data.name)));
-    //应用布局，计算节点和连线
+    // Application Layout, Calculation Nodes and Connectivity
     var nodes = root.descendants();
     var links = root.links();
     
     radialTreeCount.node = nodes.length;
-    //重新计算节点的y坐标
+    // Recalculate the y-coordinate of the node
     nodes.forEach(function (d) { d.y = d.depth * 120; });
 
-    //（2） 节点的处理
+    // (2) Handling of nodes
 
-    //获取节点的update部分,个数相同
+    // Get the update part of the node, the number is the same.
     var nodeUpdate = svg.selectAll(".node")
       .data(nodes, d => d.name);
 
-    //获取节点的enter部分
+    // Get the enter part of the node
     var nodeEnter = nodeUpdate.enter();
 
-    //获取节点的exit部分
+    // Get the exit part of the node
     var nodeExit = nodeUpdate.exit();
 
-    //1. 节点的 Enter 部分的处理办法
+    // 1. Treatment of the Enter portion of a node
     var enterNodes = nodeEnter.append("g")
       .attr("class", "node")
       .attr("transform", d => `
@@ -65,7 +64,7 @@ function drawRadialTree(data, radialTreeCount) {
           redraw(data0);
         }
         else {
-          //交互处理：1-相等&&无真和隐藏子节点  2-相等   3-不等进一步看子节点
+          // Interactive processing: 1-equal and no true sums hide child nodes 2-equal 3-unequal, look further at child nodes
           for (var i = 0; i < data.children.length; i++) {
             if ((!data.children[i].children) && (!data.children[i]._children)) {
               if (data.children[i].name == d.data.name) {
@@ -85,8 +84,6 @@ function drawRadialTree(data, radialTreeCount) {
                 else
                   for (var j = 0; j < data.children[i].children.length; j++) {
                     if (data.children[i].children[j].name == d.data.name) {
-                      //console.log("当前点击时下层的data=");
-                      //console.log(data.children[i].name);
                       toggle(data.children[i].children[j]);
                       redraw(data);
                       break;
@@ -141,7 +138,6 @@ function drawRadialTree(data, radialTreeCount) {
           {
           fullname="torch."+fullname;
           }
-        //console.log("treemap fullname:",fullname);           
 
         fetch('http://127.0.0.1:5006/leafCode?wanted=' + fullname)
           .then(response => response.text())
@@ -259,7 +255,7 @@ d3.select("input[id=showPdf5]").on("change", function () {
                   });
           if (pdfs.size == 0){
               pdfinfo.append('text')
-                  .attr("stroke-family", "仿宋")
+                  .attr("stroke-family", "FangSong")
                   .attr("font-size", "10px")
                   .text("no PDF!");
           }
@@ -267,12 +263,11 @@ d3.select("input[id=showPdf5]").on("change", function () {
               pdfs.forEach((value, key) => {
                   console.log('vk', value, key);
                   pdfinfo.append('text')
-                      .attr("stroke-family", "仿宋")
+                      .attr("stroke-family", "FangSong")
                       .attr("font-size", "10px")
                       .text(key)
                       .on("click",function()
                       {
-  //                        console.log(d);
                           pdfgitclick(key);
                       });
                   pdfinfo.append('br');
@@ -321,7 +316,7 @@ d3.select("input[id=showGit5]").on("change", function () {
                   });
           if (gits.size == 0){
               gitinfo.append('text')
-                  .attr("stroke-family", "仿宋")
+                  .attr("stroke-family", "FangSong")
                   .attr("font-size", "10px")
                   .text("no GitHub files !");
           }
@@ -329,12 +324,11 @@ d3.select("input[id=showGit5]").on("change", function () {
               gits.forEach((value, key) => {
                   console.log('vk', value, key);
                   gitinfo.append('text')
-                      .attr("stroke-family", "仿宋")
+                      .attr("stroke-family", "FangSong")
                       .attr("font-size", "10px")
                       .text(key)
                       .on("click",function()
                       {
-  //                        console.log(d);
                           pdfgitclick(key);
                       });
                   gitinfo.append('br');
@@ -357,25 +351,25 @@ function pdfgitclick(classname){
                   .style("width", "500px")
       var drag=d3.drag()
                   .on("start", function (event) {
-                      // 记录拖拽开始时的位置
+                      // Record the position at the start of the drag
                       var startX = event.x;
                       var startY = event.y;
 
-                      // 获取当前提示框的位置
+                      // Get the position of the current cue box
                       var currentLeft = parseFloat(tips.style("left"));
                       var currentTop = parseFloat(tips.style("top"));
 
-                      // 计算鼠标相对于提示框左上角的偏移
+                      // Calculate the mouse offset relative to the upper-left corner of the cue box
                       offsetX = startX - currentLeft;
                       offsetY = startY - currentTop;
                   })
                   .on("drag", function (event) {
-                  // 随鼠标移动，更新提示框位置
+                  // Update cue box position with mouse movement
                       tips.style("left", (event.x - offsetX) + "px")
                           .style("top", (event.y - offsetY) + "px");
                   });
 
-      // 将拖拽行为绑定到要拖拽的元素上
+      // Bind the drag behavior to the element to be dragged
       tips.call(drag);
       var closeButton=tips.append("span")
                 .attr("class","close")
@@ -384,23 +378,23 @@ function pdfgitclick(classname){
                 .on("click",function(){
                 d3.select(".popup").remove();
                 });
-      // 设置关闭按钮位置
+      // Setting the Close Button Position
       closeButton.style("position", "fixed")
                 .style("top", "0")
                 .style("left", "0");
       var contentContainer = tips.append("div").attr("class", "content-container");
       var tableContainer = contentContainer.append("table").attr("class", "var-fun-container var-fun-container table-style");
       var tableHeader = tableContainer.append("thead").append("tr");
-      tableHeader.append("th").text("Variable"); // 表头列1
-      tableHeader.append("th").text("Function"); // 表头列2
+      tableHeader.append("th").text("Variable");  // Table header column 1
+      tableHeader.append("th").text("Function");  // Table header column 2
 
-      var tableBody = tableContainer.append("tbody"); // 创建表格主体部分
-      var row = tableBody.append("tr"); // 创建一行
-      row.append("td").attr("class", "contentVar").style("color", "green").html(data['var'].join("<br>")); // 第一列
-      row.append("td").attr("class", "contentFun").style("color", "blue").html(data['fun'].join("<br>")); // 第二列
+      var tableBody = tableContainer.append("tbody"); // Creating the main part of the form
+      var row = tableBody.append("tr");  // Create a line
+      row.append("td").attr("class", "contentVar").style("color", "green").html(data['var'].join("<br>"));  // first column
+      row.append("td").attr("class", "contentFun").style("color", "blue").html(data['fun'].join("<br>"));  // second column
       var docContainer = tips.append("div").attr("class", "contentDoc-container");
       var textWithLinks = data['doc'];
-      var linkRegex = /(\bhttps?:\/\/\S+\b)/g;// \b匹配单词边界，\s查找空白字符
+      var linkRegex = /(\bhttps?:\/\/\S+\b)/g;  // \b matches word boundaries, \s looks for blank characters
       //                    var linkRegex = /(\bhttps?:\/\/\S+?(?=\s|<|\|$))/g
 
       var textWithFormattedLinks = linkRegex?textWithLinks.replace(linkRegex, '<a href="$1" target="_blank">$1</a>'):'';
@@ -415,10 +409,9 @@ function pdfgitclick(classname){
   })
   .catch(error => {
       console.error('Error executing Python script:', error);
-  // 处理错误
   });
 }
-    //2. 节点的 Update 部分的处理办法
+    // 2. Handling of the Update portion of a node
     var updateNodes = nodeUpdate.transition()
       .duration(2)
       .attr("transform", d => `
@@ -430,7 +423,7 @@ function pdfgitclick(classname){
       .attr("r", 6)
       .attr("fill", d => d._children ? "orange" : "#fff");
 
-    //3. 节点的 Exit 部分的处理办法
+    // 3. Treatment of the Exit portion of a node
     var exitNodes = nodeExit.transition()
       .duration(2)
       .attr("transform", d => `
@@ -442,19 +435,19 @@ function pdfgitclick(classname){
     exitNodes.select("circle")
       .attr("r", 0);
     /*
-    （3） 连线的处理
+    (3) Handling of linkages
     */
-    //获取连线的update部分
+    // Get the update part of the link
     var linkUpdate = svg.selectAll(".link")
       .data(links, d => d.target.name);
 
-    //获取连线的enter部分
+    // Get the enter part of the link
     var linkEnter = linkUpdate.enter();
 
-    //获取连线的exit部分
+    // Get the exit part of the link
     var linkExit = linkUpdate.exit();
 
-    //1. 连线的 Enter 部分的处理办法
+    // 1. Treatment of the Enter part of the link
     linkEnter.insert("path", ".node")
       .attr("class", "link")
       .attr("d",
@@ -468,14 +461,14 @@ function pdfgitclick(classname){
         .radius(d => d.y))
       .attr("fill", "none");
 
-    //2. 连线的 Update 部分的处理办法
+    // 2. Treatment of the Update part of the link
     linkUpdate.transition()
       .duration(2)
       .attr("d", d3.linkRadial()
         .angle(d => d.x)
         .radius(d => d.y));
 
-    //3. 连线的 Exit 部分的处理办法
+    // 3. Treatment of the Exit portion of the linkage
     linkExit.transition()
       .duration(2)
       .attr("d",
@@ -485,38 +478,38 @@ function pdfgitclick(classname){
       .remove();
 
     /*
-    （4） 将当前的节点坐标保存在变量x0、y0里，以备更新时使用
+    (4) Save the current node coordinates in the variables x0, y0 for updates
     */
     nodes.forEach(function (d) {
       d.x0 = d.x;
       d.y0 = d.y;
     });
-    // 更新节点的文本颜色
+    // Update the text color of a node
     updateTextColors();
   }
   function updateTextColors() {
-    // 选择所有的文本元素，并根据是否具有子节点设置文本颜色
+    // Select all text elements and set the text color according to whether they have child nodes or not
     svg.selectAll("text")
       .style("fill",
         d => (d.children || d._children) ? "green" : "#000" // 具有子节点的文本颜色设置为绿色，否则为黑色
       );
   }
 
-  //切换开关，d 为被点击的节点
+  // Toggle switch, d is the clicked node
   function toggle(dd) {
-    if (dd.children) { //如果有子节点
-      dd._children = dd.children; //将该子节点保存到 _children
-      dd.children = null;  //将子节点设置为null
+    if (dd.children) {  // If there are child nodes
+      dd._children = dd.children;  // Save this child node to _children
+      dd.children = null;  // Set child node to null
 
-    } else {  //如果没有子节点
-      dd.children = dd._children; //从 _children 取回原来的子节点 
-      dd._children = null; //将 _children 设置为 null
+    } else {  // If there are no child nodes
+      dd.children = dd._children;  // Retrieve the original child node from _children
+      dd._children = null;  // Set _children to null
     }
   }
 
 }
 
 window.onDrawRadialTreeReady = function (data, radialTreeCount) {
-  // 执行绘图逻辑
+  // Execution of drawing logic
   drawRadialTree(data, radialTreeCount);
 }

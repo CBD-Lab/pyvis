@@ -1,4 +1,5 @@
 import json
+from . import basicFunction
 
 
 def requires(libname, path):
@@ -58,19 +59,6 @@ def edges(pylibsNet, path):
     return len(edgejson)
 
 
-def readpylibsNet():
-    packages = []
-    i = 0
-    with open('pylibsNet.txt', 'r', encoding='utf-8') as f:
-        line = f.readline()
-        while line:
-            packages.append(line.split(" ")[0].replace(".py", ""))
-            line = f.readline()
-            i = i + 1
-        print("i", i)
-    return packages[2:]
-
-
 def pylibs(path):
     global netjson, nodejson, edgejson, e
     netjson = {"links": "", "nodes": ""}
@@ -78,7 +66,7 @@ def pylibs(path):
     edgejson = []
     e = {"source": -1, "target": -1}
 
-    pylibsNet = readpylibsNet()
+    pylibsNet = basicFunction.readPackages()
     print("pylibsNet: ", pylibsNet)
     edges(pylibsNet, path)
     nodes(pylibsNet)

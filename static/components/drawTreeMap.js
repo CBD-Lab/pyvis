@@ -16,13 +16,10 @@ function drawTreeMap(data, flag, pdf, mapCount) {
     var treemap = d3.treemap()
         .size([width, height]);
 
-    //console.log("data:",data);
     var hidata = d3.hierarchy(data)
         .sum(d => Math.sqrt(Math.sqrt(d.value)))
         .sort((a, b) => b.value - a.value);
-    //console.log("hidata",hidata);
     var treedata = treemap(hidata);
-    //console.log("treedata:",treedata);
 
     nodes = treedata.leaves();
 
@@ -59,24 +56,24 @@ function drawTreeMap(data, flag, pdf, mapCount) {
         .attr("cursor", "pointer")
         .on("mouseover", function (event, d) {
             d3.select(this)
-                .attr("opacity", 1.0) // 鼠标悬停时矩形透明度为1
+                .attr("opacity", 1.0)  // Rectangle transparency is 1 on mouse hover
 
-            // 选择相应的文本元素并添加过渡动画
+            // Select the appropriate text element and add a transition animation
             d3.select(this.parentNode).select(".txt").raise()
                 .transition()
-                .duration(300) // 过渡时间
-                .attr("font-size", "16") // 变化后的字体大小
+                .duration(300) // transition time
+                .attr("font-size", "16") // Changed font size
                 .text(d => (d.data.name + "-" + d.data.value));
         })
         .on("mouseout", function (event, d) {
             d3.select(this)
-                .attr("opacity", 0.7) // 鼠标离开时矩形透明度为0.7
+                .attr("opacity", 0.7) // Transparency of the rectangle is 0.7 when the mouse is off.
 
-            // 选择相应的文本元素并添加过渡动画
+            // Select the appropriate text element and add a transition animation
             d3.select(this.parentNode).select(".txt")
                 .transition()
-                .duration(300) // 过渡时间
-                .attr("font-size", "12") // 恢复原始字体大小
+                .duration(300) // transition time
+                .attr("font-size", "12") // Restore original font size
                 .text(d => (d.data.name))
         })
         .on("click", (d, i) => {
@@ -120,7 +117,7 @@ function drawTreeMap(data, flag, pdf, mapCount) {
                 });
         });
     var pdfFiles = [];
-    // 获取第一个矩形块的左上角位置
+    // Get the position of the upper left corner of the first rectangular block
     var firstRect = rect.filter((d, i) => i === 0);
     var rectLeft = firstRect.attr("x");
     var rectTop = firstRect.attr("y");
@@ -133,13 +130,13 @@ function drawTreeMap(data, flag, pdf, mapCount) {
             .style("left", rectLeft + 230 + "px")
             .style("top", rectTop + 100 + "px");
         d3.select(this)
-            .attr("opacity", 1.0) // 鼠标悬停时矩形透明度为1
+            .attr("opacity", 1.0) // Rectangle transparency is 1 on mouse hover
 
-        // 选择相应的文本元素并添加过渡动画
+        // Select the appropriate text element and add a transition animation
         d3.select(this.parentNode).select(".txt").raise()
             .transition()
-            .duration(300) // 过渡时间
-            .attr("font-size", "16") // 变化后的字体大小
+            .duration(300) // transition time
+            .attr("font-size", "16") // Changed font size
             .text(d => (d.data.name + "-" + d.data.value));
     })
     .on("mouseout", function (d) {
@@ -147,13 +144,13 @@ function drawTreeMap(data, flag, pdf, mapCount) {
             .duration(300)
             .style("opacity", 0);
         d3.select(this)
-            .attr("opacity", 0.7) // 鼠标离开时矩形透明度为0.7
+            .attr("opacity", 0.7) // Transparency of the rectangle is 0.7 when the mouse is off.
 
-        // 选择相应的文本元素并添加过渡动画
+        // Select the appropriate text element and add a transition animation
         d3.select(this.parentNode).select(".txt")
             .transition()
-            .duration(300) // 过渡时间
-            .attr("font-size", "12") // 恢复原始字体大小
+            .duration(300) // transition time
+            .attr("font-size", "12") // Restore original font size
             .text(d => (d.data.name))
     });
 
@@ -183,14 +180,14 @@ rect.each(function(d) {
             }
 });
 
-    d3.select("input[id=length]").on("change", function () { //修改width和height以实现对矩形块进行缩放
-		var newScale = +this.value; // 获取输入框的值并转换为数字
+    d3.select("input[id=length]").on("change", function () {  // Modify width and height to scale a rectangular block.
+		var newScale = +this.value;  // Get the value of the input box and convert it to a number
         var width1 = width * newScale * 0.01;
         var height1 = height * newScale * 0.01;
         svg.attr("width", width1)
             .attr("height", height1);
-        // 更新矩形块的宽度和高度
-        
+
+        // Update the width and height of the rectangular block
         rect.attr("transform", function (d) { return "translate(" + d.x0 * newScale * 0.01 + "," + d.y0 * newScale * 0.01 + ")"; })
         rect.attr("width", d => (d.x1 - d.x0) * newScale * 0.01)
             .attr("height", d => (d.y1 - d.y0) * newScale * 0.01)
@@ -238,7 +235,7 @@ rect.each(function(d) {
                     });
             if (pdfs.size == 0){
                 pdfinfo.append('text')
-                    .attr("stroke-family", "仿宋")
+                    .attr("stroke-family", "FangSong")
                     .attr("font-size", "10px")
                     .text("no PDF!");
             }
@@ -246,12 +243,11 @@ rect.each(function(d) {
                 pdfs.forEach((value, key) => {
                     console.log('vk', value, key);
                     pdfinfo.append('text')
-                        .attr("stroke-family", "仿宋")
+                        .attr("stroke-family", "FangSong")
                         .attr("font-size", "10px")
                         .text(key)
                         .on("click",function()
                         {
-    //                        console.log(d);
                             pdfgitclick(key);
                         });
                     pdfinfo.append('br');
@@ -300,7 +296,7 @@ rect.each(function(d) {
                     });
             if (gits.size == 0){
                 gitinfo.append('text')
-                    .attr("stroke-family", "仿宋")
+                    .attr("stroke-family", "FangSong")
                     .attr("font-size", "10px")
                     .text("no GitHub files !");
             }
@@ -308,12 +304,11 @@ rect.each(function(d) {
                 gits.forEach((value, key) => {
                     console.log('vk', value, key);
                     gitinfo.append('text')
-                        .attr("stroke-family", "仿宋")
+                        .attr("stroke-family", "FangSong")
                         .attr("font-size", "10px")
                         .text(key)
                         .on("click",function()
                         {
-    //                        console.log(d);
                             pdfgitclick(key);
                         });
                     gitinfo.append('br');
@@ -337,25 +332,22 @@ rect.each(function(d) {
                         .style("width", "500px")
             var drag=d3.drag()
                         .on("start", function (event) {
-                            // 记录拖拽开始时的位置
+                            // Record the position at the start of the drag
                             var startX = event.x;
                             var startY = event.y;
-
-                            // 获取当前提示框的位置
+                            // Get the position of the current cue box
                             var currentLeft = parseFloat(tips.style("left"));
                             var currentTop = parseFloat(tips.style("top"));
-
-                            // 计算鼠标相对于提示框左上角的偏移
+                            // Calculate the mouse offset relative to the upper-left corner of the cue box
                             offsetX = startX - currentLeft;
                             offsetY = startY - currentTop;
                         })
                         .on("drag", function (event) {
-                        // 随鼠标移动，更新提示框位置
+                        // Update cue box position with mouse movement
                             tips.style("left", (event.x - offsetX) + "px")
                                 .style("top", (event.y - offsetY) + "px");
                         });
-
-            // 将拖拽行为绑定到要拖拽的元素上
+            // Bind the drag behavior to the element to be dragged
             tips.call(drag);
             var closeButton=tips.append("span")
                       .attr("class","close")
@@ -364,23 +356,23 @@ rect.each(function(d) {
                       .on("click",function(){
                       d3.select(".popup").remove();
                       });
-            // 设置关闭按钮位置
+            // Setting the Off Button Position
             closeButton.style("position", "fixed")
                       .style("top", "0")
                       .style("left", "0");
             var contentContainer = tips.append("div").attr("class", "content-container");
             var tableContainer = contentContainer.append("table").attr("class", "var-fun-container var-fun-container table-style");
             var tableHeader = tableContainer.append("thead").append("tr");
-            tableHeader.append("th").text("Variable"); // 表头列1
-            tableHeader.append("th").text("Function"); // 表头列2
+            tableHeader.append("th").text("Variable"); // Table header column 1
+            tableHeader.append("th").text("Function"); // Table header column 2
 
-            var tableBody = tableContainer.append("tbody"); // 创建表格主体部分
-            var row = tableBody.append("tr"); // 创建一行
-            row.append("td").attr("class", "contentVar").style("color", "green").html(data['var'].join("<br>")); // 第一列
-            row.append("td").attr("class", "contentFun").style("color", "blue").html(data['fun'].join("<br>")); // 第二列
+            var tableBody = tableContainer.append("tbody"); // Creating the main part of the form
+            var row = tableBody.append("tr"); // Create a line
+            row.append("td").attr("class", "contentVar").style("color", "green").html(data['var'].join("<br>")); // first column
+            row.append("td").attr("class", "contentFun").style("color", "blue").html(data['fun'].join("<br>")); // second column
             var docContainer = tips.append("div").attr("class", "contentDoc-container");
             var textWithLinks = data['doc'];
-            var linkRegex = /(\bhttps?:\/\/\S+\b)/g;// \b匹配单词边界，\s查找空白字符
+            var linkRegex = /(\bhttps?:\/\/\S+\b)/g;  // \b matches word boundaries, \s looks for blank characters
             //                    var linkRegex = /(\bhttps?:\/\/\S+?(?=\s|<|\|$))/g
 
             var textWithFormattedLinks = linkRegex?textWithLinks.replace(linkRegex, '<a href="$1" target="_blank">$1</a>'):'';
@@ -395,7 +387,6 @@ rect.each(function(d) {
         })
         .catch(error => {
             console.error('Error executing Python script:', error);
-        // 处理错误
         });
     }
 
@@ -413,6 +404,6 @@ rect.each(function(d) {
 
 
 window.onDrawTreeMapReady = function (data, flag, pdf, mapCount) {
-    // 执行绘图逻辑
+    // Execution of drawing logic
     drawTreeMap(data, flag, pdf, mapCount);
 }

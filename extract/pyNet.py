@@ -1,6 +1,5 @@
 import argparse
 import inspect
-from . import basicFunction
 import json
 import pathlib
 import os
@@ -13,6 +12,7 @@ import platform
 import textwrap
 import sys
 import importlib
+from . import basicFunction
 # ------------------do not delete the import above,using while runtime.----------------------------------
 
 
@@ -146,21 +146,8 @@ def pyNet(moduleName):
     f.close()
 
 
-def readpackages():
-    packages = []
-    i = 0
-    with open('pylibsNet.txt', 'r', encoding='utf-8') as f:
-        line = f.readline()
-        while line:
-            packages.append(line.split(" ")[0].replace(".py", "").lower())
-            line = f.readline()
-            i = i + 1
-        print("i", i)
-    return packages[2:]
-
-
 def pyNetAll():
-    packages_name = readpackages()
+    packages_name = basicFunction.readPackages()
     for package_name in packages_name:
         init()
         initpname = package_name

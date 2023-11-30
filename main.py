@@ -8,7 +8,7 @@ from flask import Flask, request, jsonify, send_from_directory, send_file
 from flask_cors import CORS
 import inspect
 import importlib
-from extract import basicFunction, pylibsNet, pyNet, pyClass, pyreverseClass, pylibsInfo, pyTree, pylibsTree
+from extract import basicFunction, pylibsNet, pyNet, pyClass, pylibsInfo, pyTree, pylibsTree
 
 app = Flask(__name__)
 CORS(app)
@@ -50,8 +50,8 @@ def treeLeaf():
         jsonstroutside = []
         for item in jsonfile:
             class_str = str(item[1])
-            start_index = class_str.find("'") + 1  # 找到第一个单引号的位置
-            end_index = class_str.rfind("'")  # 找到最后一个单引号的位置
+            start_index = class_str.find("'") + 1  # Finding the location of the first single quote
+            end_index = class_str.rfind("'")  # Finding the position of the last single quote
             class_name_all = class_str[start_index:end_index]
             # print(len(wanted))
             if (class_name_all.startswith(wanted)):
@@ -74,9 +74,9 @@ def leafCode():
     module_name = request.args.get("wanted", type=str)
     print(module_name)
     try:
-        # 尝试导入模块
+        # Trying to import the module.
         module = __import__(module_name, fromlist=[''])
-        # 获取模块的源代码
+        # Getting the source code of the module.
         source_code = open(module.__file__, 'r').read()
         print(source_code)
     except ImportError as e:
@@ -149,8 +149,8 @@ def localPath():
         global python_path
         python_path = sys.executable
         python_path = python_path.strip()
-        python_path = python_path[:-10] if python_path.endswith("python.exe") else python_path
-        python_path = [python_path[:-8] if python_path.endswith("Scripts\\") else python_path]
+        python_path = python_path[:-len("python.exe")] if python_path.endswith("python.exe") else python_path
+        python_path = [python_path[:-len("Scripts\\")] if python_path.endswith("Scripts\\") else python_path]
         print("python_path：", python_path)
         result = {'result': python_path}
         return jsonify(result)
@@ -168,9 +168,6 @@ def single():
     pyNet.pyNet(single_module)
     pyTree.pyTree(single_module)
     pyClass.getClassNet(single_module)
-    # if not os.path.exists('static/dot'):
-    #     os.makedirs('static/dot', exist_ok=True)
-    # pyreverseClass.getPyreverseClass(single_module)  # 有bug
 
     return jsonify({'message': 'Tasks completed successfully'})
 
@@ -196,10 +193,6 @@ def userPath():
             pylibsNet.pylibs(user_path)
             pyNet.pyNetAll()
             pyClass.getClassNetAll()
-            # if os.path.exists('static/dot'):
-            #     shutil.rmtree('static/dot')
-            # os.makedirs('static/dot', exist_ok=True)
-            # pyreverseClass.getPyreverseClassAll()  # 有bug
             shutil.rmtree('static/netjson')
             os.rename('static/netjson_tmp', 'static/netjson')
             pylibsInfo.showInfo(user_path)
@@ -229,14 +222,14 @@ def userPath():
     return jsonify({'message': 'Tasks completed successfully'})
 
 
-# 添加新的路由来返回SVG文件
+# Add a new route to return SVG files
 @app.route('/get_svg/<filename>')
 def get_svg(filename):
     svg_directory = 'static/pic/'
     return send_from_directory(svg_directory, filename)
 
 
-# 获得整体包的信息
+# Get information about the overall package
 @app.route("/info", methods=["GET"])
 def info():
     module_name = request.args.get("wanted", type=str)
@@ -249,5 +242,5 @@ def info():
     return module_info
 
 
-if "__main__" == __name__:  # 程序入口
+if "__main__" == __name__:  # program entrance
     app.run(port=5006, debug=True)

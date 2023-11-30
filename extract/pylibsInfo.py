@@ -1,24 +1,9 @@
 import json
 import re
 import subprocess
-
+from . import basicFunction
 
 infojson = {}
-pylibsNet = []
-
-
-def readpackages():
-    filename = 'pylibsNet.txt'
-    i = 0
-    with open(filename, 'r', encoding='utf-8') as f:
-        line = f.readline()
-        while line:
-            pylibsNet.append(line.split(" ")[0].replace(".py", ""))
-            line = f.readline()
-            i = i + 1
-        print("i", i)
-    print("pylibsNet before", pylibsNet)
-    return pylibsNet[2:]
 
 
 def parse_pip_show_output(output):
@@ -33,7 +18,7 @@ def parse_pip_show_output(output):
 
 
 def showInfo(path):
-    packages_name = readpackages()
+    packages_name = basicFunction.readPackages()
     print("packages_name", packages_name)
     for package_name in packages_name:
         print("package_name：", package_name)

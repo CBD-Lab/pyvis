@@ -6,7 +6,6 @@ import pathlib
 import subprocess
 import traceback
 from distutils.log import Log
-
 from . import basicFunction
 
 
@@ -17,8 +16,10 @@ def print_files(path, tree):
     for f in lsdir:
         if (f != '__pycache__') and (f != 'test') and (f != 'testing'):  # test and cache directory are filtered
             if os.path.isfile(os.path.join(path, f)):  # inspect file
+                # Add a condition with two "." of waiver.
+                # Similar to _C.cp38-win_amd64.pyd, didn't find py file with two "."
                 if (pathlib.Path(f).suffix == ".py") and (not f.startswith("_") or f.startswith("__")) and f.count(
-                        '.') < 2:  # 加个条件，有两个.的放弃 类似于_C.cp38-win_amd64.pyd,没找到py文件带2个.的
+                        '.') < 2:
                     linkAll = {}
                     pdfModule = []
                     fileCount = 0
@@ -39,7 +40,7 @@ def print_files(path, tree):
                         # class_obj = getattr(module, class_name)
                         # docs = inspect.getdoc(class_obj)
 
-                        if hasattr(module, class_name):  # 用其他写法替换，参考basicFunction的is_iterable
+                        if hasattr(module, class_name):
                             class_obj = getattr(module, class_name)
                             docs = inspect.getdoc(class_obj)
                         else:
@@ -110,22 +111,11 @@ def print_files(path, tree):
         print(os.path.join(path, f))
 
 
-def get_path(libname):
-    libname = importlib.import_module(libname)
-    module = inspect.getmodule(libname)
-    if module:
-        module_path = os.path.abspath(module.__file__)
-        package_path = os.path.dirname(module_path)
-        return package_path
-    else:
-        return None
-
-
 def pyTree(moduleName):
     global pathGV
     pytree = {"name": moduleName, "children": ""}
     exec("import " + moduleName)
-    path = get_path(moduleName)
+    path = basicFunction.get_path(moduleName)
     pathGV = path[:-len(moduleName)]
     print_files(path, pytree)
     f = open('static/treejson/' + moduleName + '.json', 'w')
@@ -133,22 +123,9 @@ def pyTree(moduleName):
     f.close()
 
 
-def readpackages():
-    packages = []
-    i = 0
-    with open('pylibsNet.txt', 'r', encoding='utf-8') as f:
-        line = f.readline()
-        while line:
-            packages.append(line.split(" ")[0].replace(".py", "").lower())
-            line = f.readline()
-            i = i + 1
-        print("i", i)
-    return packages[2:]
-
-
 def pyTreeAll():
     global pathGV
-    packages_name = readpackages()
+    packages_name = basicFunction.readPackages()
     print("packages_name", packages_name)
     for package_name in packages_name:
         moduleName = package_name
@@ -156,7 +133,7 @@ def pyTreeAll():
         try:
             pytree = {"name": moduleName, "children": ""}
             exec("import " + moduleName)
-            path = get_path(moduleName)
+            path = basicFunction.get_path(moduleName)
             pathGV = path[:-len(moduleName)]
             print_files(path, pytree)
             f = open('static/treejson_tmp/' + moduleName + '.json', 'w')

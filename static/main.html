@@ -4,17 +4,17 @@
 <!--    #3572A5-->
 <!--    #28567C-->
 <!--    #FFDF76-->
-    <!-- 引入 Vant 的样式表 -->
+    <!-- Introducing Vant's stylesheets -->
     <link rel="stylesheet" href="/static/vant.min.css"/>
     <link rel="stylesheet" href="/static/prism.min.css"/>
     <script src="/static/prism.js"></script>
     <script src="/static/prism-python.js"></script>
-    <!-- 引入 Vue 和 Vant 的 JS 文件 -->
+    <!-- Introducing JS files for Vue and Vant -->
     <script src="/static/vue3.min.js"></script>
     <script src="/static/vant.min.js"></script>
     <script src="/static/axios.min.js"></script>
     <script src="static/d3.layout.cloud.js"></script>
-    <!--    引入绘图的js文件-->
+    <!-- Introducing the drawing js file -->
     <script type="text/javascript" src="/static/components/drawNet.js"></script>
     <script type="text/javascript" src="/static/components/drawMatrix.js"></script>
     <script type="text/javascript" src="/static/components/drawTree.js"></script>
@@ -23,7 +23,7 @@
     <script type="text/javascript" src="/static/components/drawBubble.js"></script>
     <script type="text/javascript" src="/static/components/drawCloud.js"></script>
     <script type="text/javascript" src="/static/components/drawTreeMap.js"></script>
-    <!-- 使用 meta 标签设置移动端的显示参数，禁止缩放 -->
+    <!-- Use meta tags to set mobile display parameters and disable scaling -->
     <meta charset="UTF-8" name="viewport"
           content="width=device-width,user-scalable=no,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0"/>
     <title>Python Libs Dependency Graph</title>
@@ -201,7 +201,7 @@
 
 <script src="static/d3.v7.min.js"></script>
 <div id="app">
-    <!-- 顶部导航栏 -->
+    <!-- Top Navigation -->
     <van-row style="height:10vh">
         <van-col span="4">
             <van-nav-bar class="custom-navbar" title="PyVIS" @click="home()" style="cursor: pointer;"></van-nav-bar>
@@ -218,199 +218,206 @@
     <van-row style="height:90vh">
         <van-col offset="0" span="4" class="van-hairline--surround">
             <div class="flex-placeholder">
-            <!--左侧搜索栏-->
-            <van-row class="searchbox">
-                <van-col offset="0" span="16">
-                    <van-field class="searchtext" v-model="keyword" placeholder="Module Name"></van-field>
-                </van-col>
-                <van-col span="8">
-                    <van-button class="van-haptics-feedback" @click="search()">Search</van-button>
-                </van-col>
-            </van-row>
-            <van-row class="viewset" style="margin-top:5px;">
-                <van-col span="8">
-                    <van-button class="van-haptics-feedback" @click="netvis()" type="primary">Net</van-button>
-                </van-col>
-                <van-col span="8">
-                    <van-button class="van-haptics-feedback" @click="matrixvis()" type="primary">Matrix</van-button>
-                </van-col>
-                <van-col span="8">
-                    <van-button class="van-haptics-feedback" @click="classvis()" type="primary">Class</van-button>
-                </van-col>
-                <van-col span="8">
-                    <van-button class="van-haptics-feedback" @click="treevis()" type="primary">Tree</van-button>
-                </van-col>
-                <van-col span="8">
-                    <van-button class="van-haptics-feedback" @click="pinetreevis()" type="primary">PineTree</van-button>
-                </van-col>
-                <van-col span="8">
-                    <van-button class="van-haptics-feedback" @click="radialtreevis()" type="primary">RadialTree</van-button>
-                </van-col>
-                <van-col span="8">
-                    <van-button class="van-haptics-feedback" @click="bubblevis()" type="primary">Bubble</van-button>
-                </van-col>
-                <van-col span="8">
-                    <van-button class="van-haptics-feedback" @click="cloudvis()" type="primary">Cloud</van-button>
-                </van-col>
-                <van-col span="8">
-                    <van-button class="van-haptics-feedback" @click="treemapvis()" type="primary">TreeMap</van-button>
-                </van-col>
-                <van-col span="12">
-                    <van-button icon="down" class="van-haptics-feedback" @click="downloadPhoto()" type="primary">SVG
-                    </van-button>
-                </van-col>
-                <van-col span="12">
-                    <van-button icon="down" class="van-haptics-feedback" @click="downloadPhoto('png')" type="primary">
-                        PNG
-                    </van-button>
-                </van-col>
-            </van-row>
-            <!--图像控制区-->
+                <!-- Left search bar -->
+                <van-row class="searchbox">
+                    <van-col offset="0" span="16">
+                        <van-field class="searchtext" v-model="keyword" placeholder="Module Name"></van-field>
+                    </van-col>
+                    <van-col span="8">
+                        <van-button class="van-haptics-feedback" @click="search()">Search</van-button>
+                    </van-col>
+                </van-row>
+                <van-row class="viewset" style="margin-top:5px;">
+                    <van-col span="8">
+                        <van-button class="van-haptics-feedback" @click="netvis()" type="primary">Net</van-button>
+                    </van-col>
+                    <van-col span="8">
+                        <van-button class="van-haptics-feedback" @click="matrixvis()" type="primary">Matrix</van-button>
+                    </van-col>
+                    <van-col span="8">
+                        <van-button class="van-haptics-feedback" @click="classvis()" type="primary">Class</van-button>
+                    </van-col>
+                    <van-col span="8">
+                        <van-button class="van-haptics-feedback" @click="treevis()" type="primary">Tree</van-button>
+                    </van-col>
+                    <van-col span="8">
+                        <van-button class="van-haptics-feedback" @click="pinetreevis()" type="primary">PineTree</van-button>
+                    </van-col>
+                    <van-col span="8">
+                        <van-button class="van-haptics-feedback" @click="radialtreevis()" type="primary">RadialTree</van-button>
+                    </van-col>
+                    <van-col span="8">
+                        <van-button class="van-haptics-feedback" @click="bubblevis()" type="primary">Bubble</van-button>
+                    </van-col>
+                    <van-col span="8">
+                        <van-button class="van-haptics-feedback" @click="cloudvis()" type="primary">Cloud</van-button>
+                    </van-col>
+                    <van-col span="8">
+                        <van-button class="van-haptics-feedback" @click="treemapvis()" type="primary">TreeMap</van-button>
+                    </van-col>
+                    <van-col span="12">
+                        <van-button icon="down" class="van-haptics-feedback" @click="downloadPhoto()" type="primary">SVG
+                        </van-button>
+                    </van-col>
+                    <van-col span="12">
+                        <van-button icon="down" class="van-haptics-feedback" @click="downloadPhoto('png')" type="primary">
+                            PNG
+                        </van-button>
+                    </van-col>
+                </van-row>
 
+                <!-- Image Control Area -->
                 <div v-show="viewSelection === 'net'|| viewSelection === 'class' ">
                     <van-row class="nodeMessage">Totally {{netcount.node }} nodes</van-row>
                     <van-row class="nodeMessage">Totally {{netcount.link }} links</van-row>
-                <van-row style="margin-top:10px;font-size:12px">
-                    <van-col span="24"><input type="radio" name="flush" value="重绘" id="flush" onclick="javascript:location.reload()">Repaint</input></van-col>
-                    <van-col span="12"><input type="radio" name="radio" value="edgecount" id="radio1" checked @click="selectit()">Edge-Count</input></van-col>
-                    <van-col span="12"><input type="radio" name="radio" value="equalr" id="radio2" @click="selectit()">Equal-Radius</input></van-col>
-                    <van-col span="12"><input type="radio" name="radio" value="showclass" id="radio3" @click="selectit()">Show-Class</input></van-col>
-                    <van-col span="12"><input type="radio" name="radio" value="showfunction" id="radio4" @click="selectit()">Show-Function</input></van-col>
-                </van-row>
-
+                    <van-row style="margin-top:10px;font-size:12px">
+                        <van-col span="24"><input type="radio" name="flush" id="flush" onclick="javascript:location.reload()">Repaint</input></van-col>
+                        <van-col span="12"><input type="radio" name="radio" value="edgecount" id="radio1" checked @click="selectit()">Edge-Count</input></van-col>
+                        <van-col span="12"><input type="radio" name="radio" value="equalr" id="radio2" @click="selectit()">Equal-Radius</input></van-col>
+                        <van-col span="12"><input type="radio" name="radio" value="showclass" id="radio3" @click="selectit()">Show-Class</input></van-col>
+                        <van-col span="12"><input type="radio" name="radio" value="showfunction" id="radio4" @click="selectit()">Show-Function</input></van-col>
+                    </van-row>
                 </div>
 
-                 <div v-show="viewSelection === 'net' || viewSelection === 'class'">
-                <van-row style="margin-top:10px;font-size:12px">Node Radius</van-row>
-                <van-row><input style="position:relative;top:3px;" type="range" id="nodescale" min="0.5" max="10"
-                                value="1">
-                </van-row>
-                <van-row style="margin-top:10px;font-size:12px">Edge Length</van-row>
-                <van-row><input style="position:relative;top:3px;" type="range" id="edgescale" min="50" max="500"
-                                value="150"></van-row>
-                <van-row style="margin-top:10px;font-size:12px">Charge</van-row>
-                <van-row><input style="position:relative;top:3px;" type="range" id="chargescale" min="5" max="1000"
-                                value="600"></van-row>
-                <div v-show="viewSelection === 'class' ">
-                <van-row>
-                    <van-col span="24"><input type="radio" name="radio" value="equalr" id="radio5" @click="selectit()">Equal-Radius</input></van-col>
-                </van-row>
+                <div v-show="viewSelection === 'net' || viewSelection === 'class'">
+                    <van-row style="margin-top:10px;font-size:12px">Node Radius</van-row>
+                    <van-row>
+                        <input style="position:relative;top:3px;" type="range" id="nodescale" min="0.5" max="10" value="1">
+                    </van-row>
+                    <van-row style="margin-top:10px;font-size:12px">Edge Length</van-row>
+                    <van-row>
+                        <input style="position:relative;top:3px;" type="range" id="edgescale" min="50" max="500" value="150">
+                    </van-row>
+                    <van-row style="margin-top:10px;font-size:12px">Charge</van-row>
+                    <van-row>
+                        <input style="position:relative;top:3px;" type="range" id="chargescale" min="5" max="1000" value="600">
+                    </van-row>
+                    <div v-show="viewSelection === 'class' ">
+                        <van-row>
+                            <van-col span="24">
+                                <input type="radio" name="radio" value="equalr" id="radio5" @click="selectit()">Equal-Radius</input>
+                            </van-col>
+                        </van-row>
+                    </div>
                 </div>
-            </div>
 
-            <div v-show="viewSelection === 'pinetree'">
-                <van-row class="nodeMessage" style="margin-top:10px;">Totally {{ pinecount.node }} nodes</van-row>
-                <van-row style="margin-top:10px;margin-left: 5px;">Length</van-row>
-                <van-row>
-                    <input style="position:relative;top:3px;margin-left: 5px;" type="range" id="lengthscale" min="30"
-                           max="1000" value="200">
-                </van-row>
-                <van-row style="margin-top:10px;margin-left: 5px;">Angel</van-row>
-                <van-row>
-                    <input style="position:relative;top:3px;margin-left: 5px;" type="range" id="anglescale"
-                           min="Math.PI" max="Math.PI*2" value="0">
-                </van-row>
-                <van-row style="margin-top:10px;">
-                    <input type="checkbox" name="label" value="showOn" id="showLabel" checked>Label</input>
-                </van-row>
-                <van-row style="margin-top:10px"><input type="radio" name="flush" value="重绘" id="flush1"
-                                                        onclick="javascript:location.reload()">Repaint</input>
-                </van-row>
-                <van-row style="margin-top:10px;">
-                    <van-col span="12">
-                        <input type="checkbox" name="label" value="showOn" id="showPdf3" >PDF</input>
-                    </van-col>
-                    <van-col span="12">
-                        <input type="checkbox" name="label" value="showOn" id="showGit3" >GitHub</input>
-                    </van-col>
-                </van-row>
-            </div>
-            <div v-show="viewSelection === 'radialtree'">
-                <van-row class="nodeMessage" style="margin-top:10px;">Totally {{ radialTreeCount.node }} nodes</van-row>
-                <van-row style="margin-top:10px;">
-                    <van-col span="12">
-                        <input type="checkbox" name="label" value="showOn" id="showPdf5" >PDF</input>
-                    </van-col>
-                    <van-col span="12">
-                        <input type="checkbox" name="label" value="showOn" id="showGit5" >GitHub</input>
-                    </van-col>
-                </van-row>
-                <van-row style="margin-top:10px"><input type="radio" name="flush" value="重绘" id="flush2"
-                                                        onclick="javascript:location.reload()">Repaint</input>
-                </van-row>
-            </div>
-            <div v-show="viewSelection === 'treemap'">
-                <van-row class="nodeMessage" style="margin-top:10px;">Totally {{ mapcount.node }} nodes</van-row>
-                <van-row style="margin-top:10px;margin-left: 5px;">Length</van-row>
-                <van-row>
-                    <input style="position:relative;top:3px;margin-left: 5px;" type="range" id="length" min="100"
-                           max="300" value="100">
-                </van-row>
-                <van-row style="margin-top:10px">
-                    <van-checkbox v-model="checked" style="margin-left: 5px;" class="van-haptics-feedback" @click="changemap()" type="primary">Exchange</van-checkbox>
-                </van-row>
-                <van-row style="margin-top:10px;">
-                    <van-col span="12">
-                        <input type="checkbox" name="label" value="showOn" id="showPdf4" >PDF</input>
-                    </van-col>
-                    <van-col span="12">
-                        <input type="checkbox" name="label" value="showOn" id="showGit4" >GitHub</input>
-                    </van-col>
-                </van-row>
-            </div>
-            <div v-show="viewSelection === 'hicircle'">
-                <van-row style="margin-top:30px"><input type="radio" name="flush" value="重绘" id="flush3"
-                                                        onclick="javascript:location.reload()">Repaint</input></van-row>
-            </div>
-            <div v-show="viewSelection === 'bubble'" >
-                <van-row class="nodeMessage">Totally {{ bubblecount.node }} nodes</van-row>
-
-                <van-row style="margin-top:30px;">
-                    <van-col span="12">
-                        <input type="checkbox" name="label" value="showOn" id="showPdf1" >PDF</input>
-                    </van-col>
-                    <van-col span="12">
-                        <input type="checkbox" name="label" value="showOn" id="showGit1" >GitHub</input>
-                    </van-col>
-                </van-row>
-            </div>
-             <div v-show="viewSelection === 'cloud'" >
-                <van-row class="nodeMessage">Totally {{cloudcount.node }} nodes</van-row>
-                 <van-row style="margin-top:30px;">
-                    <van-col span="12">
-                        <input type="checkbox" name="label" value="showOn" id="showPdf2" >PDF</input>
-                    </van-col>
-                    <van-col span="12">
-                        <input type="checkbox" name="label" value="showOn" id="showGit2" >GitHub</input>
-                    </van-col>
-                </van-row>
-            </div>
-            <div v-show="viewSelection === 'tree'">
-                <div style="margin-top: 30px;">
-                  <van-row class="nodeMessage">Totally {{ treecount.treeNodeCount }} nodes</van-row>
-                  <van-row class="nodeMessage">Show {{ treecount.treeShowNodeCount }} nodes</van-row>
+                <div v-show="viewSelection === 'pinetree'">
+                    <van-row class="nodeMessage" style="margin-top:10px;">Totally {{ pinecount.node }} nodes</van-row>
+                    <van-row style="margin-top:10px;margin-left: 5px;">Length</van-row>
+                    <van-row>
+                        <input style="position:relative;top:3px;margin-left: 5px;" type="range" id="lengthscale" min="30" max="1000" value="200">
+                    </van-row>
+                    <van-row style="margin-top:10px;margin-left: 5px;">Angel</van-row>
+                    <van-row>
+                        <input style="position:relative;top:3px;margin-left: 5px;" type="range" id="anglescale" min="Math.PI" max="Math.PI*2" value="0">
+                    </van-row>
+                    <van-row style="margin-top:10px;">
+                        <input type="checkbox" name="label" value="showOn" id="showLabel" checked>Label</input>
+                    </van-row>
+                    <van-row style="margin-top:10px">
+                        <input type="radio" name="flush" id="flush1" onclick="javascript:location.reload()">Repaint</input>
+                    </van-row>
+                    <van-row style="margin-top:10px;">
+                        <van-col span="12">
+                            <input type="checkbox" name="label" value="showOn" id="showPdf3" >PDF</input>
+                        </van-col>
+                        <van-col span="12">
+                            <input type="checkbox" name="label" value="showOn" id="showGit3" >GitHub</input>
+                        </van-col>
+                    </van-row>
                 </div>
-            </div>
-            <div style="display: flex; flex-direction: column;" class="filesearchbox">
-                <van-row >
-                    <van-col offset="0" span="16">
-                        <van-field v-model="singleModule" placeholder="Single Module Name"></van-field>
-                    </van-col>
-                    <van-col span="8">
-                        <van-button class="van-haptics-feedback" @click="searchSingle()">ExtractSingle</van-button>
-                    </van-col>
-                </van-row>
-                <van-row>
-                    <van-col offset="0" span="16">
-                        <van-field v-model="localValue" readonly></van-field>
-                    </van-col>
-                    <van-col span="8">
-                        <van-button class="van-haptics-feedback" @click="select()"
-                                    :loading="isLoading" loading-text="loading...">ExtractAll</van-button>
-                    </van-col>
-                </van-row>
 
-            </div>
+                <div v-show="viewSelection === 'radialtree'">
+                    <van-row class="nodeMessage" style="margin-top:10px;">Totally {{ radialTreeCount.node }} nodes</van-row>
+                    <van-row style="margin-top:10px;">
+                        <van-col span="12">
+                            <input type="checkbox" name="label" value="showOn" id="showPdf5" >PDF</input>
+                        </van-col>
+                        <van-col span="12">
+                            <input type="checkbox" name="label" value="showOn" id="showGit5" >GitHub</input>
+                        </van-col>
+                    </van-row>
+                    <van-row style="margin-top:10px">
+                        <input type="radio" name="flush" id="flush2" onclick="javascript:location.reload()">Repaint</input>
+                    </van-row>
+                </div>
+
+                <div v-show="viewSelection === 'treemap'">
+                    <van-row class="nodeMessage" style="margin-top:10px;">Totally {{ mapcount.node }} nodes</van-row>
+                    <van-row style="margin-top:10px;margin-left: 5px;">Length</van-row>
+                    <van-row>
+                        <input style="position:relative;top:3px;margin-left: 5px;" type="range" id="length" min="100" max="300" value="100">
+                    </van-row>
+                    <van-row style="margin-top:10px">
+                        <van-checkbox v-model="checked" style="margin-left: 5px;" class="van-haptics-feedback" @click="changemap()" type="primary">Exchange</van-checkbox>
+                    </van-row>
+                    <van-row style="margin-top:10px;">
+                        <van-col span="12">
+                            <input type="checkbox" name="label" value="showOn" id="showPdf4" >PDF</input>
+                        </van-col>
+                        <van-col span="12">
+                            <input type="checkbox" name="label" value="showOn" id="showGit4" >GitHub</input>
+                        </van-col>
+                    </van-row>
+                </div>
+
+                <div v-show="viewSelection === 'hicircle'">
+                    <van-row style="margin-top:30px">
+                        <input type="radio" name="flush" id="flush3" onclick="javascript:location.reload()">Repaint</input>
+                    </van-row>
+                </div>
+
+                <div v-show="viewSelection === 'bubble'" >
+                    <van-row class="nodeMessage">Totally {{ bubblecount.node }} nodes</van-row>
+                    <van-row style="margin-top:30px;">
+                        <van-col span="12">
+                            <input type="checkbox" name="label" value="showOn" id="showPdf1" >PDF</input>
+                        </van-col>
+                        <van-col span="12">
+                            <input type="checkbox" name="label" value="showOn" id="showGit1" >GitHub</input>
+                        </van-col>
+                    </van-row>
+                </div>
+
+                 <div v-show="viewSelection === 'cloud'" >
+                     <van-row class="nodeMessage">Totally {{cloudcount.node }} nodes</van-row>
+                     <van-row style="margin-top:30px;">
+                         <van-col span="12">
+                             <input type="checkbox" name="label" value="showOn" id="showPdf2" >PDF</input>
+                         </van-col>
+                         <van-col span="12">
+                             <input type="checkbox" name="label" value="showOn" id="showGit2" >GitHub</input>
+                         </van-col>
+                    </van-row>
+                </div>
+
+                <div v-show="viewSelection === 'tree'">
+                    <div style="margin-top: 30px;">
+                        <van-row class="nodeMessage">Totally {{ treecount.treeNodeCount }} nodes</van-row>
+                        <van-row class="nodeMessage">Show {{ treecount.treeShowNodeCount }} nodes</van-row>
+                    </div>
+                </div>
+
+                <div style="display: flex; flex-direction: column;" class="filesearchbox">
+                    <van-row >
+                        <van-col offset="0" span="16">
+                            <van-field v-model="singleModule" placeholder="Single Module Name"></van-field>
+                        </van-col>
+                        <van-col span="8">
+                            <van-button class="van-haptics-feedback" @click="searchSingle()">ExtractSingle</van-button>
+                        </van-col>
+                    </van-row>
+                    <van-row>
+                        <van-col offset="0" span="16">
+                            <van-field v-model="localValue" readonly></van-field>
+                        </van-col>
+                        <van-col span="8">
+                            <van-button class="van-haptics-feedback" @click="select()"
+                                        :loading="isLoading" loading-text="loading...">ExtractAll</van-button>
+                        </van-col>
+                    </van-row>
+                </div>
+
             </div>
         </van-col>
 
@@ -422,7 +429,6 @@
             <canvas style="display:none"></canvas>
         </van-col>
     </van-row>
-
 </div>
 
 <script>
@@ -630,13 +636,14 @@
             },
 
             downloadPhoto(form = "svg") {
-                // 导出最基础的svg
+                // Export the most basic svg
                 var html = d3.select("svg")
                              .attr("version", 1.1)
                              .attr("xmlns", "http://www.w3.org/2000/svg")
                              .node().parentNode.innerHTML;
                 var imgsrc = 'data:image/svg+xml;base64,' + window.btoa(unescape(encodeURIComponent(html)));
-                // 从 String 对象中创建一个 base-64 编码的 ASCII 字符串，其中字符串中的每个字符都被视为一个二进制数据字节。
+                // Creating a base-64 encoded ASCII string from the String object,
+                // where each character in the string is treated as a binary data byte.
                 var image = new Image;
                 image.src = imgsrc;
                 var self = this;
@@ -648,7 +655,7 @@
                     var boxHeight = svg.offsetHeight
                     var canvas = document.querySelector("canvas");
                     var context = canvas.getContext("2d");
-                    canvas.height = boxHeight; //canvas高度变化时清空画布
+                    canvas.height = boxHeight;  // Empty canvas when canvas height changes
                     canvas.width = boxWidth;
                     image.onload = function () {
                         context.drawImage(image, 0, 0);

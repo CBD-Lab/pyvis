@@ -1,6 +1,7 @@
 import importlib
 import inspect
 import ast
+import os
 import urllib
 
 import numpy
@@ -28,7 +29,7 @@ def get_functions(wanted):
     return infuncs, outfuncs
 
 
-# print(get_functions(torch.nn.modules.transformer))会直接得到__init__.py里的函数
+# print(get_functions(torch.nn.modules.transformer)) will get the function in __init__.py directly.
 
 
 def in_out_classes_bymodulename(wanted):
@@ -80,8 +81,8 @@ def in_out_classes_bymodulename_new(class_object, wanted):
         for item in jsonfile:
             class_str = str(item[1])
 
-            start_index = class_str.find("'") + 1  # 找到第一个单引号的位置
-            end_index = class_str.rfind("'")  # 找到最后一个单引号的位置
+            start_index = class_str.find("'") + 1  # Finding the location of the first single quote.
+            end_index = class_str.rfind("'")  # Finding the position of the last single quote.
             class_name_all = class_str[start_index:end_index]
             print(class_str, class_name_all, wanted, type(class_name_all), type(wanted))
             if (class_name_all.startswith(wanted)):
@@ -113,8 +114,8 @@ def get_class_method(wanted):
     return cmethod
 
 
-# print(get_class_method(torch.nn.modules.transformer.Transformer)) 得到__init__.py内python的内置函数，import的包和模块，
-# form .xxx的xxx,前面带'_'的参数，以及在同一级目录下的其他模块（包和py文件）
+# print(get_class_method(torch.nn.modules.transformer.Transformer)) Get python's built-in functions in __init__.py, import's packages and modules.
+# "form .xxx"'s xxx, Parameters preceded by '_' and other modules (packages and py files) in the same level directory.
 
 
 # get a class's pdf in docs
@@ -151,11 +152,11 @@ def get_class_pdf(class_obj, fullname):
 
 
 def get_class_method_attr(MyClass):
-    # 获取类的属性和方法列表(包括类的继承层次结构中的属性和方法)
+    # Get the list of attributes and methods of a class (including attributes and methods in the class' inheritance hierarchy).
     #     class_attributes_and_methods = dir(MyClass)
-    # 不包括
+    # exclusive of
     class_attributes_and_methods = MyClass.__dict__
-    # 使用列表推导式分开属性和方法
+    # Separating Properties and Methods Using List Derivatives.
     attributes = [attr for attr in class_attributes_and_methods if not callable(getattr(MyClass, attr))]
     iscall = [method for method in class_attributes_and_methods if callable(getattr(MyClass, method))]
     methods = []
@@ -173,7 +174,9 @@ def is_iterable(wanted):
         return False
 
 
-def InstantiateOtherClasses(wanted):  # basicFunction新增方法，输入是一个类，输出是这个类中有可能实例化的类
+# New methods in basicFunction. The input is a class and
+# the output is a class that is potentially instantiated in this class.
+def InstantiateOtherClasses(wanted):
     import re
     print("--------------3--------------")
     print(wanted)
@@ -194,8 +197,32 @@ def InstantiateOtherClasses(wanted):  # basicFunction新增方法，输入是一
         print(pyname + '.' + i)
         doc = inspect.getsource(eval(pyname + '.' + i))
         for j in allin:
-            pattern = r"\b" + j + "\("  # 正则表达式判断是否实例化其他类
+            pattern = r"\b" + j + "\("  # Regular expression to determine if another class is instantiated.
             tmpbool = bool(re.search(pattern, doc))
             if tmpbool:
                 classeslink.append(j)
     return classeslink
+
+
+def readPackages():
+    packages = []
+    i = 0
+    with open('pylibsNet.txt', 'r', encoding='utf-8') as f:
+        line = f.readline()
+        while line:
+            packages.append(line.split(" ")[0].replace(".py", "").lower())
+            line = f.readline()
+            i = i + 1
+        print("i", i)
+    return packages[2:]
+
+
+def get_path(libname):
+    libname = importlib.import_module(libname)
+    module = inspect.getmodule(libname)
+    if module:
+        module_path = os.path.abspath(module.__file__)
+        package_path = os.path.dirname(module_path)
+        return package_path
+    else:
+        return None

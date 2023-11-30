@@ -1,0 +1,19 @@
+{"name": "bs4", "children":
+[{"name": "builder", "children": [{"name": "_html5lib.py", "value": 16732},
+  {"name": "_htmlparser.py", "value": 13173},
+  {"name": "_lxml.py", "value": 10746},
+  {"name": "__init__.py", "value": 12412}]},
+  {"name": "dammit.py", "value": 29873},
+  {"name": "diagnose.py", "value": 6972},
+  {"name": "element.py", "value": 59736},
+  {"name": "testing.py", "value": 41141},
+  {"name": "tests", "children":
+     [{"name": "test_builder_registry.py", "value": 5582},
+       {"name": "test_docs.py", "value": 1067},
+       {"name": "test_html5lib.py", "value": 5837},
+       {"name": "test_htmlparser.py", "value": 1728},
+       {"name": "test_lxml.py", "value": 3438},
+       {"name": "test_soup.py", "value": 20313},
+       {"name": "test_tree.py", "value": 82096},
+       {"name": "__init__.py", "value": 27}]},
+  {"name": "__init__.py", "value": 23233}]}
