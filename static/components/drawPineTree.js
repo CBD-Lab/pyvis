@@ -12,38 +12,30 @@ function drawPineTree(data,pineCount) {
     var gitchange = 0;
 
 	// Get div element with ID attribute
-	var symboltext = ['py','pyi','dll','pic','else']
+	var symboltext = ['py','pyi','dll','pxd','else','c','pic','file']
 	var symbolli = svg.selectAll('.symbol')
 		.data(symboltext)
 		.enter()
 		.append("path")
 		.attr("transform", function(d,i) {
-            return "translate(" +(width*0.705+i*20)+ "," + 40 + ")";
+            return "translate(" +(width*0.7+i*20)+ "," + 40 + ")";
         })
-        .attr("d", d3.symbol().type( function(d,i) {
-            switch (i) {
-                case 0:
-                    return d3.symbols[0];
-                    break;
-                case 1:
-                    return d3.symbols[4];
-                    break;
-                case 2:
-                    return d3.symbols[2];
-                    break;
-                case 3:
-                    return d3.symbols[6];
-                    break;
-                case 4:
-                    return d3.symbols[5];
-                    break;
-        }}))
+        .attr("d", function(d,i) {
+              if (i == 7){
+                  var pathdata = "M -5 -5 L -5 5 L 5 5 L 5 -2 L -1 -2 L -1 -5 Z";
+                  return pathdata;
+              }
+              else {
+                return d3.symbol().type(d3.symbols[i])();
+              }
+        })
 		.attr("fill", (d, i) => color[i])
 		.attr("opacity", 0.7);
 	var symbolinfo = svg.selectAll("text")
 	    .data(symboltext)
 	    .enter()
 	    .append('text')
+	    .attr("text-anchor", "middle")
 		.attr("x", (d,i)=>width*0.7+i*20)
 		.attr("y", 54)
 		.attr("font-size", "10px")
@@ -204,7 +196,7 @@ function drawPineTree(data,pineCount) {
                 gitinfo.append('text')
                     .attr("stroke-family", "FangSong")
                     .attr("font-size", "10px")
-                    .text("no GitHub files!")
+                    .text("no GitHub!");
                     
             }
             else{
@@ -257,26 +249,38 @@ function drawPineTree(data,pineCount) {
             .attr("transform", function(d) {
                         return "translate(" + x2 + "," + y2+ ")";
                     })
-            .attr("d", d3.symbol().type( function() {
-                console.log(now_data.data.name);
-                var endcase = (now_data.data.name).split('.')[1];
-                if (endcase == 'py'){
-                    return d3.symbols[0];
-                }
-                else if (endcase == 'pyi'){
-                    return d3.symbols[4];
-                }
-                else if (endcase == 'dll'){
-                    return d3.symbols[2];
-                }
-                else if ((endcase == 'png' ) || (endcase == 'jpg')){
-                    return d3.symbols[6];
-                }
-                else{
-                    return d3.symbols[5];
-                }
-
-            }))
+            .attr("d", function(d) {
+                  var endcase = (now_data.data.name).split('.')[1];
+                  if (endcase == 'py'){
+                      return d3.symbol().type(d3.symbols[0])();
+                  }
+                  else if (endcase == 'pyi'){
+                      return d3.symbol().type(d3.symbols[1])();
+                  }
+                  else if (endcase == 'dll'){
+                      return d3.symbol().type(d3.symbols[2])();
+                  }
+                  else if (endcase == 'pxd'){
+                      return d3.symbol().type(d3.symbols[3])();
+                  }
+            //      else if (endcase == 'h'){
+            //          return d3.symbol().type(d3.symbols[4])();
+            //      }
+                  else if (endcase == 'c'){
+                      return d3.symbol().type(d3.symbols[5])();
+                  }
+                  else if ((endcase == 'png' ) || (endcase == 'jpg')){
+                      return d3.symbol().type(d3.symbols[6])();
+                  }
+                  else if(now_data.children||now_data._children){
+                      var pathdata = "M -5 -5 L -5 5 L 5 5 L 5 -2 L -1 -2 L -1 -5 Z";
+                      return pathdata;
+                  }
+                  else//for unknown type of file
+                  {
+                      return d3.symbol().type(d3.symbols[4])();
+                      }
+            })
             .attr("opacity",d => count > 0 ? 0 : 0.5)
             .attr("stroke", "lightgray")
             .attr("fill", (d)=>{
