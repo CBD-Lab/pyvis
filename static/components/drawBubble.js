@@ -4,6 +4,12 @@ function drawBubble(data,bubbleCount) {
         .attr("id", "tip")
         .attr("class", "tooltips");
 
+      var arraycolor = new Array(10);
+      for (var i = 0; i < 10; i++) {
+        arraycolor[i] = color[i];
+      }
+      var maxdepth = -1;
+
       var pdfs = new Map();
       var gits = new Map();
       var pdfchange = 0;
@@ -12,16 +18,6 @@ function drawBubble(data,bubbleCount) {
       var svg = d3.select("#graph")
         .attr("width", width * 0.85)
         .attr("height", height);
-
-     var colorrec = svg.selectAll('rect')
-         .data(color)
-        .enter()
-        .append("rect")
-        .attr("x", (d, i) => (i * 16 + width * 0.8))
-        .attr("y", 20)
-        .attr("width", 14)
-        .attr("height", 14)
-        .attr("fill", (d, i) => color[i]);
 
       var pack = d3.pack()
         .size([width, height]);
@@ -38,7 +34,12 @@ function drawBubble(data,bubbleCount) {
         .attr("cx", 0)
         .attr("cy", 0)
         .attr("r", d => d.r)
-        .attr("fill", d => color[d.depth])
+        .attr("fill", d => {
+            if (maxdepth<d.depth){
+                maxdepth=d.depth;
+            }
+            return color[d.depth]
+        })
         .attr("opacity", 0.7)
         .style("cursor", "pointer")
         .on("mouseenter", (event, d) => {
@@ -247,16 +248,69 @@ function drawBubble(data,bubbleCount) {
                 pdfs.set(fullname,d.data.linkAll['pdfModule'][0])
             }
         });
-    console.log(circles)
-    circles.append("text")
+    console.log('circle',circles);
+    gc.append("text")
         .attr("x", 0)
         .attr("y", 0)
-        .attr("dy", ".35em")
         .style("text-anchor", "middle")
         .style("fill", "black")
+        .style('font-size','12px')
         .text(d => {
-            return d.data.name;
+            if (d.r>25){
+                return d.data.name;
+            }
+            else{
+                return '';
+            }
+
         });
+
+    var colorrec = svg.selectAll('rect')
+         .data(arraycolor.slice(0,maxdepth+1))
+        .enter()
+        .append("rect")
+        .attr("x", width*0.8)
+        .attr("y", (d, i) => (i * 16 + height * 0.2))
+        .attr("width", 14)
+        .attr("height", 14)
+        .attr("fill", (d, i) => arraycolor[i])
+        .attr('opacity',0.9)
+        .style("cursor", "pointer")
+        .on('click',function(d,i){
+            console.log('111',d,i);
+            var currentOpacity = d3.select(this).attr("opacity");
+            var selectedIndex = arraycolor.indexOf(i);
+            console.log(selectedIndex);
+            if(currentOpacity == 0.9){
+                d3.select(this)
+                    .attr("opacity",0.2);
+                d3.selectAll('circle')
+                    .filter(function(d){
+                        return d.depth == selectedIndex;
+                    })
+                    .attr('opacity',0);
+                d3.selectAll('text')
+                    .filter(function(d){
+                        return d.depth == selectedIndex;
+                    })
+                    .attr('opacity',0);
+            }
+            else{
+                d3.select(this)
+                    .attr("opacity",0.9);
+                d3.selectAll('circle')
+                    .filter(function(d){
+                        return d.depth == selectedIndex;
+                    })
+                    .attr('opacity',0.7);
+                d3.selectAll('text')
+                    .filter(function(d){
+                        return d.depth == selectedIndex;
+                    })
+                    .attr('opacity',0.7);
+            }
+        });
+
     function pdfgitclick(classname){
         console.log('pgc',classname);
         fetch('http://127.0.0.1:5006/classVariable?wanted=' + classname)
@@ -345,7 +399,8 @@ function drawBubble(data,bubbleCount) {
                         .style("border-radius", "5px")
                         .style("padding", "5px")
                         .style("box-shadow", "0px 2px 4px rgba(0, 0, 0, 0.1)")
-                        .style('list-style','none');
+                        .style('list-style','none')
+                        .style("cursor", "pointer");
             pdfinfo.append("foreignObject")
                     .attr("height", "12px")
                     .append("xhtml:div")
@@ -370,6 +425,7 @@ function drawBubble(data,bubbleCount) {
                 pdfinfo.append('text')
                     .attr("stroke-family", "FangSong")
                     .attr("font-size", "10px")
+                    .attr('opacity',0.7)
                     .text("no PDF!");
             }
             else{
@@ -406,7 +462,8 @@ function drawBubble(data,bubbleCount) {
                         .style("border-radius", "5px")
                         .style("padding", "5px")
                         .style("box-shadow", "0px 2px 4px rgba(0, 0, 0, 0.1)")
-                        .style('list-style','none');
+                        .style('list-style','none')
+                        .style("cursor", "pointer");
             gitinfo.append("foreignObject")
                     .attr("height", "12px")
                     .append("xhtml:div")
@@ -430,7 +487,7 @@ function drawBubble(data,bubbleCount) {
                 gitinfo.append('text')
                     .attr("stroke-family", "FangSong")
                     .attr("font-size", "10px")
-                    .text("no GitHub files!");
+                    .text("no GitHub!");
             }
             else{
                 gits.forEach((value, key) => {
