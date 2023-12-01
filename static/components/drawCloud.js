@@ -204,7 +204,6 @@ function drawCloud(data,search,cloudcount){
                         break;}
                 }
             var allLayerOpacities = [];
-
             svg.selectAll("text").nodes().forEach(function(textNode,i) {
                 var opacity = d3.select(textNode).attr("opacity");
                 allLayerOpacities[hiwords[i].depth] = opacity;
@@ -261,7 +260,8 @@ function drawCloud(data,search,cloudcount){
                         .style("border-radius", "5px")
                         .style("padding", "5px")
                         .style("box-shadow", "0px 2px 4px rgba(0, 0, 0, 0.1)")
-                        .style('list-style','none');
+                        .style('list-style','none')
+                        .style("cursor", "pointer");
 
             pdfinfo.append("foreignObject")
                     .attr("height", "12px")
@@ -323,7 +323,8 @@ function drawCloud(data,search,cloudcount){
                         .style("border-radius", "5px")
                         .style("padding", "5px")
                         .style("box-shadow", "0px 2px 4px rgba(0, 0, 0, 0.1)")
-                        .style('list-style','none');
+                        .style('list-style','none')
+                        .style("cursor", "pointer");
             gitinfo.append("foreignObject")
                     .attr("height", "12px")
                     .append("xhtml:div")
@@ -347,7 +348,7 @@ function drawCloud(data,search,cloudcount){
                 gitinfo.append('text')
                     .attr("stroke-family", "FangSong")
                     .attr("font-size", "10px")
-                    .text("no GitHub files !");
+                    .text("no GitHub!");
             }
             else{
                 gits.forEach((value, key) => {
