@@ -3,7 +3,7 @@ function drawTreeMap(data, flag, pdf, mapCount) {
     var width  = (window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth) * 0.83;
     var height = (window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight) * 0.98;
     var color = d3.scaleOrdinal(d3.schemeCategory10);
-
+    
     var pdfs = new Map();
     var gits = new Map();
     var pdfchange = 0;
@@ -31,15 +31,16 @@ function drawTreeMap(data, flag, pdf, mapCount) {
         .append("g")
         .attr("id", function (d, i) { 
             return i; 
-        });
+        })
+        .attr("margin", "10px")
     var tooltip = d3.select("body").append("div")
         .attr("class", "tooltip")
         .style("opacity", 0);
 
-    var rect = gc.append("rect")
+    var rect1 = gc.append("rect")
         .attr("width", d => d.x1 - d.x0)
         .attr("height", d => d.y1 - d.y0)
-        .attr("fill", function (d) {
+        .attr("fill", function (d) {          
             while (d.depth > 1) {
                 if (flag) {
                     d = d.parent;
@@ -76,8 +77,7 @@ function drawTreeMap(data, flag, pdf, mapCount) {
                 .attr("font-size", "12") // Restore original font size
                 .text(d => (d.data.name))
         })
-        .on("click", (d, i) => {
-            
+        .on("click", (d, i) => {       
             var fullname = i.data.name.split('.', 1)[0];
             console.log("treemap fullname:",fullname);
             var point = i;
@@ -116,84 +116,78 @@ function drawTreeMap(data, flag, pdf, mapCount) {
                     console.error('Error executing Python script:', error);
                 });
         });
-    var pdfFiles = [];
-    // Get the position of the upper left corner of the first rectangular block
-    var firstRect = rect.filter((d, i) => i === 0);
-    var rectLeft = firstRect.attr("x");
-    var rectTop = firstRect.attr("y");
-        
-    firstRect.on("mouseover", function (event, d) {
-        tooltip.transition()
-            .duration(300)
-            .style("opacity", .9);
-        tooltip.html("PDF Files: " + pdfFiles.join(", "))
-            .style("left", rectLeft + 230 + "px")
-            .style("top", rectTop + 100 + "px");
-        d3.select(this)
-            .attr("opacity", 1.0) // Rectangle transparency is 1 on mouse hover
 
-        // Select the appropriate text element and add a transition animation
-        d3.select(this.parentNode).select(".txt").raise()
-            .transition()
-            .duration(300) // transition time
-            .attr("font-size", "16") // Changed font size
-            .text(d => (d.data.name + "-" + d.data.value));
-    })
-    .on("mouseout", function (d) {
-        tooltip.transition()
-            .duration(300)
-            .style("opacity", 0);
-        d3.select(this)
-            .attr("opacity", 0.7) // Transparency of the rectangle is 0.7 when the mouse is off.
-
-        // Select the appropriate text element and add a transition animation
-        d3.select(this.parentNode).select(".txt")
-            .transition()
-            .duration(300) // transition time
-            .attr("font-size", "12") // Restore original font size
-            .text(d => (d.data.name))
+    var layer = 1;
+    rect1.each(function(d) {
+        d.flag = 2;
+        if(d.depth > 1){
+            d = d.parent;
+            if (d.depth == 1 ){
+                d.flag = layer;
+            }
+            layer = layer + 1;
+        }
+        else{
+            d.flag = layer;
+        }
+        console.log(d.data.name,"的flag为",d.flag);
+        if(d.data.linkAll && typeof( d.data.linkAll['pdfClass']) !== "undefined" && Object.keys(d.data.linkAll['pdfClass']).length > 0)
+                {
+                    for (key in d.data.linkAll['pdfClass']){
+                        pdfs.set(key,d.data.linkAll['pdfClass'][key]);
+                    }
+                }
+                if(d.data.linkAll && typeof( d.data.linkAll['gitClass']) !== "undefined" && Object.keys(d.data.linkAll['gitClass']).length > 0)
+                {
+                    for (key in d.data.linkAll['gitClass']){
+                        gits.set(key,d.data.linkAll['gitClass'][key]);
+                    }
+                }
+                if (d.data.linkAll && typeof(d.data.linkAll["pdfModule"]) !== "undefined" && d.data.linkAll["pdfModule"].length > 0)
+                {
+                    var fullname = d.data.name.split('.', 1)[0]; 
+                    var point = d;
+                    while (point.depth >= 0 && point.parent) {
+                        point = point.parent;
+                        fullname = point.data.name + '.' + fullname;
+                    }
+                    fullname = fullname;
+                    pdfs.set(fullname,d.data.linkAll['pdfModule'][0])
+                }
     });
 
-rect.each(function(d) {
-    if(d.data.linkAll && typeof( d.data.linkAll['pdfClass']) !== "undefined" && Object.keys(d.data.linkAll['pdfClass']).length > 0)
-            {
-                for (key in d.data.linkAll['pdfClass']){
-                    pdfs.set(key,d.data.linkAll['pdfClass'][key]);
-                }
-            }
-            if(d.data.linkAll && typeof( d.data.linkAll['gitClass']) !== "undefined" && Object.keys(d.data.linkAll['gitClass']).length > 0)
-            {
-                for (key in d.data.linkAll['gitClass']){
-                    gits.set(key,d.data.linkAll['gitClass'][key]);
-                }
-            }
-            if (d.data.linkAll && typeof(d.data.linkAll["pdfModule"]) !== "undefined" && d.data.linkAll["pdfModule"].length > 0)
-            {
-                var fullname = d.data.name.split('.', 1)[0]; 
-                var point = d;
-                while (point.depth >= 0 && point.parent) {
-                    point = point.parent;
-                    fullname = point.data.name + '.' + fullname;
-                }
-                fullname = fullname;
-                pdfs.set(fullname,d.data.linkAll['pdfModule'][0])
-            }
-});
-
-    d3.select("input[id=length]").on("change", function () {  // Modify width and height to scale a rectangular block.
-		var newScale = +this.value;  // Get the value of the input box and convert it to a number
+    d3.select("input[id=length]").on("change", function () { //修改width和height以实现对矩形块进行缩放
+		var newScale = +this.value; // 获取输入框的值并转换为数字
         var width1 = width * newScale * 0.01;
         var height1 = height * newScale * 0.01;
         svg.attr("width", width1)
             .attr("height", height1);
-
-        // Update the width and height of the rectangular block
-        rect.attr("transform", function (d) { return "translate(" + d.x0 * newScale * 0.01 + "," + d.y0 * newScale * 0.01 + ")"; })
-        rect.attr("width", d => (d.x1 - d.x0) * newScale * 0.01)
+        // 更新矩形块的宽度和高度
+        
+        rect1.attr("transform", function (d) { return "translate(" + d.x0 * newScale * 0.01 + "," + d.y0 * newScale * 0.01 + ")"; })
+        rect1.attr("width", d => (d.x1 - d.x0) * newScale * 0.01)
             .attr("height", d => (d.y1 - d.y0) * newScale * 0.01)
         text.attr("x", d => (d.x1 - d.x0) / 2 * newScale * 0.01)
             .attr("y", d => (d.y1 - d.y0) / 2 * newScale * 0.01) 
             .attr("transform", function (d) { return "translate(" + d.x0 * newScale * 0.01 + "," + d.y0 * newScale * 0.01 + ")"; })
+    });
+
+    d3.select("input[id=layer]").on("change", function () {
+        var newScale = +this.value;
+        rect1.each(function (d) {
+            if (d.depth == newScale) {
+                d3.select(this)
+                .transition()
+                .duration(300)
+                .attr("opacity", 1.0);
+            }
+            else{
+                d3.select(this)
+                .transition()
+                .duration(300)
+                .attr("opacity", 0.3);
+            }
+        });
     });
 
     d3.select("input[id=showPdf4]").on("change", function () {

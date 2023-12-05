@@ -348,6 +348,10 @@
                     <van-row>
                         <input style="position:relative;top:3px;margin-left: 5px;" type="range" id="length" min="100" max="300" value="100">
                     </van-row>
+                    <van-row style="margin-top:10px;margin-left: 5px;">Layer</van-row>
+                    <van-row>
+                        <input style="position:relative;top:3px;margin-left: 5px;" type="range" id="layer" min="1" max="10" value="1">
+                    </van-row>
                     <van-row style="margin-top:10px">
                         <van-checkbox v-model="checked" style="margin-left: 5px;" class="van-haptics-feedback" @click="changemap()" type="primary">Exchange</van-checkbox>
                     </van-row>
@@ -476,7 +480,7 @@
         },
         methods: {
             home() {
-                this.keyword = "";
+                this.keyword = "bs4";
                 this.netvis();
             },
 
@@ -629,6 +633,9 @@
             changemap() {
                 this.flag = !this.flag;
                 this.treemapvis();
+                d3.select("input[id=layer]").on("change", function () {
+                    this.value = 1;
+                });
             },
             viewpdf() {
                 this.pdf = !this.pdf;

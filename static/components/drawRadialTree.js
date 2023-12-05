@@ -188,6 +188,51 @@ function drawRadialTree(data, radialTreeCount) {
           .text(d => d.data.name)
       });
 
+
+      enterNodes
+      .each(function(d) {
+          if(d.data.linkAll
+          &&
+          ((typeof( d.data.linkAll['pdfClass']) !== "undefined" && Object.keys(d.data.linkAll['pdfClass']).length > 0)||(typeof( d.data.linkAll['gitClass']) !== "undefined" && Object.keys(d.data.linkAll['gitClass']).length > 0)))
+          {
+            d3.select(this)
+              .append("foreignObject")
+              .attr("class","fileBox")
+              .attr("width", "8px")
+              .attr("height", "15px")
+              .attr("x", function(event,d) {
+                return d.children || d._children ? -30 : 100 ;
+              })
+              .attr("y",-10)
+               .append("xhtml:div")
+               .style("margin", 0)
+               .style("padding", 0)
+               .html('<img src="http://127.0.0.1:5006/get_svg/fileBox.svg" width="100%" height="100%" />')
+               .on("click",function(event,d)
+               {
+                  textclick(event,d);
+               })
+              }
+               if (d.data.linkAll && typeof(d.data.linkAll["pdfModule"]) !== "undefined" && d.data.linkAll["pdfModule"].length > 0) {
+                d3.select(this)
+                    .append("foreignObject")
+                    .attr("width", "8px")
+                    .attr("height", "15px")
+                    .attr("x", function(event,d) {
+                      return d.children || d._children ? -30 : 20+100;
+                    })
+                    .attr("y",-10)
+                     .append("xhtml:div")
+                     .style("margin", 0)
+                     .style("padding", 0)
+                     .html('<img src="http://127.0.0.1:5006/get_svg/pdf.svg" width="100%" height="100%" />')
+                     .on("click",function()
+                     {
+                        var link = d.data.linkAll['pdfModule'];
+                        window.open(link, '_blank');
+                     })
+                    }      
+                  });
 enterNodes
 .each(function(d) {
   if(d.data.linkAll && typeof( d.data.linkAll['pdfClass']) !== "undefined" && Object.keys(d.data.linkAll['pdfClass']).length > 0)
