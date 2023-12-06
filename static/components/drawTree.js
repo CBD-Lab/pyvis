@@ -1,4 +1,4 @@
-function drawTree(data,treecount){
+function drawTree(data,treecount,kdoc){
      let tooltiptree = d3.select('body')
                             .append('div')
                             .attr("id", "tiptree") // Adding the ID attribute
@@ -332,7 +332,7 @@ function updateNodes(source, nodes) {
         return chooseColor(d.data.name,d.children||d._children);
     })
      .attr("stroke-width","0.3px")
-     .on("click",function(event,d)
+     .on("click",function(event,d)//operate on the main tree nodes
      {
          if(d.height==0){
             textclick(event,d);
@@ -371,7 +371,7 @@ function updateNodes(source, nodes) {
      .attr("stroke-width","0.3px")
 
     nodeEnter
-        .each(function(d) {
+        .each(function(d) {//
             if(d.data.linkAll
             &&
             ((typeof( d.data.linkAll['pdfClass']) !== "undefined" && Object.keys(d.data.linkAll['pdfClass']).length > 0)||(typeof( d.data.linkAll['gitClass']) !== "undefined" && Object.keys(d.data.linkAll['gitClass']).length > 0)))
@@ -385,11 +385,11 @@ function updateNodes(source, nodes) {
                   return d.children || d._children ? -30 : 10+100;
                 })
                 .attr("y",-10)
-                 .append("xhtml:div")
-                 .style("margin", 0)
-                 .style("padding", 0)
-                 .html('<img src="http://127.0.0.1:5006/get_svg/fileBox.svg" width="100%" height="100%" />')
-                 .on("click",function(event,d)
+                .append("xhtml:div")
+                .style("margin", 0)
+                .style("padding", 0)
+                .html('<img src="http://127.0.0.1:5006/get_svg/fileBox.svg" width="100%" height="100%" />')
+                .on("click",function(event,d)
                  {
                     textclick(event,d);
                  })
@@ -777,7 +777,10 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,pdfClass,gitClass)
             })
         .on("click",function(d,i)
         {
-          fetch('http://127.0.0.1:5006/classVariable?wanted=' + i)
+            lastIndex=i.lastIndexOf('.')
+            kdoc.classname=i.lastIndexOf('.')[0];
+            kdoc.moduledir=i.lastIndexOf('.')[-1];
+            fetch('http://127.0.0.1:5006/classVariable?wanted=' + i)
                     .then(response => response.json())
                     .then(data => {
                     var tips = d3.select("body")
@@ -898,18 +901,26 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,pdfClass,gitClass)
                 var fullname = i.data.name;
                 var point=i;
                }
-                  while(point.depth>=2&& point.parent)
-                  {
-                      point=point.parent;
-                      fullname = point.data.name +'.'+ fullname; // Concatenating Strings with the + Operator
-                  }
-              //   fullname="torch."+fullname;
-              fetch('http://127.0.0.1:5006/leafCode?wanted=' + fullname)
-                      .then(response => response.text())
+              while(point.depth>=2&& point.parent)
+                {
+                  point=point.parent;
+                  fullname = point.data.name +'.'+ fullname; // Concatenating Strings with the + Operator
+                }
+                lastIndex=fullname.lastIndexOf('.')
+                        var keyword = {
+                            classname: fullname.substring(lastIndex+1),
+                            moduledir: fullname.substring(0,lastIndex)
+                            };
+                            kdoc.classname=fullname.lastIndexOf('.')[0];
+                            kdoc.moduledir=fullname.lastIndexOf('.')[-1];
+
+                var keywordJson = JSON.stringify(keyword);
+              fetch('http://127.0.0.1:5006/codeDoc?wanted=' + keywordJson)
+                      .then(response => response.json())
                       .then(data => {
                        const language = 'python';
                              // Highlighting code strings with the Prism.highlight method
-                       const highlightedCode = Prism.highlight(data, Prism.languages[language], language);
+                       const highlightedCode = Prism.highlight(data.code, Prism.languages[language], language);
 
                        var tips = d3.select("body")
                                       .append("div")
@@ -954,7 +965,7 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,pdfClass,gitClass)
             }
 }
 var hasFile=1;
-window.onDrawTreeReady = function(data,treecount) {
-    drawTree(data,treecount);
+window.onDrawTreeReady = function(data,treecount,keyworddoc) {
+    drawTree(data,treecount,keyworddoc);
 }
 

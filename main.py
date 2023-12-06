@@ -4,6 +4,8 @@ import subprocess
 import sys
 import urllib.parse
 import shutil
+
+import requests
 from flask import Flask, request, jsonify, send_from_directory, send_file
 from flask_cors import CORS
 import inspect
@@ -53,7 +55,6 @@ def treeLeaf():
             start_index = class_str.find("'") + 1  # Finding the location of the first single quote
             end_index = class_str.rfind("'")  # Finding the position of the last single quote
             class_name_all = class_str[start_index:end_index]
-            # print(len(wanted))
             if (class_name_all.startswith(wanted)):
                 jsonstrinside.append(class_name_all)
             else:
@@ -63,7 +64,6 @@ def treeLeaf():
             "jsonoutside": jsonstroutside
         }
         return jsonify(response_data)
-        # print(jsonfile, type(jsonfile))
     except Exception as e:
         print("error", e)
         return jsonify({"error": "An error occurred"})
@@ -71,22 +71,55 @@ def treeLeaf():
 
 @app.route("/leafCode", methods=["GET"])
 def leafCode():
-    module_name = request.args.get("wanted", type=str)
-    print(module_name)
+    fullname_str = request.args.get("wanted", type=str)
+    fullname = json.loads(fullname_str)
+    moduledir=fullname['moduledir']
+    classname=fullname['classname']
     try:
         # Trying to import the module.
-        module = __import__(module_name, fromlist=[''])
+        module = __import__(moduledir, fromlist=[''])
         # Getting the source code of the module.
         source_code = open(module.__file__, 'r').read()
-        print(source_code)
+        if(classname!=''):
+            import re
+            class_pattern = re.compile(fr'class\s+{classname}\b')
+            match = class_pattern.search(source_code)
+            if match:
+                class_start = match.start()
+                class_end = source_code.find('\n', class_start)
+                class_source_code = source_code[class_start:class_end]
+                return class_source_code
     except ImportError as e:
-        print(f"cannot load '{module_name}': {e}")
-        source_code = f"Cannot load '{module_name}': {e}"
+        print(f"cannot load '{fullname}': {e}")
+        source_code = f"Cannot load '{fullname}': {e}"
     except Exception as e:
         print(f"error happens: {e}")
         source_code = f"error happens: {e}"
     return source_code
 
+@app.route("/codeDoc", methods=["GET"])
+def codeDoc():
+    my_package_str = request.args.get("wanted", type=str)
+    try:
+        my_package = json.loads(my_package_str)
+    except json.JSONDecodeError as e:
+        print(f"Error decoding JSON: {e}")
+    module = importlib.import_module(my_package['moduledir'])
+
+    docs = module.__doc__
+    if(my_package['classname']!=''):
+        class_obj = getattr(module, my_package['classname'])
+        docs = inspect.getdoc(class_obj)
+    json_package=json.dumps(my_package)
+    url = 'http://127.0.0.1:5006/leafCode?wanted=' + json_package
+    response = requests.get(url)
+    content = response.content.decode("utf-8")
+    print(docs,content)
+    result = {
+        "doc": docs,
+        "code": content
+    }
+    return jsonify(result)
 
 @app.route("/classVariable", methods=["GET"])
 def classVariable():
@@ -116,6 +149,33 @@ def classVariable():
     return jsonify(result)
 
 
+@app.route("/doc", methods=["GET"])
+def doc():
+    my_class = request.args.get("wanted", type=str)
+    class_name = my_class.rsplit('.', 1)[1]
+    module_name = my_class.rsplit('.', 1)[0]
+
+    class_obj = importlib.import_module(my_class)
+    # class_obj = getattr(module, class_name)
+
+    # class_variables = [attr for attr in dir(class_obj) if
+    #                    not callable(getattr(class_obj, attr))]
+    # for var in class_variables:
+    #     varAll.append(var)
+
+    funcAll = basicFunction.get_class_method(class_obj)
+
+    docs, pdf, git = basicFunction.get_class_pdf(class_obj, my_class)
+    result = {
+        # "var": varAll,
+        "fun": funcAll,
+        "doc": docs,
+        "pdf": pdf,
+        'git': git
+    }
+    return jsonify(result)
+
+
 @app.route("/moduletxt")
 def moduletxt():
     wanted = request.args.get("wanted", type=str)
@@ -134,12 +194,10 @@ def moduletxt():
 
 @app.route("/localModule")
 def localModule():
-    print("localModule")
     wanted = request.args.get("wanted", type=str)
     if (wanted is None) or (wanted == "undefined") or (wanted == ""):
         wanted = 'pylibsNet'
     jsonfile = "netjson/" + wanted + ".json"
-    print(jsonfile)
     return app.send_static_file(jsonfile)
 
 
@@ -234,11 +292,9 @@ def get_svg(filename):
 def info():
     module_name = request.args.get("wanted", type=str)
     filedir = 'pylibsInfo.json'
-    # print(send_from_directory(filedir))
     with open(filedir, 'rb') as f:
         load_json = json.load(f)
         module_info = load_json[module_name]
-        print(module_info)
     return module_info
 
 
