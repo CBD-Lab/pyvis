@@ -1,4 +1,4 @@
-function drawTreeMap(data, flag, pdf, mapCount) {
+function drawTreeMap(data, flag, pdf, mapCount, allRootsArrayLength) {
     
     var width  = (window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth) * 0.83;
     var height = (window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight) * 0.98;
@@ -52,7 +52,7 @@ function drawTreeMap(data, flag, pdf, mapCount) {
             return color(d.data.name)
         })
         .attr("transform", function (d) { return "translate(" + d.x0 + "," + d.y0 + ")"; })
-        .attr("opacity", 0.7)
+        .attr("opacity", 0.6)
         .attr("stroke", "white")
         .attr("cursor", "pointer")
         .on("mouseover", function (event, d) {
@@ -68,7 +68,7 @@ function drawTreeMap(data, flag, pdf, mapCount) {
         })
         .on("mouseout", function (event, d) {
             d3.select(this)
-                .attr("opacity", 0.7) // Transparency of the rectangle is 0.7 when the mouse is off.
+                .attr("opacity", 0.6) // Transparency of the rectangle is 0.7 when the mouse is off.
 
             // Select the appropriate text element and add a transition animation
             d3.select(this.parentNode).select(".txt")
@@ -117,10 +117,31 @@ function drawTreeMap(data, flag, pdf, mapCount) {
                 });
         });
 
+    var currentLayer = 0;
+    // 遍历树状图，设置层级
+    function setLayer(node) {
+        // 如果是根节点，增加层级并赋值给节点的 layer 属性
+        if (node.depth === 1) {
+            currentLayer++;
+            node.data.layer = currentLayer;
+        }
+        node.data.layer = currentLayer;
+        // 将当前层级传递给子节点
+        if (node.children) {
+            node.children.forEach(child => {
+                setLayer(child);
+            });
+        }
+    }
+    // 设置树状图节点的层级
+    setLayer(treedata);
+
     var layer = 1;
     rect1.each(function(d) {
-        d.flag = 2;
+        console.log(d.data.name,d.data.layer)
+        d.flag = 0;
         if(d.depth > 1){
+            d.flag = 2;
             d = d.parent;
             if (d.depth == 1 ){
                 d.flag = layer;
@@ -130,7 +151,6 @@ function drawTreeMap(data, flag, pdf, mapCount) {
         else{
             d.flag = layer;
         }
-        console.log(d.data.name,"的flag为",d.flag);
         if(d.data.linkAll && typeof( d.data.linkAll['pdfClass']) !== "undefined" && Object.keys(d.data.linkAll['pdfClass']).length > 0)
                 {
                     for (key in d.data.linkAll['pdfClass']){
@@ -175,7 +195,7 @@ function drawTreeMap(data, flag, pdf, mapCount) {
     d3.select("input[id=layer]").on("change", function () {
         var newScale = +this.value;
         rect1.each(function (d) {
-            if (d.depth == newScale) {
+            if (d.data.layer == newScale) {
                 d3.select(this)
                 .transition()
                 .duration(300)
@@ -185,7 +205,7 @@ function drawTreeMap(data, flag, pdf, mapCount) {
                 d3.select(this)
                 .transition()
                 .duration(300)
-                .attr("opacity", 0.3);
+                .attr("opacity", 0.1);
             }
         });
     });
@@ -393,11 +413,32 @@ function drawTreeMap(data, flag, pdf, mapCount) {
         .attr("class", "txt")
         .attr("fill", "white")
         .text(d => (d.data.name));
+    
+    var allRoots = new Set();
+    // 遍历树状图，找到所有根节点
+    function findAllRoots(node) {
+        if (node.depth === 1) {
+            // 当前节点是根节点
+            allRoots.add(node.data.name);
+        } else if (node.parent) {
+            // 继续遍历父节点
+            findAllRoots(node.parent);
+        }
+    }
+    // 遍历树状图，找到所有根节点
+    rect1.each(findAllRoots);
+    // 将 Set 转为数组，方便后续使用
+    var allRootsArray = Array.from(allRoots);
+    var allRootsLength = allRootsArray.length;
+    allRootsArrayLength = allRootsLength;
+    // 打印所有根节点
+    console.log("所有根节点:", allRootsArray);
 
 }
 
 
-window.onDrawTreeMapReady = function (data, flag, pdf, mapCount) {
+window.onDrawTreeMapReady = function (data, flag, pdf, mapCount, allRootsArrayLength) {
     // Execution of drawing logic
-    drawTreeMap(data, flag, pdf, mapCount);
+    drawTreeMap(data, flag, pdf, mapCount, allRootsArrayLength);
+    console.log(allRootsArrayLength);
 }

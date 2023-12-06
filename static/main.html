@@ -378,6 +378,10 @@
                     <van-row>
                         <input style="position:relative;top:3px;margin-left: 5px;" type="range" id="length" min="100" max="300" value="100">
                     </van-row>
+                    <van-row style="margin-top:10px;margin-left: 5px;">Layer</van-row>
+                    <van-row>
+                        <input style="position:relative;top:3px;margin-left: 5px;" type="range" id="layer" min="0" max="20" step="1" value="0" onkeydown="handleKeyDown(event)" onkeypress="handleKeyPress(event)">
+                    </van-row>
                     <van-row style="margin-top:10px">
                         <van-checkbox v-model="checked" style="margin-left: 5px;" class="van-haptics-feedback" @click="changemap()" type="primary">Exchange</van-checkbox>
                     </van-row>
@@ -462,6 +466,32 @@
 </div>
 
 <script>
+    var currentValue = 0;
+
+    function handleKeyDown(event) {
+        // 获取当前值
+        currentValue = parseInt(event.target.value);
+    }
+
+    function handleKeyPress(event) {
+        var inputElement = document.getElementById('layer');
+
+        // 根据按下的键更新值
+        switch (event.key) {
+            case 'ArrowLeft':
+                // 左箭头键
+                inputElement.value = Math.max(currentValue - 1, parseInt(inputElement.min));
+                break;
+            case 'ArrowRight':
+                // 右箭头键
+                inputElement.value = Math.min(currentValue + 1, parseInt(inputElement.max));
+                break;
+        }
+
+        currentValue = parseInt(inputElement.value);
+    }
+</script>
+<script>
     var width=(window.innerWidth||document.documentElement.clientWidth||document.body.clientWidth)*0.95;
     var height=(window.innerHeight||document.documentElement.clientHeight||document.body.clientHeight)*0.92;
     var color = d3.schemeCategory10;
@@ -506,6 +536,7 @@
                 projectNameValue:'',
                 optionArr: ['Module', 'Doc', 'PdfLink', 'GitLink'],
                 showPicker:false,
+                allRootsArrayLength:'',
             };
         },
         methods: {
@@ -651,8 +682,8 @@
                 var that = this;
                 this.viewSelection="treemap";
                 axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
-                    onDrawTreeMapReady(res.data,this.flag,this.pdf,this.mapcount);
-
+                    onDrawTreeMapReady(res.data,this.flag,this.pdf,this.mapcount,this.allRootsArrayLength);
+                    
                 });
             },
 
