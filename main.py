@@ -211,6 +211,10 @@ def localPath():
         python_path = [python_path[:-len("Scripts\\")] if python_path.endswith("Scripts\\") else python_path]
         print("python_path：", python_path)
         result = {'result': python_path}
+        if not os.path.isfile('pylibsInfo.json'):
+            init_json = {"": {}}
+            with open('pylibsInfo.json', 'w', encoding='utf-8') as f:
+                json.dump(init_json, f)
         return jsonify(result)
     except Exception as e:
         print(f'Error executing the command: {str(e)}')

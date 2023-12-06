@@ -94,7 +94,10 @@ def getClassNet(pname):
     global pathGV
     init()
     path = basicFunction.get_path(pname)
-    pathGV = path[:-len(pname)]
+    if '.' in pname:
+        pathGV = path[:-len(pname.split('.', 1)[0])]
+    else:
+        pathGV = path[:-len(pname)]
     myclasses = get_classes(path, pname)
     print("-----5----")
     print(myclasses)
