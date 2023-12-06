@@ -220,7 +220,8 @@ def localPath():
 # load certain package
 @app.route('/single', methods=['GET'])
 def single():
-    single_module = request.args.get('wanted', type=str).lower()
+    single_module = request.args.get('wanted', type=str)
+    single_module = single_module.lower()
     if (single_module is None) or (single_module == "undefined") or (single_module == ""):
         single_module = 'flask'
     pyNet.pyNet(single_module)
