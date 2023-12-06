@@ -138,6 +138,8 @@ def netjson(filename, initpname):
 def pyNet(moduleName):
     initpname = moduleName
     exec("import " + moduleName)
+    if '.' in moduleName:
+        exec("import " + moduleName.split('.', 1)[0])
     init()
     netjson(moduleName, initpname)
 

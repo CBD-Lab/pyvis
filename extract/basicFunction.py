@@ -222,6 +222,7 @@ def get_path(libname):
     module = inspect.getmodule(libname)
     if module:
         module_path = os.path.abspath(module.__file__)
+        # For example, if libname is "matplotlib.pyplot"， the path to ".../matplotlib" will be retained.
         package_path = os.path.dirname(module_path)
         return package_path
     else:

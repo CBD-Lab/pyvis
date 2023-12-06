@@ -23,6 +23,7 @@
     <script type="text/javascript" src="/static/components/drawBubble.js"></script>
     <script type="text/javascript" src="/static/components/drawCloud.js"></script>
     <script type="text/javascript" src="/static/components/drawTreeMap.js"></script>
+    <script type="text/javascript" src="/static/components/showFile.js"></script>
     <!-- Use meta tags to set mobile display parameters and disable scaling -->
     <meta charset="UTF-8" name="viewport"
           content="width=device-width,user-scalable=no,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0"/>
@@ -195,6 +196,18 @@
         .forceChontrol{
             color:white;
         }
+        .van-search{
+            width:100%;
+        }
+        .van-search__clear {
+            display: none;
+        }
+        .van-search__action {
+            display: none !important;
+          }
+        .van-icon-clear {
+            display: none !important;
+          }
     </style>
 </head>
 <body>
@@ -220,12 +233,29 @@
             <div class="flex-placeholder">
                 <!-- Left search bar -->
                 <van-row class="searchbox">
-                    <van-col offset="0" span="16">
-                        <van-field class="searchtext" v-model="keyword" placeholder="Module Name"></van-field>
-                    </van-col>
-                    <van-col span="8">
-                        <van-button class="van-haptics-feedback" @click="search()">Search</van-button>
-                    </van-col>
+<!--                    <van-col offset="0" span="16">-->
+<!--                        <van-field class="searchtext" v-model="keyword" placeholder="Module Name"></van-field>-->
+<!--                    </van-col>-->
+<!--                    <van-col span="8">-->
+<!--                        <van-button class="van-haptics-feedback" @click="search()">Search</van-button>-->
+<!--                    </van-col>-->
+                    <van-search v-model="keyword" show-action @search="search()" input-align="left" placeholder="Module Name" action-text=" ">
+<!--                            <view slot="action" @tap="search">search</view>-->
+                        </van-search>
+                </van-row>
+                <van-row class="searchbox">
+<!--                    <van-col offset="0" span="16">-->
+<!--                        <van-field class="searchtext" v-model="keyworddoc" placeholder="Doc Name"></van-field>-->
+<!--                    </van-col>-->
+<!--                    <van-col span="8">-->
+<!--                        <van-button class="van-haptics-feedback" @click="searchdoc()">Doc</van-button>-->
+                        <van-search :style="{ width: '60%' }" v-model="keyworddoc.moduledir" @search="searchdoc()" input-align="left" placeholder="Module Directory">
+                            <view slot="action"></view>
+                        </van-search>
+                        <van-search :style="{ width: '40%' }" v-model="keyworddoc.classname" @search="searchdoc()" input-align="left" placeholder="Class Name" left-icon="">
+                            <view slot="action"></view>
+                        </van-search>
+<!--                    </van-col>-->
                 </van-row>
                 <van-row class="viewset" style="margin-top:5px;">
                     <van-col span="8">
@@ -348,10 +378,6 @@
                     <van-row>
                         <input style="position:relative;top:3px;margin-left: 5px;" type="range" id="length" min="100" max="300" value="100">
                     </van-row>
-                    <van-row style="margin-top:10px;margin-left: 5px;">Layer</van-row>
-                    <van-row>
-                        <input style="position:relative;top:3px;margin-left: 5px;" type="range" id="layer" min="1" max="10" value="1">
-                    </van-row>
                     <van-row style="margin-top:10px">
                         <van-checkbox v-model="checked" style="margin-left: 5px;" class="van-haptics-feedback" @click="changemap()" type="primary">Exchange</van-checkbox>
                     </van-row>
@@ -446,6 +472,7 @@
                 nodes:'',
                 links:'',
                 keyword:'',
+                keyworddoc:{classname:'',moduledir:''},
                 isLoading: false,
                 localValue: '',
                 singleModule: '',
@@ -475,7 +502,10 @@
                 },
                 radialTreeCount:{
                     node:0
-                }
+                },
+                projectNameValue:'',
+                optionArr: ['Module', 'Doc', 'PdfLink', 'GitLink'],
+                showPicker:false,
             };
         },
         methods: {
@@ -484,6 +514,10 @@
                 this.netvis();
             },
 
+            changeConfirm(val,index){
+                this.projectNameValue = val;
+                console.log(index);
+            },
             clearPage() {
                 d3.select('svg').selectAll('*').remove();
                 var tooltip = document.getElementById("tip");
@@ -536,13 +570,16 @@
                         break;
                 }
             },
-
+            searchdoc()
+            {
+                showFile(this.keyworddoc);
+            },
             netvis() {
                 var that = this;
                 this.clearPage();
                 this.viewSelection="net";
                 axios.get("http://127.0.0.1:5006/module?wanted=" + this.keyword).then(res=>{
-                    onDrawNetReady(res.data, this.keyword,this.search,this.netcount);
+                    onDrawNetReady(res.data, this.keyword,this.search,this.netcount,this.keyworddoc,0);
                 })
                 .catch(error=>
                 {
@@ -566,7 +603,7 @@
                 if (this.keyword == "" || this.keyword == "undefined" || this.keyword == "None")
                     this.keyword = "flask"
                 axios.get("http://127.0.0.1:5006/module?wanted=" + this.keyword + "class").then(res=>{
-                    onDrawNetReady(res.data, this.keyword,this.search,this.netcount);
+                    onDrawNetReady(res.data, this.keyword,this.search,this.netcount,this.keyworddoc,1);
                 });
             },
             treevis() {
@@ -574,7 +611,7 @@
                 this.clearPage();
                 this.viewSelection="tree";
                 axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
-                    onDrawTreeReady(res.data,this.treecount);
+                    onDrawTreeReady(res.data,this.treecount,this.keyworddoc);
                 });
             },
             pinetreevis() {
@@ -633,9 +670,6 @@
             changemap() {
                 this.flag = !this.flag;
                 this.treemapvis();
-                d3.select("input[id=layer]").on("change", function () {
-                    this.value = 1;
-                });
             },
             viewpdf() {
                 this.pdf = !this.pdf;

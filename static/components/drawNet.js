@@ -4,7 +4,7 @@ var nodeweight;
 var nodelayer;
 
 
-function drawNet(data, k, search, netCount){
+function drawNet(data, k, search, netCount, kdoc,isclassnet){
     var forceSimulation = d3.forceSimulation()
 							.force("link",d3.forceLink())
 							.force("charge",d3.forceManyBody().strength(-100))
@@ -19,7 +19,6 @@ function drawNet(data, k, search, netCount){
     var module = "pylibs.json"
     var nodes = data.nodes;
     var links = data.links;
-    console.log(nodes,links)
     netCount.node = nodes.length;
     netCount.link = links.length;
     nodeweight = new Array(nodes.length);
@@ -80,7 +79,6 @@ function drawNet(data, k, search, netCount){
 					  return d.weight*2+5;
 				  })
 				  .attr("fill", (d, i) => {
-				   console.log(d,k);
 					  if (k == "pylibsNet" || k== "" || k == "undefined" || k == "None"||typeof(d.myparent)!='undefined') {
 					  return color[d.weight%10];
 					  }
@@ -127,13 +125,19 @@ function drawNet(data, k, search, netCount){
 				  .on("click", (d, i) => {
 					  var point = i;
                       fullname=point.name;
-				      if(fullname.lastIndexOf('.')!=-1)  // Load the source code if it's a directory
+				      if(fullname.lastIndexOf('.')!=-1 && isclassnet==0)  // Load the source code if it's a directory and it is not a class net graph
 				      {
-					  fetch('http://127.0.0.1:5006/leafCode?wanted=' + fullname)
-						  .then(response => response.text())
+				        kdoc.moduledir=fullname;
+                        var keyword = {
+                            classname: '',
+                            moduledir: fullname
+                            };
+                        var keywordJson = JSON.stringify(keyword);
+					  fetch('http://127.0.0.1:5006/codeDoc?wanted=' + keywordJson)
+						  .then(response => response.json())
 						  .then(data => {
 							  const language = 'python';
-							  const highlightedCode = Prism.highlight(data, Prism.languages[language], language);
+							  const highlightedCode = Prism.highlight(data.code, Prism.languages[language], language);
 							  var tips = d3.select("body")
 										   .append("div")
 										   .attr("class", "popup");
@@ -175,8 +179,58 @@ function drawNet(data, k, search, netCount){
 							  console.error('Error executing Python script:', error);
 						  });
 						  }
+                      else if(fullname.lastIndexOf('.')!=-1 && isclassnet==1)//load the  doc file if it's a class net graph
+                      {
+                        lastIndex=fullname.lastIndexOf('.')
+                        var keyword = {
+                            classname: fullname.substring(lastIndex+1),
+                            moduledir: fullname.substring(0,lastIndex)
+                            };
+                        kdoc.classname=fullname.substring(lastIndex+1);
+                        kdoc.moduledir=fullname.substring(0,lastIndex);
+                        console.log(kdoc);
 
-                  else
+                        var keywordJson = JSON.stringify(keyword);
+                         axios.get("http://127.0.0.1:5006/codeDoc?wanted=" + keywordJson).then(res=>{
+                            console.log(res.data);
+                            var tips = d3.select("body")
+                                                   .append("div")
+                                                   .attr("class", "popup");
+                            var drag=d3.drag()
+                                  .on("start", function (event) {
+                                    // Record the position at the start of the drag
+                                    var startX = event.x;
+                                    var startY = event.y;
+                                    // Get the position of the current cue box
+                                    var currentLeft = parseFloat(tips.style("left"));
+                                    var currentTop = parseFloat(tips.style("top"));
+                                    // Calculate the mouse offset re lative to the upper-left corner of the cue box
+                                    offsetX = startX - currentLeft;
+                                    offsetY = startY - currentTop;
+                                  })
+                                  .on("drag", function (event) {
+                                    // Update cue box position with mouse movement
+                                    tips.style("left", (event.x - offsetX) + "px")
+                                      .style("top", (event.y - offsetY) + "px");
+                                  });
+                                      // Bind the drag behavior to the element to be dragged
+                                      tips.call(drag);
+
+                                      tips.append("span")
+                                          .attr("class", "close")
+                                          .attr("color", "red")
+                                          .text("x")
+                                          .on("click", () => {
+                                              tips.remove();
+                                          });
+
+                                      tips.append("div")
+                                          .attr("class", "content")
+                                          .html('<pre><code class="language-python">' + res.data.doc + '</code></pre>');
+
+                        })
+                      }
+                  else//search the modulename if it's not a modulename
                   {
                       tooltip.style("display", "none");
                       search(i.name);
@@ -294,9 +348,9 @@ function selectit(type){
     return null;
 }
 
-window.onDrawNetReady = function(data, k, search, netCount) {
+window.onDrawNetReady = function(data, k, search, netCount,kdoc,isclassnet) {
     // Execution of drawing logic
-    drawNet(data, k, search, netCount);
+    drawNet(data, k, search, netCount,kdoc,isclassnet);
 }
 window.onNetfunction = function(type) {
     selectit(type);
