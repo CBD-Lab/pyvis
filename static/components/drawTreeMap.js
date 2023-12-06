@@ -156,13 +156,13 @@ function drawTreeMap(data, flag, pdf, mapCount) {
                 }
     });
 
-    d3.select("input[id=length]").on("change", function () { //修改width和height以实现对矩形块进行缩放
-		var newScale = +this.value; // 获取输入框的值并转换为数字
+    d3.select("input[id=length]").on("change", function () { // Modify width and height to scale a rectangular block.
+		var newScale = +this.value; // Get the value of the input box and convert it to a number
         var width1 = width * newScale * 0.01;
         var height1 = height * newScale * 0.01;
         svg.attr("width", width1)
             .attr("height", height1);
-        // 更新矩形块的宽度和高度
+        // Update the width and height of the rectangular block
         
         rect1.attr("transform", function (d) { return "translate(" + d.x0 * newScale * 0.01 + "," + d.y0 * newScale * 0.01 + ")"; })
         rect1.attr("width", d => (d.x1 - d.x0) * newScale * 0.01)
