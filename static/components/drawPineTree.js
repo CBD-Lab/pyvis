@@ -1,4 +1,4 @@
-function drawPineTree(data,pineCount) {
+function drawPineTree(data,pineCount,kdoc) {
     var width = (window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth) * 0.84;
     var height = (window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight) * 0.89;
 
@@ -109,7 +109,7 @@ function drawPineTree(data,pineCount) {
                         .style("box-shadow", "0px 2px 4px rgba(0, 0, 0, 0.1)")
                         .style('list-style','none')
                         .style("cursor", "pointer");
-                        
+
             pdfinfo.append("foreignObject")
                     .attr("height", "12px")
                     .append("xhtml:div")
@@ -197,7 +197,7 @@ function drawPineTree(data,pineCount) {
                     .attr("stroke-family", "FangSong")
                     .attr("font-size", "10px")
                     .text("no GitHub!");
-                    
+
             }
             else{
                 gits.forEach((value, key) => {
@@ -331,25 +331,24 @@ function drawPineTree(data,pineCount) {
                 d3.select('#svgbox').selectAll("tooltip").remove();
               })
 		   .on("click", (d) => {
-                console.log('1',d, now_data);
                 var fullname = now_data.data.name.split('.', 1)[0];
                 var point = now_data;
                 while (point.depth >= 0 && point.parent) {
                     point = point.parent;
                     fullname = point.data.name + '.' + fullname;
                 }
-
-                if (point.data.name == "nn")
-                    fullname = "torch." + fullname;
-                else
-                    fullname = fullname;
-
-                console.log('2',d, data, fullname);
-                fetch('http://127.0.0.1:5006/leafCode?wanted=' + fullname)
-                    .then(response => response.text())
+                kdoc.moduledir=fullname;
+                kdoc.classname='';
+                var keyword = {
+                    classname: '',
+                    moduledir: fullname
+                    };
+                var keywordJson = JSON.stringify(keyword);
+                fetch('http://127.0.0.1:5006/codeDoc?wanted=' + keywordJson)
+                    .then(response => response.json())
                     .then(data => {
                         const language = 'python';
-                        const highlightedCode = Prism.highlight(data, Prism.languages[language], language);
+                        const highlightedCode = Prism.highlight(data.code, Prism.languages[language], language);
                         var tips = d3.select("body")
                                    .append("div")
                                    .attr("class", "popup");
@@ -526,7 +525,7 @@ function drawPineTree(data,pineCount) {
     }
 
 }
-window.onDrawPineTreeReady = function (data,pineCount) {
+window.onDrawPineTreeReady = function (data,pineCount,kdoc) {
 	// Execution of drawing logic
-	drawPineTree(data,pineCount);
+	drawPineTree(data,pineCount,kdoc);
 }

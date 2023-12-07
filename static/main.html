@@ -533,9 +533,6 @@
                 radialTreeCount:{
                     node:0
                 },
-                projectNameValue:'',
-                optionArr: ['Module', 'Doc', 'PdfLink', 'GitLink'],
-                showPicker:false,
                 allRootsArrayLength:'',
             };
         },
@@ -543,11 +540,6 @@
             home() {
                 this.keyword = "";
                 this.netvis();
-            },
-
-            changeConfirm(val,index){
-                this.projectNameValue = val;
-                console.log(index);
             },
             clearPage() {
                 d3.select('svg').selectAll('*').remove();
@@ -624,7 +616,7 @@
                 this.clearPage();
                 this.viewSelection="matrix";
                 axios.get("http://127.0.0.1:5006/module?wanted=" + this.keyword).then(res=>{
-                    onDrawMatrixReady(res.data);
+                    onDrawMatrixReady(res.data,this.keyworddoc);
                 });
             },
             classvis() {
@@ -650,7 +642,7 @@
                 var that = this;
                 this.viewSelection="pinetree";
                 axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
-                    onDrawPineTreeReady(res.data,this.pinecount);
+                    onDrawPineTreeReady(res.data,this.pinecount,this.keyworddoc);
                 });
             },
             radialtreevis() {
@@ -658,7 +650,7 @@
                 var that = this;
                 this.viewSelection="radialtree";
                 axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
-                    onDrawRadialTreeReady(res.data,this.radialTreeCount);
+                    onDrawRadialTreeReady(res.data,this.radialTreeCount,this.keyworddoc);
                 });
             },
             bubblevis() {
@@ -666,7 +658,7 @@
                 this.clearPage();
                 this.viewSelection="bubble";
                 axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
-                    onDrawBubbleReady(res.data,this.bubblecount);
+                    onDrawBubbleReady(res.data,this.bubblecount,this.keyworddoc);
                 });
             },
             cloudvis() {
@@ -674,7 +666,7 @@
                 this.clearPage();
                 this.viewSelection="cloud";
                 axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
-                    onDrawCloudReady(res.data,this.search,this.cloudcount);
+                    onDrawCloudReady(res.data,this.search,this.cloudcount,this.keyworddoc);
                 });
             },
             treemapvis() {
@@ -682,8 +674,8 @@
                 var that = this;
                 this.viewSelection="treemap";
                 axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
-                    onDrawTreeMapReady(res.data,this.flag,this.pdf,this.mapcount,this.allRootsArrayLength);
-                    
+                    onDrawTreeMapReady(res.data,this.flag,this.pdf,this.mapcount,this.allRootsArrayLength,this.keyworddoc);
+
                 });
             },
 

@@ -1,4 +1,4 @@
-function drawMatrixGraph(graph){
+function drawMatrixGraph(graph,kdoc){
     function trim(str){
         return str.replace(/\s|\xA0/g,"");
     }
@@ -55,11 +55,18 @@ function drawMatrixGraph(graph){
                  .text((d)=>{return d.name;})
                  .style("cursor", "pointer")
                  .on("click", (d, i) => {
-                      fetch('http://127.0.0.1:5006/leafCode?wanted=' + i.name)
-                        .then(response => response.text())
+                        kdoc.moduledir=i.name;
+				        kdoc.classname='';
+                        var keyword = {
+                            classname: '',
+                            moduledir: i.name
+                            };
+                        var keywordJson = JSON.stringify(keyword);
+                      fetch('http://127.0.0.1:5006/codeDoc?wanted=' + keywordJson)
+                        .then(response => response.json())
                         .then(data => {
                           const language = 'python';
-                          const highlightedCode = Prism.highlight(data, Prism.languages[language], language);
+                          const highlightedCode = Prism.highlight(data.code, Prism.languages[language], language);
                           var tips = d3.select("body")
                                        .append("div")
                                        .attr("class", "popup");
@@ -293,11 +300,18 @@ function drawMatrixGraph(graph){
           .attr("stroke-width",0.5)
           .style("cursor", "pointer")
           .on("click", (d, i) => {
-          fetch('http://127.0.0.1:5006/leafCode?wanted=' + i.name)
-            .then(response => response.text())
+                        kdoc.moduledir=i.name;
+				        kdoc.classname='';
+                        var keyword = {
+                            classname: '',
+                            moduledir: i.name
+                            };
+                        var keywordJson = JSON.stringify(keyword);
+          fetch('http://127.0.0.1:5006/codeDoc?wanted=' + keywordJson)
+            .then(response => response.json())
             .then(data => {
               const language = 'python';
-              const highlightedCode = Prism.highlight(data, Prism.languages[language], language);
+              const highlightedCode = Prism.highlight(data.code, Prism.languages[language], language);
               var tips = d3.select("body")
                            .append("div")
                            .attr("class", "popup");
@@ -379,7 +393,7 @@ function drawMatrixGraph(graph){
           });
 }
 
-window.onDrawMatrixReady = function(data) {
+window.onDrawMatrixReady = function(data,kdoc) {
     // 执行绘图逻辑
-    drawMatrixGraph(data);
+    drawMatrixGraph(data,kdoc);
 }

@@ -1,4 +1,4 @@
-function drawCloud(data,search,cloudcount){
+function drawCloud(data,search,cloudcount,kdoc){
       var width = (window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth) * 0.84;
       var height = (window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight) * 0.89;
 
@@ -114,12 +114,18 @@ function drawCloud(data,search,cloudcount){
                 point = point.parent;
                 fullname = point.data.name + '.' + fullname;
               }
-
-              fetch('http://127.0.0.1:5006/leafCode?wanted=' + fullname)
-                .then(response => response.text())
+                kdoc.moduledir=fullname;
+                kdoc.classname='';
+                var keyword = {
+                    classname: '',
+                    moduledir: fullname
+                    };
+                var keywordJson = JSON.stringify(keyword);
+              fetch('http://127.0.0.1:5006/codeDoc?wanted=' + keywordJson)
+                .then(response => response.json())
                 .then(data => {
                   const language = 'python';
-                  const highlightedCode = Prism.highlight(data, Prism.languages[language], language);
+                  const highlightedCode = Prism.highlight(data.code, Prism.languages[language], language);
                   var tips = d3.select("body")
                     .append("div")
                     .attr("class", "popup");
@@ -204,6 +210,7 @@ function drawCloud(data,search,cloudcount){
                         break;}
                 }
             var allLayerOpacities = [];
+
             svg.selectAll("text").nodes().forEach(function(textNode,i) {
                 var opacity = d3.select(textNode).attr("opacity");
                 allLayerOpacities[hiwords[i].depth] = opacity;
@@ -260,8 +267,7 @@ function drawCloud(data,search,cloudcount){
                         .style("border-radius", "5px")
                         .style("padding", "5px")
                         .style("box-shadow", "0px 2px 4px rgba(0, 0, 0, 0.1)")
-                        .style('list-style','none')
-                        .style("cursor", "pointer");
+                        .style('list-style','none');
 
             pdfinfo.append("foreignObject")
                     .attr("height", "12px")
@@ -323,8 +329,7 @@ function drawCloud(data,search,cloudcount){
                         .style("border-radius", "5px")
                         .style("padding", "5px")
                         .style("box-shadow", "0px 2px 4px rgba(0, 0, 0, 0.1)")
-                        .style('list-style','none')
-                        .style("cursor", "pointer");
+                        .style('list-style','none');
             gitinfo.append("foreignObject")
                     .attr("height", "12px")
                     .append("xhtml:div")
@@ -348,7 +353,7 @@ function drawCloud(data,search,cloudcount){
                 gitinfo.append('text')
                     .attr("stroke-family", "FangSong")
                     .attr("font-size", "10px")
-                    .text("no GitHub!");
+                    .text("no GitHub files !");
             }
             else{
                 gits.forEach((value, key) => {
@@ -440,8 +445,8 @@ function drawCloud(data,search,cloudcount){
     }
 }
 
-window.onDrawCloudReady = function(data,search,cloudcount) {
+window.onDrawCloudReady = function(data,search,cloudcount,kdoc) {
     console.log('drawTree.js is ready');
     // Execution of drawing logic
-    drawCloud(data,search,cloudcount);
+    drawCloud(data,search,cloudcount,kdoc);
 }

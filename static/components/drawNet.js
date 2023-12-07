@@ -128,6 +128,7 @@ function drawNet(data, k, search, netCount, kdoc,isclassnet){
 				      if(fullname.lastIndexOf('.')!=-1 && isclassnet==0)  // Load the source code if it's a directory and it is not a class net graph
 				      {
 				        kdoc.moduledir=fullname;
+				        kdoc.classname='';
                         var keyword = {
                             classname: '',
                             moduledir: fullname
@@ -186,9 +187,8 @@ function drawNet(data, k, search, netCount, kdoc,isclassnet){
                             classname: fullname.substring(lastIndex+1),
                             moduledir: fullname.substring(0,lastIndex)
                             };
-                        kdoc.classname=fullname.substring(lastIndex+1);
-                        kdoc.moduledir=fullname.substring(0,lastIndex);
-                        console.log(kdoc);
+                            kdoc.classname=fullname.substring(lastIndex+1);
+                            kdoc.moduledir=fullname.substring(0,lastIndex);
 
                         var keywordJson = JSON.stringify(keyword);
                          axios.get("http://127.0.0.1:5006/codeDoc?wanted=" + keywordJson).then(res=>{
@@ -226,7 +226,7 @@ function drawNet(data, k, search, netCount, kdoc,isclassnet){
 
                                       tips.append("div")
                                           .attr("class", "content")
-                                          .html('<pre><code class="language-python">' + res.data.doc + '</code></pre>');
+                                          .html('<pre><code class="language-python">' + res.data.code + '</code></pre>');
 
                         })
                       }

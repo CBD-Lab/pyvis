@@ -1,4 +1,4 @@
-function drawBubble(data,bubbleCount) {
+function drawBubble(data,bubbleCount,kdoc) {
       let tooltip = d3.select('body')
         .append('div')
         .attr("id", "tip")
@@ -66,25 +66,24 @@ function drawBubble(data,bubbleCount) {
           tooltip.style("visibility", 'false');
         })
         .on("click", (d, i) => {
-          console.log(d, i);
           var fullname = i.data.name.split('.', 1)[0];
           var point = i;
           while (point.depth >= 0 && point.parent) {
             point = point.parent;
             fullname = point.data.name + '.' + fullname;
           }
-
-          if (point.data.name == "nn")
-            fullname = "torch." + fullname;
-          else
-            fullname = fullname;
-
-          console.log(d, i, fullname);
-          fetch('http://127.0.0.1:5006/leafCode?wanted=' + fullname)
-            .then(response => response.text())
+                kdoc.moduledir=fullname;
+                kdoc.classname='';
+                var keyword = {
+                    classname: '',
+                    moduledir: fullname
+                    };
+                var keywordJson = JSON.stringify(keyword);
+          fetch('http://127.0.0.1:5006/codeDoc?wanted=' + keywordJson)
+            .then(response => response.json())
             .then(data => {
               const language = 'python';
-              const highlightedCode = Prism.highlight(data, Prism.languages[language], language);
+              const highlightedCode = Prism.highlight(data.code, Prism.languages[language], language);
               var tips = d3.select("body")
                            .append("div")
                            .attr("class", "popup");
@@ -262,7 +261,14 @@ function drawBubble(data,bubbleCount) {
             else{
                 return '';
             }
-
+        })
+        .attr('opacity',d=>{
+            if (d.depth == maxdepth){
+                return 0.7;
+            }
+            else{
+                return 0;
+            }
         });
 
     var colorrec = svg.selectAll('rect')
@@ -510,7 +516,7 @@ function drawBubble(data,bubbleCount) {
 	});
 }
 
-window.onDrawBubbleReady = function(data,bubbleCount) {
+window.onDrawBubbleReady = function(data,bubbleCount,kdoc) {
   // Execute drawing logic
-  drawBubble(data,bubbleCount);
+  drawBubble(data,bubbleCount,kdoc);
 };
