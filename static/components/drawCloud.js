@@ -88,7 +88,9 @@ function drawCloud(data,search,cloudcount,kdoc){
               var point = i;
               while (point.depth >= 0 && point.parent) {
                 point = point.parent;
-                fullname = point.data.name + '.' + fullname;
+                if(!(point.data.name=='package'&&point.depth==0)){//delete the first layer"package." pylibstree
+                        fullname = point.data.name + '.' + fullname;
+                    }
               }
 
               var [x, y] = d3.pointer(event);
@@ -112,7 +114,9 @@ function drawCloud(data,search,cloudcount,kdoc){
               var point = i;
               while (point.depth >= 0 && point.parent) {
                 point = point.parent;
-                fullname = point.data.name + '.' + fullname;
+                if(!(point.data.name=='package'&&point.depth==0)){//delete the first layer"package." pylibstree
+                        fullname = point.data.name + '.' + fullname;
+                    }
               }
                 kdoc.moduledir=fullname;
                 kdoc.classname='';
@@ -183,9 +187,10 @@ function drawCloud(data,search,cloudcount,kdoc){
                     var point = worddata[i];
                     while (point.depth >= 0 && point.parent) {
                         point = point.parent;
+                        if(!(point.data.name=='package'&&point.depth==0)){//delete the first layer"package." pylibstree
                         fullname = point.data.name + '.' + fullname;
                     }
-                    fullname = fullname;
+                    }
                     pdfs.set(fullname,worddata[i].data.linkAll['pdfModule'][0])
                 }
             });

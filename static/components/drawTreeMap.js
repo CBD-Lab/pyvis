@@ -82,7 +82,9 @@ function drawTreeMap(data, flag, pdf, mapCount,kdoc) {
             var point = i;
               while (point.depth >= 0 && point.parent) {
                 point = point.parent;
-                fullname = point.data.name + '.' + fullname;
+                if(!(point.data.name=='package'&&point.depth==0)){//delete the first layer"package." pylibstree
+                        fullname = point.data.name + '.' + fullname;
+                    }
               }
                 kdoc.moduledir=fullname;
                 kdoc.classname='';
@@ -173,9 +175,10 @@ rect.each(function(d) {
                 var point = d;
                 while (point.depth >= 0 && point.parent) {
                     point = point.parent;
-                    fullname = point.data.name + '.' + fullname;
+                    if(!(point.data.name=='package'&&point.depth==0)){//delete the first layer"package." pylibstree
+                        fullname = point.data.name + '.' + fullname;
+                    }
                 }
-                fullname = fullname;
                 pdfs.set(fullname,d.data.linkAll['pdfModule'][0])
             }
 });

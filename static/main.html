@@ -650,7 +650,7 @@
                 var that = this;
                 this.viewSelection="radialtree";
                 axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
-                    onDrawRadialTreeReady(res.data,this.radialTreeCount,this.keyworddoc);
+                    onDrawRadialTreeReady(res.data, this.radialTreeCount,this.keyworddoc);
                 });
             },
             bubblevis() {

@@ -237,7 +237,9 @@ function updateNodes(source, nodes) {
                     while(point.depth>=0&& point.parent)
                         {
                             point=point.parent;
-                            fullname = point.data.name +'.'+ fullname;
+                            if(!(point.data.name=='package'&&point.depth==0)){//delete the first layer"package." pylibstree
+                                fullname = point.data.name + '.' + fullname;
+                            }
                         }
         d.id=fullname
         return d.id
@@ -498,7 +500,9 @@ function textclick(event,d){
                 while(point.depth>=0&& point.parent)
                     {
                         point=point.parent;
-                        fullname = point.data.name +'.'+ fullname;
+                        if(!(point.data.name=='package'&&point.depth==0)){//delete the first layer"package." pylibstree
+                        fullname = point.data.name + '.' + fullname;
+                    }
                     }
                 fetch('http://127.0.0.1:5006/treeLeaf?wanted=' + fullname)
                     .then(response => response.json())
@@ -904,7 +908,9 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,pdfClass,gitClass)
               while(point.depth>=2&& point.parent)
                 {
                   point=point.parent;
-                  fullname = point.data.name +'.'+ fullname; // Concatenating Strings with the + Operator
+                  if(!(point.data.name=='package'&&point.depth==0)){//delete the first layer"package." pylibstree
+                        fullname = point.data.name + '.' + fullname;
+                    }
                 }
                 lastIndex=fullname.lastIndexOf('.')
                         var keyword = {

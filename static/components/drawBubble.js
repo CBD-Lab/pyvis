@@ -50,9 +50,10 @@ function drawBubble(data,bubbleCount,kdoc) {
           var point = d;
           while (point.depth >= 0 && point.parent) {
             point = point.parent;
-            fullname = point.data.name + '.' + fullname;
+            if(!(point.data.name=='package'&&point.depth==0)){//delete the first layer"package." pylibstree
+                        fullname = point.data.name + '.' + fullname;
+                    }
           }
-          fullname = fullname;
           tooltip.html(fullname)
                  .style("left", event.pageX + "px")
                  .style("top", event.pageY + "px")
@@ -70,7 +71,9 @@ function drawBubble(data,bubbleCount,kdoc) {
           var point = i;
           while (point.depth >= 0 && point.parent) {
             point = point.parent;
-            fullname = point.data.name + '.' + fullname;
+            if(!(point.data.name=='package'&&point.depth==0)){//delete the first layer"package." pylibstree
+                        fullname = point.data.name + '.' + fullname;
+                    }
           }
                 kdoc.moduledir=fullname;
                 kdoc.classname='';
@@ -238,12 +241,10 @@ function drawBubble(data,bubbleCount,kdoc) {
                 var point = d;
                 while (point.depth >= 0 && point.parent) {
                     point = point.parent;
-                    fullname = point.data.name + '.' + fullname;
+                    if(!(point.data.name=='package'&&point.depth==0)){//delete the first layer"package." pylibstree
+                        fullname = point.data.name + '.' + fullname;
+                    }
                 }
-
-
-                fullname = fullname;
-                console.log('pm',fullname);
                 pdfs.set(fullname,d.data.linkAll['pdfModule'][0])
             }
         });

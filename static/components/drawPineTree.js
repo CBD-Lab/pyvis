@@ -306,14 +306,10 @@ function drawPineTree(data,pineCount,kdoc) {
                 var point = now_data;
                 while (point.depth >= 0 && point.parent) {
                     point = point.parent;
-                    fullname = point.data.name + '.' + fullname;
+                    if(!(point.data.name=='package'&&point.depth==0)){//delete the first layer"package." pylibstree
+                        fullname = point.data.name + '.' + fullname;
+                    }
                 }
-
-                if (point.data.name == "nn")
-                    fullname = "torch." + fullname;
-                else
-                    fullname = fullname;
-
                 var [x, y] = d3.pointer(event);
                 var text = d3.select('#svgbox').append("tooltip")
                             .html(fullname)
@@ -335,7 +331,9 @@ function drawPineTree(data,pineCount,kdoc) {
                 var point = now_data;
                 while (point.depth >= 0 && point.parent) {
                     point = point.parent;
-                    fullname = point.data.name + '.' + fullname;
+                    if(!(point.data.name=='package'&&point.depth==0)){//delete the first layer"package." pylibstree
+                        fullname = point.data.name + '.' + fullname;
+                    }
                 }
                 kdoc.moduledir=fullname;
                 kdoc.classname='';
@@ -410,9 +408,10 @@ function drawPineTree(data,pineCount,kdoc) {
                     var point = now_data;
                     while (point.depth >= 0 && point.parent) {
                         point = point.parent;
+                        if(!(point.data.name=='package'&&point.depth==0)){//delete the first layer"package." pylibstree
                         fullname = point.data.name + '.' + fullname;
+                        }
                     }
-                    fullname = fullname;
                     pdfs.set(fullname,now_data.data.linkAll['pdfModule'][0])
                 }
         });

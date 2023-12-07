@@ -34,7 +34,7 @@ def module():
 def treevis():
     wanted = request.args.get("wanted", type=str)
     if (wanted is None) or (wanted == "undefined") or (wanted == ""):
-        wanted = 'nn'
+        wanted = 'pylibstree'
     jsonfile = "treejson/" + wanted + ".json"
     return app.send_static_file(jsonfile)
 
