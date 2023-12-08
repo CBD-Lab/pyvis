@@ -28,18 +28,45 @@ function showFile(keyworddoc)
                           });
                               // Bind the drag behavior to the element to be dragged
                               tips.call(drag);
+                              const language = 'python';
+							  const highlightedCode = Prism.highlight(res.data.code, Prism.languages[language], language);
+                              var docContent='<pre><code class="language-python">' + res.data.doc + '</code></pre>';
+                              var codeContent='<pre><code class="language-python">' + highlightedCode + '</code></pre>';
 
                               tips.append("span")
 								  .attr("class", "close")
 								  .attr("color", "red")
-								  .text("x")
+								  .style("width", "30px")
+                                  .style("height", "30px")
+                                  .style("cursor","pointer")
+                                  .style("background-color", "#FFDF76")
+                                  .style("position", "fixed")
+                                  .style("text-align", "center")
+								  .html("&#10006;")
 								  .on("click", () => {
 								      tips.remove();
 								  });
-
+                              tips.append("button")
+                                  .attr("class","change");
+                              var changeButton = tips.select(".change");
+                              changeButton.style("width","80px")
+                                          .style("height","30px")
+                                          .style("background-color","#3572A5")
+                                          .style("color","white")
+                                          .style("right", "10px")
+                                          .style("position", "fixed")
+                                          .style("cursor","pointer")
+                                          .style("z-index", "9999")
+                              changeButton.text("Toggle")
+                              changeButton.on("click", function() {
+                                  var currentContent = tips.select(".content").html();
+                                  var newContent = (currentContent === docContent) ? codeContent : docContent;
+                                  tips.select(".content").html(newContent);
+                                });
 							  tips.append("div")
 								  .attr("class", "content")
-								  .html('<pre><code class="language-python">' + res.data.code + '</code></pre>');
+								  .style("margin-top","30px")
+								  .html('<pre><code class="language-python">' + res.data.doc + '</code></pre>');
 
                 })
 }

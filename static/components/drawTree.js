@@ -639,14 +639,14 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,pdfClass,gitClass)
         pointNode=pointNode.parent;
         pointminiNode=pointminiNode.parent;
         if(pointminiNode.data.name!=pointNode.data.name)
-        {
-            break;
+            {
+                break;
+            }
         }
-        }
-            overlappingLeafNodes.push(nodes[j]);
-            break;
-          }
-        }
+                overlappingLeafNodes.push(nodes[j]);
+                break;
+              }
+            }
         }
     }
     var outRect=d3.select("#mainsvg").selectAll(".rectout")
@@ -672,13 +672,13 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,pdfClass,gitClass)
         .attr("width", "620px")
         .attr("height", "30px")
         .attr("fill", "#3572A5")
-        .attr("opacity","0.9")
+//        .attr("opacity","0.9")
     gc.append("rect")
         .attr("width", "620px")
         .attr("height", "270px")
         .attr("y","31px")
         .attr("fill", "#E4F1FF")
-        .attr("opacity","0.9")
+//        .attr("opacity","0.9")
     // Adding a Vertical Dividing Line
     gc.append("line")
         .attr("x1", "290px")
@@ -870,7 +870,7 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,pdfClass,gitClass)
             .attr("cy",d=>d.y+35)
             .attr("r",5)
             .attr("opacity",0.5)
-            .attr("fill","#FFDF76");
+            .attr("fill",function(d,i){return color[i%10];});
 
     var nodetxt=gc.selectAll(".textout")
             .data(nodesout)
@@ -878,20 +878,24 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,pdfClass,gitClass)
             .append("text")
             .attr("class","textout")
             .attr("x",d=>d.x+300)
-            .attr("y",d=>d.y+35)
+            .attr("y",function(d,i)
+                                {
+                                return(i%2==0?d.y+35:d.y+45);
+                                })
             .attr("dx",(d,i)=>d.height==0?"0em":"-1em")
             .attr("dy","0.5em")
             .attr("text-anchor",(d,i)=>d.height==0?"start":"end")
             .attr("font-size","12px")
             .text(d=>d.data.name)
+            .attr("fill",function(d,i){return color[i%10];})
             .on("mouseover",function(d,i)
             {  d3.select(this)
-                .attr("fill", "#28567C")
+//                .attr("fill", "#28567C")
                 .attr("font-weight","bold");
             })
             .on("mouseleave",function(d,i)
             {  d3.select(this)
-                .attr("fill", "black")
+//                .attr("fill",color[i%10])
                 .attr("font-weight","none");
             })
             .on("click",function(d,i)

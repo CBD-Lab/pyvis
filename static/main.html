@@ -208,6 +208,19 @@
         .van-icon-clear {
             display: none !important;
           }
+        .image-container {
+            height:10vh;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--topcolor);
+          }
+        .icon {
+            width:5vh;
+            height:5vh;
+            font-size: 20px;
+
+          }
     </style>
 </head>
 <body>
@@ -219,11 +232,16 @@
         <van-col span="4">
             <van-nav-bar class="custom-navbar" title="PyVIS" @click="home()" style="cursor: pointer;"></van-nav-bar>
         </van-col>
-        <van-col span="12">
+        <van-col span="17">
             <van-nav-bar class="custom-navbar" title="Python Module Visualization"></van-nav-bar>
         </van-col>
-        <van-col span="8">
-            <van-nav-bar class="custom-navbar" title="Flask+Vue3+D3V7"></van-nav-bar>
+        <van-col span="3">
+<!--            <van-nav-bar class="custom-navbar" title="Flask+Vue3+D3V7"></van-nav-bar>-->
+              <div class="image-container">
+                <img src="/static/pic/flask-logo.png" class="icon">
+                <img src="/static/pic/vue-logo.svg" class="icon">
+                <img src="/static/pic/d3-logo.png" class="icon" style="margin-right: 20px;">
+              </div>
         </van-col>
     </van-row>
 
@@ -233,22 +251,10 @@
             <div class="flex-placeholder">
                 <!-- Left search bar -->
                 <van-row class="searchbox">
-<!--                    <van-col offset="0" span="16">-->
-<!--                        <van-field class="searchtext" v-model="keyword" placeholder="Module Name"></van-field>-->
-<!--                    </van-col>-->
-<!--                    <van-col span="8">-->
-<!--                        <van-button class="van-haptics-feedback" @click="search()">Search</van-button>-->
-<!--                    </van-col>-->
                     <van-search v-model="keyword" show-action @search="search()" input-align="left" placeholder="Module Name" action-text=" ">
-<!--                            <view slot="action" @tap="search">search</view>-->
                         </van-search>
                 </van-row>
                 <van-row class="searchbox">
-<!--                    <van-col offset="0" span="16">-->
-<!--                        <van-field class="searchtext" v-model="keyworddoc" placeholder="Doc Name"></van-field>-->
-<!--                    </van-col>-->
-<!--                    <van-col span="8">-->
-<!--                        <van-button class="van-haptics-feedback" @click="searchdoc()">Doc</van-button>-->
                         <van-search :style="{ width: '60%' }" v-model="keyworddoc.moduledir" @search="searchdoc()" input-align="left" placeholder="Module Directory">
                             <view slot="action"></view>
                         </van-search>
