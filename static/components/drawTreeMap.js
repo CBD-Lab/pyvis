@@ -1,4 +1,4 @@
-function drawTreeMap(data, flag, pdf, mapCount,kdoc) {
+function drawTreeMap(data, flag, pdf, mapCount, allRootsArrayLength,kdoc) {
 
     var width  = (window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth) * 0.83;
     var height = (window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight) * 0.98;
@@ -31,12 +31,13 @@ function drawTreeMap(data, flag, pdf, mapCount,kdoc) {
         .append("g")
         .attr("id", function (d, i) {
             return i;
-        });
+        })
+        .attr("margin", "10px")
     var tooltip = d3.select("body").append("div")
         .attr("class", "tooltip")
         .style("opacity", 0);
 
-    var rect = gc.append("rect")
+    var rect1 = gc.append("rect")
         .attr("width", d => d.x1 - d.x0)
         .attr("height", d => d.y1 - d.y0)
         .attr("fill", function (d) {
@@ -51,7 +52,7 @@ function drawTreeMap(data, flag, pdf, mapCount,kdoc) {
             return color(d.data.name)
         })
         .attr("transform", function (d) { return "translate(" + d.x0 + "," + d.y0 + ")"; })
-        .attr("opacity", 0.7)
+        .attr("opacity", 0.6)
         .attr("stroke", "white")
         .attr("cursor", "pointer")
         .on("mouseover", function (event, d) {
@@ -67,7 +68,7 @@ function drawTreeMap(data, flag, pdf, mapCount,kdoc) {
         })
         .on("mouseout", function (event, d) {
             d3.select(this)
-                .attr("opacity", 0.7) // Transparency of the rectangle is 0.7 when the mouse is off.
+                .attr("opacity", 0.6) // Transparency of the rectangle is 0.7 when the mouse is off.
 
             // Select the appropriate text element and add a transition animation
             d3.select(this.parentNode).select(".txt")
@@ -77,22 +78,21 @@ function drawTreeMap(data, flag, pdf, mapCount,kdoc) {
                 .text(d => (d.data.name))
         })
         .on("click", (d, i) => {
-
             var fullname = i.data.name.split('.', 1)[0];
             var point = i;
-              while (point.depth >= 0 && point.parent) {
+            while (point.depth >= 0 && point.parent) {
                 point = point.parent;
                 if(!(point.data.name=='package'&&point.depth==0)){//delete the first layer"package." pylibstree
                         fullname = point.data.name + '.' + fullname;
                     }
               }
-                kdoc.moduledir=fullname;
-                kdoc.classname='';
-                var keyword = {
-                    classname: '',
-                    moduledir: fullname
-                    };
-                var keywordJson = JSON.stringify(keyword);
+            kdoc.moduledir=fullname;
+            kdoc.classname='';
+            var keyword = {
+                classname: '',
+                moduledir: fullname
+                };
+            var keywordJson = JSON.stringify(keyword);
             fetch('http://127.0.0.1:5006/codeDoc?wanted=' + keywordJson)
                 .then(response => response.json())
                 .then(data => {
@@ -118,89 +118,102 @@ function drawTreeMap(data, flag, pdf, mapCount,kdoc) {
                     console.error('Error executing Python script:', error);
                 });
         });
-    var pdfFiles = [];
-    // Get the position of the upper left corner of the first rectangular block
-    var firstRect = rect.filter((d, i) => i === 0);
-    var rectLeft = firstRect.attr("x");
-    var rectTop = firstRect.attr("y");
 
-    firstRect.on("mouseover", function (event, d) {
-        tooltip.transition()
-            .duration(300)
-            .style("opacity", .9);
-        tooltip.html("PDF Files: " + pdfFiles.join(", "))
-            .style("left", rectLeft + 230 + "px")
-            .style("top", rectTop + 100 + "px");
-        d3.select(this)
-            .attr("opacity", 1.0) // Rectangle transparency is 1 on mouse hover
+    var currentLayer = 0;
+    // 遍历树状图，设置层级
+    function setLayer(node) {
+        // 如果是根节点，增加层级并赋值给节点的 layer 属性
+        if (node.depth === 1) {
+            currentLayer++;
+            node.data.layer = currentLayer;
+        }
+        node.data.layer = currentLayer;
+        // 将当前层级传递给子节点
+        if (node.children) {
+            node.children.forEach(child => {
+                setLayer(child);
+            });
+        }
+    }
+    // 设置树状图节点的层级
+    setLayer(treedata);
 
-        // Select the appropriate text element and add a transition animation
-        d3.select(this.parentNode).select(".txt").raise()
-            .transition()
-            .duration(300) // transition time
-            .attr("font-size", "16") // Changed font size
-            .text(d => (d.data.name + "-" + d.data.value));
-    })
-    .on("mouseout", function (d) {
-        tooltip.transition()
-            .duration(300)
-            .style("opacity", 0);
-        d3.select(this)
-            .attr("opacity", 0.7) // Transparency of the rectangle is 0.7 when the mouse is off.
-
-        // Select the appropriate text element and add a transition animation
-        d3.select(this.parentNode).select(".txt")
-            .transition()
-            .duration(300) // transition time
-            .attr("font-size", "12") // Restore original font size
-            .text(d => (d.data.name))
-    });
-
-rect.each(function(d) {
-    if(d.data.linkAll && typeof( d.data.linkAll['pdfClass']) !== "undefined" && Object.keys(d.data.linkAll['pdfClass']).length > 0)
-            {
-                for (key in d.data.linkAll['pdfClass']){
-                    pdfs.set(key,d.data.linkAll['pdfClass'][key]);
-                }
+    var layer = 1;
+    rect1.each(function(d) {
+        console.log(d.data.name,d.data.layer)
+        d.flag = 0;
+        if(d.depth > 1){
+            d.flag = 2;
+            d = d.parent;
+            if (d.depth == 1 ){
+                d.flag = layer;
             }
-            if(d.data.linkAll && typeof( d.data.linkAll['gitClass']) !== "undefined" && Object.keys(d.data.linkAll['gitClass']).length > 0)
-            {
-                for (key in d.data.linkAll['gitClass']){
-                    gits.set(key,d.data.linkAll['gitClass'][key]);
-                }
-            }
-            if (d.data.linkAll && typeof(d.data.linkAll["pdfModule"]) !== "undefined" && d.data.linkAll["pdfModule"].length > 0)
-            {
-                var fullname = d.data.name.split('.', 1)[0];
-                var point = d;
-                while (point.depth >= 0 && point.parent) {
-                    point = point.parent;
-                    if(!(point.data.name=='package'&&point.depth==0)){//delete the first layer"package." pylibstree
-                        fullname = point.data.name + '.' + fullname;
+            layer = layer + 1;
+        }
+        else{
+            d.flag = layer;
+        }
+        if(d.data.linkAll && typeof( d.data.linkAll['pdfClass']) !== "undefined" && Object.keys(d.data.linkAll['pdfClass']).length > 0)
+                {
+                    for (key in d.data.linkAll['pdfClass']){
+                        pdfs.set(key,d.data.linkAll['pdfClass'][key]);
                     }
                 }
-                pdfs.set(fullname,d.data.linkAll['pdfModule'][0])
-            }
-});
+                if(d.data.linkAll && typeof( d.data.linkAll['gitClass']) !== "undefined" && Object.keys(d.data.linkAll['gitClass']).length > 0)
+                {
+                    for (key in d.data.linkAll['gitClass']){
+                        gits.set(key,d.data.linkAll['gitClass'][key]);
+                    }
+                }
+                if (d.data.linkAll && typeof(d.data.linkAll["pdfModule"]) !== "undefined" && d.data.linkAll["pdfModule"].length > 0)
+                {
+                    var fullname = d.data.name.split('.', 1)[0];
+                    var point = d;
+                    while (point.depth >= 0 && point.parent) {
+                        point = point.parent;
+                         if(!(point.data.name=='package'&&point.depth==0)){//delete the first layer"package." pylibstree
+                        fullname = point.data.name + '.' + fullname;
+                        }
+                    }
+                    pdfs.set(fullname,d.data.linkAll['pdfModule'][0])
+                }
+    });
 
-    d3.select("input[id=length]").on("change", function () {  // Modify width and height to scale a rectangular block.
-		var newScale = +this.value;  // Get the value of the input box and convert it to a number
+    d3.select("input[id=length]").on("change", function () { // Modify width and height to scale a rectangular block.
+		var newScale = +this.value; // Get the value of the input box and convert it to a number
         var width1 = width * newScale * 0.01;
         var height1 = height * newScale * 0.01;
         svg.attr("width", width1)
             .attr("height", height1);
-
         // Update the width and height of the rectangular block
-        rect.attr("transform", function (d) { return "translate(" + d.x0 * newScale * 0.01 + "," + d.y0 * newScale * 0.01 + ")"; })
-        rect.attr("width", d => (d.x1 - d.x0) * newScale * 0.01)
+
+        rect1.attr("transform", function (d) { return "translate(" + d.x0 * newScale * 0.01 + "," + d.y0 * newScale * 0.01 + ")"; })
+        rect1.attr("width", d => (d.x1 - d.x0) * newScale * 0.01)
             .attr("height", d => (d.y1 - d.y0) * newScale * 0.01)
         text.attr("x", d => (d.x1 - d.x0) / 2 * newScale * 0.01)
             .attr("y", d => (d.y1 - d.y0) / 2 * newScale * 0.01)
             .attr("transform", function (d) { return "translate(" + d.x0 * newScale * 0.01 + "," + d.y0 * newScale * 0.01 + ")"; })
     });
 
+    d3.select("input[id=layer]").on("change", function () {
+        var newScale = +this.value;
+        rect1.each(function (d) {
+            if (d.data.layer == newScale) {
+                d3.select(this)
+                .transition()
+                .duration(300)
+                .attr("opacity", 1.0);
+            }
+            else{
+                d3.select(this)
+                .transition()
+                .duration(300)
+                .attr("opacity", 0.1);
+            }
+        });
+    });
+
     d3.select("input[id=showPdf4]").on("change", function () {
-        console.log('showpdf',gits);
         if (pdfchange == 0)
 			pdfchange = 1;
 		else
@@ -403,10 +416,30 @@ rect.each(function(d) {
         .attr("fill", "white")
         .text(d => (d.data.name));
 
+    var allRoots = new Set();
+    // 遍历树状图，找到所有根节点
+    function findAllRoots(node) {
+        if (node.depth === 1) {
+            // 当前节点是根节点
+            allRoots.add(node.data.name);
+        } else if (node.parent) {
+            // 继续遍历父节点
+            findAllRoots(node.parent);
+        }
+    }
+    // 遍历树状图，找到所有根节点
+    rect1.each(findAllRoots);
+    // 将 Set 转为数组，方便后续使用
+    var allRootsArray = Array.from(allRoots);
+    var allRootsLength = allRootsArray.length;
+    allRootsArrayLength = allRootsLength;
+    // 打印所有根节点
+    console.log("所有根节点:", allRootsArray);
+
 }
 
 
-window.onDrawTreeMapReady = function (data, flag, pdf, mapCount,kdoc) {
+window.onDrawTreeMapReady = function (data, flag, pdf, mapCount, allRootsArrayLength,kdoc) {
     // Execution of drawing logic
-    drawTreeMap(data, flag, pdf, mapCount,kdoc);
+    drawTreeMap(data, flag, pdf, mapCount, allRootsArrayLength,kdoc);
 }
