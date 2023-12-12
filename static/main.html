@@ -384,12 +384,23 @@
                     <van-row>
                         <input style="position:relative;top:3px;margin-left: 5px;" type="range" id="length" min="100" max="300" value="100">
                     </van-row>
-                    <van-row style="margin-top:10px;margin-left: 5px;">Layer</van-row>
+                    <van-row style="margin-top:10px;margin-left: 5px;">Color </van-row>
                     <van-row>
-                        <input style="position:relative;top:3px;margin-left: 5px;" type="range" id="layer" min="0" max="20" step="1" value="0" onkeydown="handleKeyDown(event)" onkeypress="handleKeyPress(event)">
+                        <input style="position:relative;top:3px;margin-left: 5px;" type="range" id="color" min="0" max="30" step="1" value="0" onkeydown="handleKeyDown(event)" onkeypress="handleKeyPress(event)" oninput="updateColorValue(this.value)">
+                        <span id="colorValue" style="margin-left: 10px;margin-top: 3px">0</span>
+                    </van-row>
+                    <van-row style="margin-top:10px;margin-left: 5px;">Depth</van-row>
+                    <van-row>
+                        <input style="position:relative;top:3px;margin-left: 5px;" type="range" id="depth" min="0" max="10" step="1" value="0" onkeydown="handleKeyDown(event)" onkeypress="handleKeyPress(event)" oninput="updateDepthValue(this.value)">
+                        <span id="depthValue" style="margin-left: 10px;margin-top: 3px">0</span>
                     </van-row>
                     <van-row style="margin-top:10px">
-                        <van-checkbox v-model="checked" style="margin-left: 5px;" class="van-haptics-feedback" @click="changemap()" type="primary">Exchange</van-checkbox>
+                        <van-col span="12">
+                            <van-checkbox v-model="checked" style="margin-left: 5px;" class="van-haptics-feedback" @click="changemap()" type="primary">Exchange</van-checkbox>
+                        </van-col>
+                        <van-col span="12">
+                            <van-checkbox v-model="checked2" style="margin-left: 5px;" class="van-haptics-feedback" @click="changeraw()" type="primary">Raw</van-checkbox>
+                        </van-col>
                     </van-row>
                     <van-row style="margin-top:10px;">
                         <van-col span="12">
@@ -472,15 +483,18 @@
 </div>
 
 <script>
-    var currentValue = 0;
-
+    function updateColorValue(value) {
+            document.getElementById('colorValue').innerText = value;
+    }
+    function updateDepthValue(value) {
+            document.getElementById('depthValue').innerText = value;
+    }
     function handleKeyDown(event) {
         // 获取当前值
         currentValue = parseInt(event.target.value);
     }
-
     function handleKeyPress(event) {
-        var inputElement = document.getElementById('layer');
+        var inputElement = document.getElementById('color');
 
         // 根据按下的键更新值
         switch (event.key) {
@@ -539,12 +553,15 @@
                 radialTreeCount:{
                     node:0
                 },
-                allRootsArrayLength:'',
+                allRootsArrayLength: {
+                    length: 0,
+                },
+                raw:true,
             };
         },
         methods: {
             home() {
-                this.keyword = "";
+                this.keyword = "numpy";
                 this.netvis();
             },
             clearPage() {
@@ -680,8 +697,7 @@
                 var that = this;
                 this.viewSelection="treemap";
                 axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
-                    onDrawTreeMapReady(res.data,this.flag,this.pdf,this.mapcount,this.allRootsArrayLength,this.keyworddoc);
-
+                    onDrawTreeMapReady(res.data,this.flag,this.pdf,this.mapcount,this.allRootsArrayLength,this.keyworddoc,this.raw);
                 });
             },
 
@@ -698,6 +714,10 @@
             },
             changemap() {
                 this.flag = !this.flag;
+                this.treemapvis();
+            },
+            changeraw() {
+                this.raw= !this.raw;
                 this.treemapvis();
             },
             viewpdf() {
