@@ -264,12 +264,7 @@ function drawBubble(data,bubbleCount,kdoc) {
             }
         })
         .attr('opacity',d=>{
-            if (d.depth == maxdepth){
-                return 0.7;
-            }
-            else{
-                return 0;
-            }
+            return 0.7;
         });
 
     var colorrec = svg.selectAll('rect')
@@ -280,7 +275,7 @@ function drawBubble(data,bubbleCount,kdoc) {
         .attr("y", (d, i) => (i * 16 + height * 0.2))
         .attr("width", 14)
         .attr("height", 14)
-        .attr("fill", (d, i) => arraycolor[i])
+        .attr("fill", (d, i) => arraycolor[i%10])
         .attr('opacity',0.9)
         .style("cursor", "pointer")
         .on('click',function(d,i){
@@ -389,15 +384,18 @@ function drawBubble(data,bubbleCount,kdoc) {
             console.error('Error executing Python script:', error);
         });
     }
+
      bubbleCount.node = nodes.length;
      d3.select("input[id=showPdf1]").on("change", function () {
-        console.log('sp',gits);
-        if (pdfchange == 0)
+//        console.log('sp',gits);
+        if (pdfchange == 0){
 			pdfchange = 1;
-		else
-			pdfchange = 0;
-	    if(pdfchange==1){
-            var pdfinfo = d3.select('#svgbox').append("div")
+			if (gitchange==1){
+                d3.select('#gitshow1').remove();
+                d3.select("input#showGit1").property("checked", false);
+                gitchange=0;
+			}
+			var pdfinfo = d3.select('#svgbox').append("div")
                         .attr("class", "tooltip")
                         .attr('id','pdfshow1')
                         .style("left", (width * 0.2) + "px")
@@ -450,16 +448,20 @@ function drawBubble(data,bubbleCount,kdoc) {
                 });
             }
         }
-        else{
+		else{
+			pdfchange = 0;
             d3.select('#pdfshow1').remove();
         }
 	});
 	d3.select("input[id=showGit1]").on("change", function () {
-        if (gitchange == 0)
-			gitchange = 1;
-		else
-			gitchange = 0;
-	    if(gitchange==1){
+        if (gitchange == 0){
+            gitchange = 1;
+            if (pdfchange==1){
+                d3.select('#pdfshow1').remove();
+                d3.select("input#showPdf1").property("checked", false);
+                pdfchange=0;
+            }
+
             var gitinfo = d3.select('#svgbox').append("div")
                         .attr("class", "tooltip")
                         .attr('id','gitshow1')
@@ -498,7 +500,7 @@ function drawBubble(data,bubbleCount,kdoc) {
             }
             else{
                 gits.forEach((value, key) => {
-                    console.log('vk', value, key);
+//                    console.log('vk', value, key);
                     gitinfo.append('text')
                         .attr("stroke-family", "FangSong")
                         .attr("font-size", "10px")
@@ -511,7 +513,8 @@ function drawBubble(data,bubbleCount,kdoc) {
                 });
             }
         }
-        else{
+		else{
+		    gitchange = 0;
             d3.select('#gitshow1').remove();
         }
 	});

@@ -256,14 +256,16 @@ function drawCloud(data,search,cloudcount,kdoc){
 
         }
 
-    d3.select("input[id=showPdf2]").on("change", function () {
-        console.log('sp',gits);
-        if (pdfchange == 0)
+         d3.select("input[id=showPdf2]").on("change", function () {
+//        console.log('sp',gits);
+        if (pdfchange == 0){
 			pdfchange = 1;
-		else
-			pdfchange = 0;
-	    if(pdfchange==1){
-            var pdfinfo = d3.select('#svgbox').append("div")
+			if (gitchange==1){
+                d3.select('#gitshow2').remove();
+                d3.select("input#showGit2").property("checked", false);
+                gitchange=0;
+			}
+			var pdfinfo = d3.select('#svgbox').append("div")
                         .attr("class", "tooltip")
                         .attr('id','pdfshow2')
                         .style("left", (width * 0.2) + "px")
@@ -272,8 +274,9 @@ function drawCloud(data,search,cloudcount,kdoc){
                         .style("border-radius", "5px")
                         .style("padding", "5px")
                         .style("box-shadow", "0px 2px 4px rgba(0, 0, 0, 0.1)")
-                        .style('list-style','none');
-
+                        .style('list-style','none')
+                        .style("cursor", "pointer");
+                                               
             pdfinfo.append("foreignObject")
                     .attr("height", "12px")
                     .append("xhtml:div")
@@ -293,10 +296,12 @@ function drawCloud(data,search,cloudcount,kdoc){
                       d3.select("input#showPdf2").property("checked", false);
                       pdfchange = 0;
                     });
+
             if (pdfs.size == 0){
                 pdfinfo.append('text')
                     .attr("stroke-family", "FangSong")
                     .attr("font-size", "10px")
+                    .attr('opacity',0.7)
                     .text("no PDF!");
             }
             else{
@@ -314,17 +319,20 @@ function drawCloud(data,search,cloudcount,kdoc){
                 });
             }
         }
-        else{
+		else{
+			pdfchange = 0;
             d3.select('#pdfshow2').remove();
         }
-    });
-    d3.select("input[id=showGit2]").on("change", function () {
-        console.log('sp',gits);
-        if (gitchange == 0)
-			gitchange = 1;
-		else
-			gitchange = 0;
-	    if(gitchange==1){
+	});
+	d3.select("input[id=showGit2]").on("change", function () {
+        if (gitchange == 0){
+            gitchange = 1;
+            if (pdfchange==1){
+                d3.select('#pdfshow2').remove();
+                d3.select("input#showPdf2").property("checked", false);
+                pdfchange=0;
+            }
+
             var gitinfo = d3.select('#svgbox').append("div")
                         .attr("class", "tooltip")
                         .attr('id','gitshow2')
@@ -362,7 +370,7 @@ function drawCloud(data,search,cloudcount,kdoc){
             }
             else{
                 gits.forEach((value, key) => {
-                    console.log('vk', value, key);
+//                    console.log('vk', value, key);
                     gitinfo.append('text')
                         .attr("stroke-family", "FangSong")
                         .attr("font-size", "10px")
@@ -375,7 +383,8 @@ function drawCloud(data,search,cloudcount,kdoc){
                 });
             }
         }
-        else{
+		else{
+		    gitchange = 0;
             d3.select('#gitshow2').remove();
         }
 	});
