@@ -276,7 +276,7 @@ function drawCloud(data,search,cloudcount,kdoc){
                         .style("box-shadow", "0px 2px 4px rgba(0, 0, 0, 0.1)")
                         .style('list-style','none')
                         .style("cursor", "pointer");
-                                               
+
             pdfinfo.append("foreignObject")
                     .attr("height", "12px")
                     .append("xhtml:div")

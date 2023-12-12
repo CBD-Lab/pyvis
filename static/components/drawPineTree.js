@@ -83,6 +83,16 @@ function drawPineTree(data,pineCount,kdoc) {
 		d3.selectAll("text")
 			.attr("fill", "black");
 	});
+	d3.select("input[id=ratescale]").on("change", function () {
+		rate= this.value/100;
+		d3.selectAll("line").remove();
+		d3.selectAll("text").remove();
+		d3.selectAll("path").remove();
+		id = 0;
+		show(data, x0, y0, length, rate, -Math.PI / 2, data.children.length);
+		d3.selectAll("text")
+			.attr("fill", "black");
+	});
 	d3.select("input[id=showLabel]").on("change", function () {
 		d3.selectAll("text")
 			.attr("opacity", d => labelchange == 0 ? 1 : 0);
@@ -92,13 +102,15 @@ function drawPineTree(data,pineCount,kdoc) {
 			labelchange = 0;
 	});
 	d3.select("input[id=showPdf3]").on("change", function () {
-        console.log('sp',gits);
-        if (pdfchange == 0)
+//        console.log('sp',gits);
+        if (pdfchange == 0){
 			pdfchange = 1;
-		else
-			pdfchange = 0;
-	    if(pdfchange==1){
-            var pdfinfo = d3.select('#svgbox').append("div")
+			if (gitchange==1){
+                d3.select('#gitshow3').remove();
+                d3.select("input#showGit3").property("checked", false);
+                gitchange=0;
+			}
+			var pdfinfo = d3.select('#svgbox').append("div")
                         .attr("class", "tooltip")
                         .attr('id','pdfshow3')
                         .style("left", (width * 0.2) + "px")
@@ -109,7 +121,6 @@ function drawPineTree(data,pineCount,kdoc) {
                         .style("box-shadow", "0px 2px 4px rgba(0, 0, 0, 0.1)")
                         .style('list-style','none')
                         .style("cursor", "pointer");
-
             pdfinfo.append("foreignObject")
                     .attr("height", "12px")
                     .append("xhtml:div")
@@ -129,10 +140,12 @@ function drawPineTree(data,pineCount,kdoc) {
                       d3.select("input#showPdf3").property("checked", false);
                       pdfchange = 0;
                     });
+
             if (pdfs.size == 0){
                 pdfinfo.append('text')
                     .attr("stroke-family", "FangSong")
                     .attr("font-size", "10px")
+                    .attr('opacity',0.7)
                     .text("no PDF!");
             }
             else{
@@ -150,17 +163,20 @@ function drawPineTree(data,pineCount,kdoc) {
                 });
             }
         }
-        else{
+		else{
+			pdfchange = 0;
             d3.select('#pdfshow3').remove();
         }
-    });
-    d3.select("input[id=showGit3]").on("change", function () {
-        console.log('sp',gits);
-        if (gitchange == 0)
-			gitchange = 1;
-		else
-			gitchange = 0;
-	    if(gitchange==1){
+	});
+	d3.select("input[id=showGit3]").on("change", function () {
+        if (gitchange == 0){
+            gitchange = 1;
+            if (pdfchange==1){
+                d3.select('#pdfshow3').remove();
+                d3.select("input#showPdf3").property("checked", false);
+                pdfchange=0;
+            }
+
             var gitinfo = d3.select('#svgbox').append("div")
                         .attr("class", "tooltip")
                         .attr('id','gitshow3')
@@ -172,7 +188,6 @@ function drawPineTree(data,pineCount,kdoc) {
                         .style("box-shadow", "0px 2px 4px rgba(0, 0, 0, 0.1)")
                         .style('list-style','none')
                         .style("cursor", "pointer");
-
             gitinfo.append("foreignObject")
                     .attr("height", "12px")
                     .append("xhtml:div")
@@ -197,11 +212,10 @@ function drawPineTree(data,pineCount,kdoc) {
                     .attr("stroke-family", "FangSong")
                     .attr("font-size", "10px")
                     .text("no GitHub!");
-
             }
             else{
                 gits.forEach((value, key) => {
-                    console.log('vk', value, key);
+//                    console.log('vk', value, key);
                     gitinfo.append('text')
                         .attr("stroke-family", "FangSong")
                         .attr("font-size", "10px")
@@ -214,7 +228,8 @@ function drawPineTree(data,pineCount,kdoc) {
                 });
             }
         }
-        else{
+		else{
+		    gitchange = 0;
             d3.select('#gitshow3').remove();
         }
 	});
@@ -435,13 +450,13 @@ function drawPineTree(data,pineCount,kdoc) {
 				if (data.height > 0)  // no children
 				{
 					var subcount = data.children.length;
-					rate = 0.6;
+
 					show(data, x2, y2, length * rate * (data.height / 2 + Math.random() * 0.3 + 0.3), rate, a, subcount);
 					data = data.parent;
 				}
 				else {  // has children
-					rate = 0.3;
-					show(data, x2, y2, length * rate, rate, a, 0);
+
+					show(data, x2, y2, length * rate/2, rate/2, a, 0);
 					data = data.parent;
 				}
 			}
