@@ -57,9 +57,15 @@ function showFile(keyworddoc)
                                           .style("position", "fixed")
                                           .style("cursor","pointer")
                                           .style("z-index", "9999")
-                              changeButton.text("Toggle")
+                                changeButton.text("Code")
                               changeButton.on("click", function() {
                                   var currentContent = tips.select(".content").html();
+                                  if(currentContent === docContent)
+                                  {
+                                    changeButton.text("Doc")
+                                  }
+                                  else
+                                    changeButton.text("Code")
                                   var newContent = (currentContent === docContent) ? codeContent : docContent;
                                   tips.select(".content").html(newContent);
                                 });

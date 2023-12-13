@@ -121,8 +121,13 @@
         .flex-placeholder {
           display:flex;
           flex-direction: column;
+          justify-content: space-between;
           height:90vh;
         }
+        .van-dropdown-item
+        {
+            position:absolute;
+            }
         .searchbox{
             border:1px solid var(--topcolor);
         }
@@ -137,6 +142,10 @@
             color:white;
             font-size:12px;
         }
+        .optionBox
+        {
+
+            }
         .filesearchbox
         {
             margin-top:auto;
@@ -250,10 +259,21 @@
         <van-col offset="0" span="4" class="van-hairline--surround">
             <div class="flex-placeholder">
                 <!-- Left search bar -->
-                <van-row class="searchbox">
-                    <van-search v-model="keyword" show-action @search="search()" input-align="left" placeholder="Module Name" action-text=" ">
-                        </van-search>
-                </van-row>
+                <van-row>
+                <van-col class="searchbox" style="width:80%">
+                        <van-field
+                            placeholder="Input Module"
+                            v-model="keyword"
+                            left-icon="search"
+                            @keyup.enter="search()"
+                            @click="changeOptionShow()"
+                            />
+                </van-col>
+                <van-col class="searchbox" style="width:20%">
+                    <van-dropdown-menu>
+                    <van-dropdown-item v-model="keyword" :options="searchOptions" @change="search()" /></van-dropdown-menu>
+                </van-col>
+                    </van-row>
                 <van-row class="searchbox">
                         <van-search :style="{ width: '60%' }" v-model="keyworddoc.moduledir" @search="searchdoc()" input-align="left" placeholder="Module Directory">
                             <view slot="action"></view>
@@ -561,6 +581,9 @@
                     length: 0,
                 },
                 raw:true,
+                allRootsArrayLength:'',
+                showOption:false,
+                searchOptions:[],
             };
         },
         methods: {
@@ -624,18 +647,36 @@
             {
                 showFile(this.keyworddoc);
             },
+            changeOptionShow()
+            {
+                this.showOption=!this.showOption;
+                console.log(this.showOption);
+                },
+            onOptionChange()
+            {
+
+            },
             netvis() {
                 var that = this;
                 this.clearPage();
                 this.viewSelection="net";
                 axios.get("http://127.0.0.1:5006/module?wanted=" + this.keyword).then(res=>{
                     onDrawNetReady(res.data, this.keyword,this.search,this.netcount,this.keyworddoc,0);
+                    if(this.keyword=='')
+                    {
+                        this.searchOptions = res.data.nodes.map((node, index) => {
+                              return {
+                                text: node.name,
+                                value: node.name
+                              };
+                            });
+                        this.showOption=false;
+                        console.log(this.searchOptions);
+                    }
                 })
                 .catch(error=>
                 {
                  console.error("error fetching",error);
-<!--                 this.singleModule=this.keyword;-->
-<!--                 this.searchSingle();-->
                 });
             },
             matrixvis() {
@@ -708,7 +749,6 @@
             selectit(){
                 var obj;
                 obj=document.getElementsByName("radio");
-                console.log('12',obj);
                 for(i=0;i<obj.length;i++){
                     if (obj[i].checked){
                         onNetfunction(obj[i].value);
@@ -776,8 +816,6 @@
 
                 if (window.confirm(message)) {
                     this.isLoading = true;
-                    console.log('confirm');
-                    console.log("selected Path: " + this.localValue);
                     fetch("/userPath").then(res => {
                         if (res.ok) {
                             this.isLoading = false;
@@ -786,7 +824,6 @@
                         throw new Error("Network response was not ok.");
                     })
                     .then(data => {
-                        console.log("Response from server:", data);
                         this.netvis();
                     })
                     .catch(error => {
@@ -819,7 +856,6 @@
             axios.get("http://127.0.0.1:5006/localPath")
                 .then((response) => {
                     this.localValue = response.data.result[0];
-                    console.log(this.localValue);
                 })
                 .catch((error) => {
                     console.error("An error occurred while fetching localValue:", error);
