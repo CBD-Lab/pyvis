@@ -18,7 +18,7 @@ function drawTreeMap(data, flag, pdf, mapCount, allRootsArrayLength,kdoc,raw) {
 
     var hidata = d3.hierarchy(data)
         .sum(function (d) {
-            if (raw) {
+            if (!raw) {
                 d = Math.sqrt(Math.sqrt(d.value))
             }
             else
@@ -185,7 +185,7 @@ function drawTreeMap(data, flag, pdf, mapCount, allRootsArrayLength,kdoc,raw) {
                 }
     });
 
-    d3.select("input[id=length]").on("change", function () { // Modify width and height to scale a rectangular block.
+    d3.select("input[id=zoom]").on("change", function () { // Modify width and height to scale a rectangular block.
 		var newScale = +this.value; // Get the value of the input box and convert it to a number
         var width1 = width * newScale * 0.01;
         var height1 = height * newScale * 0.01;
@@ -220,7 +220,7 @@ function drawTreeMap(data, flag, pdf, mapCount, allRootsArrayLength,kdoc,raw) {
         this.max = allRootsArrayLength.length;
     });
     
-    d3.select("input[id=depth]").on("change", function () {
+    d3.select("input[id=layer]").on("change", function () {
         var newScale = +this.value;
         rect1.each(function (d) {
             if (d.depth == newScale) {
