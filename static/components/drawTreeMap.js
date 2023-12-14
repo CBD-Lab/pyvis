@@ -1,4 +1,4 @@
-function drawTreeMap(data, flag, pdf, mapCount, allRootsArrayLength,kdoc,raw) {
+function drawTreeMap(data, flag, pdf, mapCount, allRootsArrayLength,kdoc,raw,showFile) {
 
     var width  = (window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth) * 0.83;
     var height = (window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight) * 0.98;
@@ -96,35 +96,7 @@ function drawTreeMap(data, flag, pdf, mapCount, allRootsArrayLength,kdoc,raw) {
               }
             kdoc.moduledir=fullname;
             kdoc.classname='';
-            var keyword = {
-                classname: '',
-                moduledir: fullname
-                };
-            var keywordJson = JSON.stringify(keyword);
-            fetch('http://127.0.0.1:5006/codeDoc?wanted=' + keywordJson)
-                .then(response => response.json())
-                .then(data => {
-                    const language = 'python';
-                    const highlightedCode = Prism.highlight(data.code, Prism.languages[language], language);
-                    var tips = d3.select("body")
-                        .append("div")
-                        .attr("class", "popup");
-
-                    tips.append("span")
-                        .attr("class", "close")
-                        .attr("color", "red")
-                        .text("x")
-                        .on("click", () => {
-                            tips.remove();
-                        });
-
-                    tips.append("div")
-                        .attr("class", "content")
-                        .html('<pre><code class="language-python">' + highlightedCode + '</code></pre>');
-                })
-                .catch(error => {
-                    console.error('Error executing Python script:', error);
-                });
+            showFile(kdoc)
         });
         
     var currentColor = 0;
@@ -463,8 +435,7 @@ function drawTreeMap(data, flag, pdf, mapCount, allRootsArrayLength,kdoc,raw) {
 }
 
 
-window.onDrawTreeMapReady = function (data, flag, pdf, mapCount, allRootsArrayLength,kdoc,raw) {
+window.onDrawTreeMapReady = function (data, flag, pdf, mapCount, allRootsArrayLength,kdoc,raw,showFile) {
     // Execution of drawing logic
-    drawTreeMap(data, flag, pdf, mapCount, allRootsArrayLength,kdoc,raw);
-    console.log(mapCount.node);
+    drawTreeMap(data, flag, pdf, mapCount, allRootsArrayLength,kdoc,raw,showFile);
 }

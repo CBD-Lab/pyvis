@@ -1,4 +1,4 @@
-function drawBubble(data,bubbleCount,kdoc) {
+function drawBubble(data,bubbleCount,kdoc,showFile) {
       let tooltip = d3.select('body')
         .append('div')
         .attr("id", "tip")
@@ -75,59 +75,9 @@ function drawBubble(data,bubbleCount,kdoc) {
                         fullname = point.data.name + '.' + fullname;
                     }
           }
-                kdoc.moduledir=fullname;
-                kdoc.classname='';
-                var keyword = {
-                    classname: '',
-                    moduledir: fullname
-                    };
-                var keywordJson = JSON.stringify(keyword);
-          fetch('http://127.0.0.1:5006/codeDoc?wanted=' + keywordJson)
-            .then(response => response.json())
-            .then(data => {
-              const language = 'python';
-              const highlightedCode = Prism.highlight(data.code, Prism.languages[language], language);
-              var tips = d3.select("body")
-                           .append("div")
-                           .attr("class", "popup");
-
-              var drag=d3.drag()
-                         .on("start", function (event) {
-                            // Record the position at the start of the drag
-                            var startX = event.x;
-                            var startY = event.y;
-                            // Get the position of the current cue box
-                            var currentLeft = parseFloat(tips.style("left"));
-                            var currentTop = parseFloat(tips.style("top"));
-                            // Calculate the mouse offset relative to the upper-left corner of the cue box
-                            offsetX = startX - currentLeft;
-                            offsetY = startY - currentTop;
-                         })
-                         .on("drag", function (event) {
-                            // Update cue box position with mouse movement
-                            tips.style("left", (event.x - offsetX) + "px")
-                              .style("top", (event.y - offsetY) + "px");
-                         });
-                        // Bind the drag behavior to the element to be dragged
-              tips.call(drag);
-
-              tips.append("span")
-                  .attr("class", "close")
-                  .attr("color", "red")
-                  .text("x")
-                  .on("click", () => {
-                         tips.remove();
-                });
-
-              tips.append("div")
-                .attr("class", "content")
-                .html('<pre><code class="language-python">' + highlightedCode + '</code></pre>');
-
-              console.log(data);
-            })
-            .catch(error => {
-              console.error('Error executing Python script:', error);
-            });
+          kdoc.moduledir=fullname;
+          kdoc.classname='';
+          showFile(kdoc);
         })
         .on("contextmenu", (d,i)=> {
             d.preventDefault();
@@ -519,8 +469,7 @@ function drawBubble(data,bubbleCount,kdoc) {
         }
 	});
 }
-
-window.onDrawBubbleReady = function(data,bubbleCount,kdoc) {
+window.onDrawBubbleReady = function(data,bubbleCount,kdoc,showFile) {
   // Execute drawing logic
-  drawBubble(data,bubbleCount,kdoc);
+  drawBubble(data,bubbleCount,kdoc,showFile);
 };

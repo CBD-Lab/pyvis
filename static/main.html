@@ -661,7 +661,7 @@
                 this.clearPage();
                 this.viewSelection="net";
                 axios.get("http://127.0.0.1:5006/module?wanted=" + this.keyword).then(res=>{
-                    onDrawNetReady(res.data, this.keyword,this.search,this.netcount,this.keyworddoc,0);
+                    onDrawNetReady(res.data, this.keyword,this.search,this.netcount,this.keyworddoc,0,showFile);
                     if(this.keyword=='')
                     {
                         this.searchOptions = res.data.nodes.map((node, index) => {
@@ -684,7 +684,7 @@
                 this.clearPage();
                 this.viewSelection="matrix";
                 axios.get("http://127.0.0.1:5006/module?wanted=" + this.keyword).then(res=>{
-                    onDrawMatrixReady(res.data,this.keyworddoc);
+                    onDrawMatrixReady(res.data,this.keyworddoc,showFile);
                 });
             },
             classvis() {
@@ -694,7 +694,7 @@
                 if (this.keyword == "" || this.keyword == "undefined" || this.keyword == "None")
                     this.keyword = "flask"
                 axios.get("http://127.0.0.1:5006/module?wanted=" + this.keyword + "class").then(res=>{
-                    onDrawNetReady(res.data, this.keyword,this.search,this.netcount,this.keyworddoc,1);
+                    onDrawNetReady(res.data, this.keyword,this.search,this.netcount,this.keyworddoc,1,showFile);
                 });
             },
             treevis() {
@@ -702,7 +702,7 @@
                 this.clearPage();
                 this.viewSelection="tree";
                 axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
-                    onDrawTreeReady(res.data,this.treecount,this.keyworddoc);
+                    onDrawTreeReady(res.data,this.treecount,this.keyworddoc,showFile);
                 });
             },
             pinetreevis() {
@@ -710,7 +710,7 @@
                 var that = this;
                 this.viewSelection="pinetree";
                 axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
-                    onDrawPineTreeReady(res.data,this.pinecount,this.keyworddoc);
+                    onDrawPineTreeReady(res.data,this.pinecount,this.keyworddoc,showFile);
                 });
             },
             radialtreevis() {
@@ -718,7 +718,7 @@
                 var that = this;
                 this.viewSelection="radialtree";
                 axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
-                    onDrawRadialTreeReady(res.data, this.radialTreeCount,this.keyworddoc);
+                    onDrawRadialTreeReady(res.data, this.radialTreeCount,this.keyworddoc,showFile);
                 });
             },
             bubblevis() {
@@ -726,7 +726,7 @@
                 this.clearPage();
                 this.viewSelection="bubble";
                 axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
-                    onDrawBubbleReady(res.data,this.bubblecount,this.keyworddoc);
+                    onDrawBubbleReady(res.data,this.bubblecount,this.keyworddoc,showFile);
                 });
             },
             cloudvis() {
@@ -734,7 +734,7 @@
                 this.clearPage();
                 this.viewSelection="cloud";
                 axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
-                    onDrawCloudReady(res.data,this.search,this.cloudcount,this.keyworddoc);
+                    onDrawCloudReady(res.data,this.search,this.cloudcount,this.keyworddoc,showFile);
                 });
             },
             treemapvis() {
@@ -742,7 +742,7 @@
                 var that = this;
                 this.viewSelection="treemap";
                 axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
-                    onDrawTreeMapReady(res.data,this.flag,this.pdf,this.mapcount,this.allRootsArrayLength,this.keyworddoc,this.raw);
+                    onDrawTreeMapReady(res.data,this.flag,this.pdf,this.mapcount,this.allRootsArrayLength,this.keyworddoc,this.raw,showFile);
                 });
             },
 

@@ -1,4 +1,4 @@
-function drawRadialTree(data, radialTreeCount,kdoc) {
+function drawRadialTree(data, radialTreeCount,kdoc,showFile) {
   var padding = { left: 80, right: 50, top: 20, bottom: 20 };
   var svg = d3.select("#graph")
     .attr("width", width + padding.left + padding.right)
@@ -136,35 +136,7 @@ function drawRadialTree(data, radialTreeCount,kdoc) {
           }
             kdoc.moduledir=fullname;
             kdoc.classname='';
-            var keyword = {
-                classname: '',
-                moduledir: fullname
-                };
-            var keywordJson = JSON.stringify(keyword);
-        fetch('http://127.0.0.1:5006/codeDoc?wanted=' + keywordJson)
-          .then(response => response.json())
-          .then(data => {
-            const language = 'python';
-            const highlightedCode = Prism.highlight(data.code, Prism.languages[language], language);
-            var tips = d3.select("body")
-              .append("div")
-              .attr("class", "popup");
-
-            tips.append("span")
-              .attr("class", "close")
-              .attr("color", "red")
-              .text("x")
-              .on("click", () => {
-                tips.remove();
-              });
-
-            tips.append("div")
-              .attr("class", "content")
-              .html('<pre><code class="language-python">' + highlightedCode + '</code></pre>');
-          })
-          .catch(error => {
-            console.error('Error executing Python script:', error);
-          });
+            showFile(kdoc)
       })
       .on("mouseover", function (event, d) {
         var fullname = d.data.name.split('.', 1)[0];
@@ -510,9 +482,9 @@ function pdfgitclick(classname){
 
 }
 
-window.onDrawRadialTreeReady = function (data, radialTreeCount,kdoc) {
+window.onDrawRadialTreeReady = function (data, radialTreeCount,kdoc,showFile) {
   // Execution of drawing logic
                 console.log("helloradialtree");
 
-  drawRadialTree(data, radialTreeCount,kdoc);
+  drawRadialTree(data, radialTreeCount,kdoc,showFile);
 }

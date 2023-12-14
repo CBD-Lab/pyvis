@@ -1,4 +1,4 @@
-function drawTree(data,treecount,kdoc){
+function drawTree(data,treecount,kdoc,showFile){
      let tooltiptree = d3.select('body')
                             .append('div')
                             .attr("id", "tiptree") // Adding the ID attribute
@@ -504,6 +504,8 @@ function textclick(event,d){
                         fullname = point.data.name + '.' + fullname;
                     }
                     }
+                kdoc.moduledir=fullname;
+                kdoc.classname='';
                 fetch('http://127.0.0.1:5006/treeLeaf?wanted=' + fullname)
                     .then(response => response.json())
                     .then(data => {
@@ -678,7 +680,7 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,pdfClass,gitClass)
         .attr("height", "270px")
         .attr("y","31px")
         .attr("fill", "#E4F1FF")
-//        .attr("opacity","0.9")
+//        .attr("opacity","0.8")
     // Adding a Vertical Dividing Line
     gc.append("line")
         .attr("x1", "290px")
@@ -701,7 +703,7 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,pdfClass,gitClass)
     gc.append("text")
         .attr("x", "300px")
         .attr("y", "20px")
-        .attr("fill","white")
+        .attr("fill","black")
         .attr("font-size", "15px")
         .text("build-out classes");
     var datain=gc.selectAll(".textin")
@@ -782,8 +784,8 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,pdfClass,gitClass)
         .on("click",function(d,i)
         {
             lastIndex=i.lastIndexOf('.')
-            kdoc.classname=i.lastIndexOf('.')[0];
-            kdoc.moduledir=i.lastIndexOf('.')[-1];
+            kdoc.moduledir=i.substring(0,lastIndex);
+            kdoc.classname=i.substring(lastIndex+1);
             fetch('http://127.0.0.1:5006/classVariable?wanted=' + i)
                     .then(response => response.json())
                     .then(data => {
@@ -917,65 +919,14 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,pdfClass,gitClass)
                     }
                 }
                 lastIndex=fullname.lastIndexOf('.')
-                        var keyword = {
-                            classname: fullname.substring(lastIndex+1),
-                            moduledir: fullname.substring(0,lastIndex)
-                            };
-                            kdoc.classname=fullname.lastIndexOf('.')[0];
-                            kdoc.moduledir=fullname.lastIndexOf('.')[-1];
-
-                var keywordJson = JSON.stringify(keyword);
-              fetch('http://127.0.0.1:5006/codeDoc?wanted=' + keywordJson)
-                      .then(response => response.json())
-                      .then(data => {
-                       const language = 'python';
-                             // Highlighting code strings with the Prism.highlight method
-                       const highlightedCode = Prism.highlight(data.code, Prism.languages[language], language);
-
-                       var tips = d3.select("body")
-                                      .append("div")
-                                      .attr("class","popup")
-                       var drag=d3.drag()
-                              .on("start", function (event) {
-                                    // Record the position at the start of the drag
-                                    var startX = event.x;
-                                    var startY = event.y;
-                                    // Get the position of the current cue box
-                                    var currentLeft = parseFloat(tips.style("left"));
-                                    var currentTop = parseFloat(tips.style("top"));
-                                    // Calculate the mouse offset relative to the upper-left corner of the cue box
-                                    offsetX = startX - currentLeft;
-                                    offsetY = startY - currentTop;
-                                  })
-                                  .on("drag", function (event) {
-                                    // Update cue box position with mouse movement
-                                    tips.style("left", (event.x - offsetX) + "px")
-                                      .style("top", (event.y - offsetY) + "px");
-                              });
-
-                            // Bind the drag behavior to the element to be dragged
-                            tips.call(drag);
-
-                      tips.append("span")
-                          .attr("class","close")
-                          .attr("color","red")
-                          .text("x")
-                          .on("click",function(){
-                          tips.remove();
-                         });
-
-                      tips.append("div")
-                                    .attr("class","content")
-                                    .html('<pre><code class="language-python">'+highlightedCode+'</code></pre>');
-                                    })
-                      .catch(error => {
-                          console.error('Error executing Python script:', error);
-                      });
+                kdoc.classname=fullname.lastIndexOf('.')[0];
+                kdoc.moduledir=fullname.lastIndexOf('.')[-1];
+                showFile(kdoc)
             });
             }
 }
 var hasFile=1;
-window.onDrawTreeReady = function(data,treecount,keyworddoc) {
-    drawTree(data,treecount,keyworddoc);
+window.onDrawTreeReady = function(data,treecount,keyworddoc,showFile) {
+    drawTree(data,treecount,keyworddoc,showFile);
 }
 

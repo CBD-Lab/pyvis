@@ -4,7 +4,7 @@ var nodeweight;
 var nodelayer;
 
 
-function drawNet(data, k, search, netCount, kdoc,isclassnet){
+function drawNet(data, k, search, netCount, kdoc,isclassnet,showFile){
     var forceSimulation = d3.forceSimulation()
 							.force("link",d3.forceLink())
 							.force("charge",d3.forceManyBody().strength(-100))
@@ -98,7 +98,7 @@ function drawNet(data, k, search, netCount, kdoc,isclassnet){
 					  {
 					        const tooltipContent = `<div style="background-color:grey">Name:${i.name}</div>${i.myparent ?`<div>Parent:${i.myparent}</div>`:''}${i.attributes&&i.attributes.length>0 ?`<div>Attributes:${i.attributes}</div>`:''}${i.methods&&i.methods.length>0?`<div>Methods:${i.methods}</div>`:''}`;
 					          tooltip.html(tooltipContent).style("display","block")
-					            .style("background-color", "#E4F1FF");
+					            .style("background-color", "#FFDF76");
 					  }
 					  else if(fullname.lastIndexOf('.') == -1) {  // Displaying Root Node Information
 					      fetch('http://127.0.0.1:5006/info?wanted=' + fullname)
@@ -106,7 +106,7 @@ function drawNet(data, k, search, netCount, kdoc,isclassnet){
 					      .then(data => {  // Displaying Root Node Module Information
 					          const tooltipContent = `<div style="background-color:grey">Name:${data.Name}</div><div>Version:${data.Version}</div><div>Summary:${data.Summary}</div><div>Author:${data.Author}</div><div>License:${data.License}</div><div>Location:${data.Location}</div>${data.RequiredBy ?`<div>Required by:${data.RequiredBy}</div>`:''}${data.Requires?`<div>Requires:${data.Requires}</div>`:''}<div>Home page:${data.HomePage}</div>`;
 					          tooltip.html(tooltipContent).style("display","block")
-					            .style("background-color", "#E4F1FF");
+					            .style("background-color", "#FFDF76");
 					      })
 					  }
 
@@ -129,106 +129,15 @@ function drawNet(data, k, search, netCount, kdoc,isclassnet){
 				      {
 				        kdoc.moduledir=fullname;
 				        kdoc.classname='';
-                        var keyword = {
-                            classname: '',
-                            moduledir: fullname
-                            };
-                        var keywordJson = JSON.stringify(keyword);
-					  fetch('http://127.0.0.1:5006/codeDoc?wanted=' + keywordJson)
-						  .then(response => response.json())
-						  .then(data => {
-							  const language = 'python';
-							  const highlightedCode = Prism.highlight(data.code, Prism.languages[language], language);
-							  var tips = d3.select("body")
-										   .append("div")
-										   .attr("class", "popup");
-
-
-						      var drag=d3.drag()
-                                  .on("start", function (event) {
-                                    // Record the position at the start of the drag
-                                    var startX = event.x;
-                                    var startY = event.y;
-                                    // Get the position of the current cue box
-                                    var currentLeft = parseFloat(tips.style("left"));
-                                    var currentTop = parseFloat(tips.style("top"));
-                                    // Calculate the mouse offset relative to the upper-left corner of the cue box
-                                    offsetX = startX - currentLeft;
-                                    offsetY = startY - currentTop;
-                                  })
-                                  .on("drag", function (event) {
-                                    // Update cue box position with mouse movement
-                                    tips.style("left", (event.x - offsetX) + "px")
-                                      .style("top", (event.y - offsetY) + "px");
-                                  });
-                              // Bind the drag behavior to the element to be dragged
-                              tips.call(drag);
-
-                              tips.append("span")
-								  .attr("class", "close")
-								  .attr("color", "red")
-								  .text("x")
-								  .on("click", () => {
-								      tips.remove();
-								  });
-
-							  tips.append("div")
-								  .attr("class", "content")
-								  .html('<pre><code class="language-python">' + highlightedCode + '</code></pre>');
-						  })
-						  .catch(error => {
-							  console.error('Error executing Python script:', error);
-						  });
-						  }
+					    showFile(kdoc);
+                      }
                       else if(fullname.lastIndexOf('.')!=-1 && isclassnet==1)//load the  doc file if it's a class net graph
                       {
                         lastIndex=fullname.lastIndexOf('.')
-                        var keyword = {
-                            classname: fullname.substring(lastIndex+1),
-                            moduledir: fullname.substring(0,lastIndex)
-                            };
                             kdoc.classname=fullname.substring(lastIndex+1);
                             kdoc.moduledir=fullname.substring(0,lastIndex);
 
-                        var keywordJson = JSON.stringify(keyword);
-                         axios.get("http://127.0.0.1:5006/codeDoc?wanted=" + keywordJson).then(res=>{
-                            console.log(res.data);
-                            var tips = d3.select("body")
-                                                   .append("div")
-                                                   .attr("class", "popup");
-                            var drag=d3.drag()
-                                  .on("start", function (event) {
-                                    // Record the position at the start of the drag
-                                    var startX = event.x;
-                                    var startY = event.y;
-                                    // Get the position of the current cue box
-                                    var currentLeft = parseFloat(tips.style("left"));
-                                    var currentTop = parseFloat(tips.style("top"));
-                                    // Calculate the mouse offset re lative to the upper-left corner of the cue box
-                                    offsetX = startX - currentLeft;
-                                    offsetY = startY - currentTop;
-                                  })
-                                  .on("drag", function (event) {
-                                    // Update cue box position with mouse movement
-                                    tips.style("left", (event.x - offsetX) + "px")
-                                      .style("top", (event.y - offsetY) + "px");
-                                  });
-                                      // Bind the drag behavior to the element to be dragged
-                                      tips.call(drag);
-
-                                      tips.append("span")
-                                          .attr("class", "close")
-                                          .attr("color", "red")
-                                          .text("x")
-                                          .on("click", () => {
-                                              tips.remove();
-                                          });
-
-                                      tips.append("div")
-                                          .attr("class", "content")
-                                          .html('<pre><code class="language-python">' + res.data.code + '</code></pre>');
-
-                        })
+                        showFile(kdoc);
                       }
                   else//search the modulename if it's not a modulename
                   {
@@ -348,9 +257,9 @@ function selectit(type){
     return null;
 }
 
-window.onDrawNetReady = function(data, k, search, netCount,kdoc,isclassnet) {
+window.onDrawNetReady = function(data, k, search, netCount,kdoc,isclassnet,showFile) {
     // Execution of drawing logic
-    drawNet(data, k, search, netCount,kdoc,isclassnet);
+    drawNet(data, k, search, netCount,kdoc,isclassnet,showFile);
 }
 window.onNetfunction = function(type) {
     selectit(type);

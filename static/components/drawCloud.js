@@ -1,4 +1,4 @@
-function drawCloud(data,search,cloudcount,kdoc){
+function drawCloud(data,search,cloudcount,kdoc,showFile){
       var width = (window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth) * 0.84;
       var height = (window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight) * 0.89;
 
@@ -84,7 +84,7 @@ function drawCloud(data,search,cloudcount,kdoc){
             .on("mouseover", function(d,i){
                 d3.select(this)
                     .attr("font-weight", "bold");
-                 var fullname = i.text;
+             var fullname = i.text;
               var point = i;
               while (point.depth >= 0 && point.parent) {
                 point = point.parent;
@@ -120,53 +120,7 @@ function drawCloud(data,search,cloudcount,kdoc){
               }
                 kdoc.moduledir=fullname;
                 kdoc.classname='';
-                var keyword = {
-                    classname: '',
-                    moduledir: fullname
-                    };
-                var keywordJson = JSON.stringify(keyword);
-              fetch('http://127.0.0.1:5006/codeDoc?wanted=' + keywordJson)
-                .then(response => response.json())
-                .then(data => {
-                  const language = 'python';
-                  const highlightedCode = Prism.highlight(data.code, Prism.languages[language], language);
-                  var tips = d3.select("body")
-                    .append("div")
-                    .attr("class", "popup");
-
-                  var drag=d3.drag()
-                          .on("start", function (event) {
-                            var startX = event.x;
-                            var startY = event.y;
-
-                            var currentLeft = parseFloat(tips.style("left"));
-                            var currentTop = parseFloat(tips.style("top"));
-
-                            offsetX = startX - currentLeft;
-                            offsetY = startY - currentTop;
-                          })
-                          .on("drag", function (event) {
-                            tips.style("left", (event.x - offsetX) + "px")
-                              .style("top", (event.y - offsetY) + "px");
-                          });
-
-                        tips.call(drag);
-
-                  tips.append("span")
-                    .attr("class", "close")
-                    .attr("color", "red")
-                    .text("x")
-                    .on("click", () => {
-                      tips.remove();
-                    });
-
-                  tips.append("div")
-                    .attr("class", "content")
-                    .html('<pre><code class="language-python">' + highlightedCode + '</code></pre>');
-                })
-                .catch(error => {
-                  console.error('Error executing Python script:', error);
-                });
+                showFile(kdoc)
             })
             .each(function(d,i) {
                 if(worddata[i].data.linkAll && typeof( worddata[i].data.linkAll['pdfClass']) !== "undefined" && Object.keys(worddata[i].data.linkAll['pdfClass']).length > 0)
@@ -459,8 +413,8 @@ function drawCloud(data,search,cloudcount,kdoc){
     }
 }
 
-window.onDrawCloudReady = function(data,search,cloudcount,kdoc) {
+window.onDrawCloudReady = function(data,search,cloudcount,kdoc,showFile) {
     console.log('drawTree.js is ready');
     // Execution of drawing logic
-    drawCloud(data,search,cloudcount,kdoc);
+    drawCloud(data,search,cloudcount,kdoc,showFile);
 }

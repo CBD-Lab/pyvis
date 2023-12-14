@@ -1,4 +1,4 @@
-function drawMatrixGraph(graph,kdoc){
+function drawMatrixGraph(graph,kdoc,showFile){
     function trim(str){
         return str.replace(/\s|\xA0/g,"");
     }
@@ -57,35 +57,7 @@ function drawMatrixGraph(graph,kdoc){
                  .on("click", (d, i) => {
                         kdoc.moduledir=i.name;
 				        kdoc.classname='';
-                        var keyword = {
-                            classname: '',
-                            moduledir: i.name
-                            };
-                        var keywordJson = JSON.stringify(keyword);
-                      fetch('http://127.0.0.1:5006/codeDoc?wanted=' + keywordJson)
-                        .then(response => response.json())
-                        .then(data => {
-                          const language = 'python';
-                          const highlightedCode = Prism.highlight(data.code, Prism.languages[language], language);
-                          var tips = d3.select("body")
-                                       .append("div")
-                                       .attr("class", "popup");
-
-                          tips.append("span")
-                              .attr("class", "close")
-                              .attr("color", "red")
-                              .text("x")
-                              .on("click", () => {
-                                     tips.remove();
-                            });
-
-                          tips.append("div")
-                            .attr("class", "content")
-                            .html('<pre><code class="language-python">' + highlightedCode + '</code></pre>');
-                        })
-                        .catch(error => {
-                          console.error('Error executing Python script:', error);
-                        });
+                      showFile(kdoc);
                  })
                  .on("mouseover", function(d,i){
                     d3.select(this)
@@ -393,7 +365,7 @@ function drawMatrixGraph(graph,kdoc){
           });
 }
 
-window.onDrawMatrixReady = function(data,kdoc) {
+window.onDrawMatrixReady = function(data,kdoc,showFile) {
     // 执行绘图逻辑
-    drawMatrixGraph(data,kdoc);
+    drawMatrixGraph(data,kdoc,showFile);
 }

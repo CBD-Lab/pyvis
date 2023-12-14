@@ -1,4 +1,4 @@
-function drawPineTree(data,pineCount,kdoc) {
+function drawPineTree(data,pineCount,kdoc,showFile) {
     var width = (window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth) * 0.84;
     var height = (window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight) * 0.89;
 
@@ -352,57 +352,7 @@ function drawPineTree(data,pineCount,kdoc) {
                 }
                 kdoc.moduledir=fullname;
                 kdoc.classname='';
-                var keyword = {
-                    classname: '',
-                    moduledir: fullname
-                    };
-                var keywordJson = JSON.stringify(keyword);
-                fetch('http://127.0.0.1:5006/codeDoc?wanted=' + keywordJson)
-                    .then(response => response.json())
-                    .then(data => {
-                        const language = 'python';
-                        const highlightedCode = Prism.highlight(data.code, Prism.languages[language], language);
-                        var tips = d3.select("body")
-                                   .append("div")
-                                   .attr("class", "popup");
-
-                        var drag=d3.drag()
-                              .on("start", function (event) {
-                                // Record the position at the start of the drag
-                                var startX = event.x;
-                                var startY = event.y;
-                                // Get the position of the current cue box
-                                var currentLeft = parseFloat(tips.style("left"));
-                                var currentTop = parseFloat(tips.style("top"));
-                                // Calculate the mouse offset relative to the upper-left corner of the cue box
-                                offsetX = startX - currentLeft;
-                                offsetY = startY - currentTop;
-                              })
-                              .on("drag", function (event) {
-                                // Update cue box position with mouse movement
-                                tips.style("left", (event.x - offsetX) + "px")
-                                  .style("top", (event.y - offsetY) + "px");
-                              });
-                        // Bind the drag behavior to the element to be dragged
-                        tips.call(drag);
-
-                        tips.append("span")
-                            .attr("class", "close")
-                            .attr("color", "red")
-                            .text("x")
-                            .on("click", () => {
-                                 tips.remove();
-                            });
-
-                        tips.append("div")
-                            .attr("class", "content")
-                            .html('<pre><code class="language-python">' + highlightedCode + '</code></pre>');
-
-                            console.log(data);
-                        })
-                .catch(error => {
-                    console.error('Error executing Python script:', error);
-                });
+                showFile(kdoc);
            })
            .each(function() {
                 if(now_data.data.linkAll && typeof( now_data.data.linkAll['pdfClass']) !== "undefined" && Object.keys(now_data.data.linkAll['pdfClass']).length > 0)
@@ -539,7 +489,7 @@ function drawPineTree(data,pineCount,kdoc) {
     }
 
 }
-window.onDrawPineTreeReady = function (data,pineCount,kdoc) {
+window.onDrawPineTreeReady = function (data,pineCount,kdoc,showFile) {
 	// Execution of drawing logic
-	drawPineTree(data,pineCount,kdoc);
+	drawPineTree(data,pineCount,kdoc,showFile);
 }
