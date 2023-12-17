@@ -46,16 +46,16 @@ Click the [Tree] button, the tree provides a hierarchy structure of a package. O
 Click the [PineTree] button to display a new PineTree layout of overview of a package folder.
 ![Https://pyvisvue3d3.yingshinet.com](pinetree.png)
 ### (7) RadialTree Layout: radialtree visualization
-Click the [RadialTree] button to display a RadialTree indicating the hierarchical status of the relevant directories and files.
+Click the [RadialTree] button to display a RadialTree indicating the hierarchical status of a package folder.
 
-### (8) Bubble Module: bubble diagram visualization
-Click the [Bubble] button to display a Bubble diagram indicating the hierarchical status of the relevant directories and files. 
+### (8) Bubble Tree: bubble diagram visualization
+Click the [Bubble] button to display a Bubble diagram indicating the hierarchical status of a package folder.
 
-### (9) Cloud Module: wordcloud visualization
-Click the [Cloud] button to display a word cloud map indicating the hierarchical status of the relevant directories and files. 
+### (9) Cloud Tree: wordcloud visualization
+Click the [Cloud] button to display a word cloud of files and directories. 
 
-### (10) TreeMap Module: treemap visualization
-Click the [TreeMap] button to display a treemap indicating the hierarchical status of the relevant directories and files. 
+### (10) TreeMap Tree: treemap visualization
+Click the [TreeMap] button to display a treemap indicating the hierarchical status a package folder. 
 ![Https://pyvisvue3d3.yingshinet.com](TreeMap-Torchvision-TorchText.png)
 ## 5- Download figures
 On the left control region two download buttons are provided for obtaining the visualization figures if you need.
