@@ -1,7 +1,7 @@
-# PyVis: Python Module Visualization
+# PyVisVue3D3: Python Module Visualization(Https://pyvisvue3d3.yingshinet.com)
 
 ## 1- How can users get started with the project?
-To get started with PyCinemetrics, simply download the source code from https://github.com/CBD-Lab/pyvis. Then install the python module needed here: flask, flask_cores, inspect, importlib, requests...... you can directly run pip install -r requirements.txt to install all modules needed and
+To get started with PyVisVue3D3, simply download the source code from https://github.com/CBD-Lab/pyvis. Then install the python module needed here: flask, flask_cores, inspect, importlib, requests...... you can directly run pip install -r requirements.txt to install all modules needed and
 compile main.py to run the whole project. Open the link http://127.0.0.1:5006/ on the browser to use the tool.
 
 ## 2- How can you extract python modules in your local environment?
@@ -62,6 +62,6 @@ Click the [TreeMap] button to display a treemap indicating the hierarchical stat
 On the left control region two download buttons are provided for obtaining the visualization figures if you need.
 
 ## 6- Who maintains and contributes to the project?
-PyCinemetrics is sponsored by Chunfang Li(Communication University of China), and the development of this software has been contributed to by Junli Lu, Yuchen Pei, Yuhang Hu, Yalv Fan, Yuanzhi Tian, Xiaoyu Linghu, and Kun Wang.
+PyVisVue3D3 is sponsored by Chunfang Li(Communication University of China), and the development of this software has been contributed to by Junli Lu, Yuchen Pei, Yalv Fan, Yuanzhi Tian, Xiaoyu Linghu, and Kun Wang.
 
 # Thanks for your attention and suggestion.
