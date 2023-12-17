@@ -1,4 +1,4 @@
-function drawTreeMap(data, flag, pdf, mapCount, allRootsArrayLength,kdoc,raw,showFile) {
+function drawTreeMap(data, flag, pdf, mapCount, allRootsArrayLength,kdoc,raw) {
 
     var width  = (window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth) * 0.83;
     var height = (window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight) * 0.98;
@@ -71,8 +71,12 @@ function drawTreeMap(data, flag, pdf, mapCount, allRootsArrayLength,kdoc,raw,sho
             d3.select(this.parentNode).select(".txt").raise()
                 .transition()
                 .duration(300) // transition time
+                
                 .attr("font-size", "16") // Changed font size
-                .text(d => (d.data.name + "-" + d.data.value));
+                .attr("fill", "black")
+                .attr("font-weight","bold")
+                .text(d => (d.data.name + "-" + d.data.value))
+                .raise();
         })
         .on("mouseout", function (event, d) {
             d3.select(this)
@@ -83,7 +87,11 @@ function drawTreeMap(data, flag, pdf, mapCount, allRootsArrayLength,kdoc,raw,sho
                 .transition()
                 .duration(300) // transition time
                 .attr("font-size", "12") // Restore original font size
-                .text(d => (d.data.name))
+                .attr("fill", "white")
+                .attr("font-weight","normal")
+                .text(function(d) {
+                    return d.data.name.slice(0, Math.ceil(d.data.name.length * 0.4));
+                });
         })
         .on("click", (d, i) => {
             var fullname = i.data.name.split('.', 1)[0];
@@ -96,7 +104,35 @@ function drawTreeMap(data, flag, pdf, mapCount, allRootsArrayLength,kdoc,raw,sho
               }
             kdoc.moduledir=fullname;
             kdoc.classname='';
-            showFile(kdoc)
+            var keyword = {
+                classname: '',
+                moduledir: fullname
+                };
+            var keywordJson = JSON.stringify(keyword);
+            fetch('http://127.0.0.1:5006/codeDoc?wanted=' + keywordJson)
+                .then(response => response.json())
+                .then(data => {
+                    const language = 'python';
+                    const highlightedCode = Prism.highlight(data.code, Prism.languages[language], language);
+                    var tips = d3.select("body")
+                        .append("div")
+                        .attr("class", "popup");
+
+                    tips.append("span")
+                        .attr("class", "close")
+                        .attr("color", "red")
+                        .text("x")
+                        .on("click", () => {
+                            tips.remove();
+                        });
+
+                    tips.append("div")
+                        .attr("class", "content")
+                        .html('<pre><code class="language-python">' + highlightedCode + '</code></pre>');
+                })
+                .catch(error => {
+                    console.error('Error executing Python script:', error);
+                });
         });
         
     var currentColor = 0;
@@ -117,9 +153,13 @@ function drawTreeMap(data, flag, pdf, mapCount, allRootsArrayLength,kdoc,raw,sho
     setColor(treedata);
 
     var color = 1;
+    var maxlayer = 0;
     rect1.each(function(d) {
         d.flag = 0;
         if(d.depth > 1){
+            if (d.depth > maxlayer){
+                maxlayer = d.depth;
+            }
             d.flag = 2;
             d = d.parent;
             if (d.depth == 1 ){
@@ -157,6 +197,8 @@ function drawTreeMap(data, flag, pdf, mapCount, allRootsArrayLength,kdoc,raw,sho
                 }
     });
 
+    allRootsArrayLength.max = maxlayer;
+
     d3.select("input[id=zoom]").on("change", function () { // Modify width and height to scale a rectangular block.
 		var newScale = +this.value; // Get the value of the input box and convert it to a number
         var width1 = width * newScale * 0.01;
@@ -171,25 +213,6 @@ function drawTreeMap(data, flag, pdf, mapCount, allRootsArrayLength,kdoc,raw,sho
         text.attr("x", d => (d.x1 - d.x0) / 2 * newScale * 0.01)
             .attr("y", d => (d.y1 - d.y0) / 2 * newScale * 0.01)
             .attr("transform", function (d) { return "translate(" + d.x0 * newScale * 0.01 + "," + d.y0 * newScale * 0.01 + ")"; })
-    });
-
-    d3.select("input[id=color]").on("change", function () {
-        var newScale = +this.value;
-        rect1.each(function (d) {
-            if (d.data.color == newScale) {
-                d3.select(this)
-                .transition()
-                .duration(300)
-                .attr("opacity", 1.0);
-            }
-            else{
-                d3.select(this)
-                .transition()
-                .duration(300)
-                .attr("opacity", 0.4);
-            }
-        });
-        this.max = allRootsArrayLength.length;
     });
     
     d3.select("input[id=layer]").on("change", function () {
@@ -208,6 +231,7 @@ function drawTreeMap(data, flag, pdf, mapCount, allRootsArrayLength,kdoc,raw,sho
                 .attr("opacity", 0.4);
             }
         });
+        this.max = allRootsArrayLength.max;
     });
 
     d3.select("input[id=showPdf4]").on("change", function () {
@@ -411,7 +435,9 @@ function drawTreeMap(data, flag, pdf, mapCount, allRootsArrayLength,kdoc,raw,sho
         .attr("transform", function (d) { return "translate(" + d.x0 + "," + d.y0 + ")"; })
         .attr("class", "txt")
         .attr("fill", "white")
-        .text(d => (d.data.name));
+        .text(function(d) {
+            return d.data.name.slice(0, Math.ceil(d.data.name.length * 0.4));
+        });
 
     var allRoots = new Set();
     // 遍历树状图，找到所有根节点
@@ -435,7 +461,8 @@ function drawTreeMap(data, flag, pdf, mapCount, allRootsArrayLength,kdoc,raw,sho
 }
 
 
-window.onDrawTreeMapReady = function (data, flag, pdf, mapCount, allRootsArrayLength,kdoc,raw,showFile) {
+window.onDrawTreeMapReady = function (data, flag, pdf, mapCount, allRootsArrayLength,kdoc,raw) {
     // Execution of drawing logic
-    drawTreeMap(data, flag, pdf, mapCount, allRootsArrayLength,kdoc,raw,showFile);
+    drawTreeMap(data, flag, pdf, mapCount, allRootsArrayLength,kdoc,raw);
+    console.log(mapCount.node);
 }

@@ -413,11 +413,6 @@
                     <van-row>
                         <input style="position:relative;top:3px;margin-left: 5px;" type="range" id="zoom" min="100" max="300" value="100">
                     </van-row>
-                    <van-row style="margin-top:10px;margin-left: 5px;">Color </van-row>
-                    <van-row>
-                        <input style="position:relative;top:3px;margin-left: 5px;" type="range" id="color" min="0" max="30" step="1" value="0" onkeydown="handleKeyDown(event)" onkeypress="handleKeyPress(event)" oninput="updateColorValue(this.value)">
-                        <span id="colorValue" style="margin-left: 10px;margin-top: 3px">0</span>
-                    </van-row>
                     <van-row style="margin-top:10px;margin-left: 5px;">Layer</van-row>
                     <van-row>
                         <input style="position:relative;top:3px;margin-left: 5px;" type="range" id="layer" min="0" max="10" step="1" value="0" onkeydown="handleKeyDown(event)" onkeypress="handleKeyPress(event)" oninput="updateDepthValue(this.value)">
@@ -592,9 +587,9 @@
                 },
                 allRootsArrayLength: {
                     length: 0,
+                    max: 0,
                 },
                 raw:true,
-                allRootsArrayLength:'',
                 showOption:false,
                 searchOptions:[],
             };
