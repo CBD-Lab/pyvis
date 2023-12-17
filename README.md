@@ -23,29 +23,27 @@ Click the [tree] button to show the hierarchical tree graph of the extracted tre
 ## 4- Single Package Visualization
 
 ### (1) Retrieval
-Input the module name in the first search box and press enter, also it is available to pull the
-dropdownlist to choose the module name without input. After this operation, the whole
-visualization is based on the module selected.
-For the second search box, input the module directory in the left column, the class name in
+Input the package name in the first search box and press enter, also it is available to pull the
+dropdownlist to choose the package name without input. After this operation, the whole
+visualization will use the data of the package selected.
+For the second search box, input the package directory in the left column, the class name in
 the right column(not necessary), thus it is available to retrieval python document and code at any
 directory and file.
 
-### (2) Net Module: force-directed graph visualization
-Click the [Net] button to display a force-directed graph illustrating the relationships among
-related directories and files.If you want to change the style of the force-directed graph, a control area list three option regions for you.
+### (2) Net Layout: force-directed graph visualization
+Click the [Net] button to display a force-directed graph illustrating the relationships of modules(.py). If you want to change the style of the force-directed graph, a control area list three option regions for you.
 
-### (3) Matrix Module: matrix diagram visualization
-Click the [Matrix] button to display a Matrix diagram illustrating the relationships among
-related directories and files.Additionally, The matrix pointsand circles in the page have full interaction with the text.
+### (3) Matrix Layout: matrix diagram visualization
+Click the [Matrix] button to display a Matrix diagram illustrating the relationships with interaction.
 
-### (4) Class Module: class force-directed graph visualization
-Click the [Class] button,the module provide a force-directed graph that displays the information of all classes contained in the module.
+### (4) Class Layout: class force-directed graph visualization
+Click the [Class] button, Class call graph(only parent-children relations) will be shown within a package.
 
-### (5) Tree Module: Horizontal graph visualization
-Click the [Tree] button, the tree graph provides a hierarchy structure of the environment’s module directory. Once you click the leaf node, detailed information is provided with a pop-up window.
+### (5) Basic Tree Layout
+Click the [Tree] button, the tree provides a hierarchy structure of a package. Once you click the leaf node, detailed information is provided with a pop-up window.
 ![Https://pyvisvue3d3.yingshinet.com](Tree-PyTorch.png)
-### (6) PineTree Module: tree diagram visualization
-Click the [PineTree] button to display a tree map indicating the hierarchical structure of the relevant directories and files. At the same time, the left control area shows the number of nodes on the page.
+### (6) PineTree Layout: tree diagram visualization
+Click the [PineTree] button to display a new PineTree layout of overview of a package folder.
 ![Https://pyvisvue3d3.yingshinet.com](pinetree.png)
 ### (7) RadialTree Module: radialtree visualization
 Click the [RadialTree] button to display a Bubble diagram indicating the hierarchical status of the relevant directories and files.
