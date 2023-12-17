@@ -14,7 +14,8 @@ the module name and click the button [ExtractSingle] to extract message of the m
 ## 3- Entire Package Environment Visualization
 
 ### (1) Net json file
-The default whole environment module visualization file would be calledto show the relations between all inner modules with a force-directed graph when you open the link http://127.0.0.1:5006/.
+The default whole environment module visualization file would be called to show the relations between all packages with a force-directed graph when you open the link http://127.0.0.1:5006/.
+You can input or select a package name, then the package will be displayed.  And click the LOGO[PyVIS], return to the front page.
 
 ### (2) Tree json file
 Click the [tree] button to show the hierarchical tree graph of the extracted tree json file.
@@ -42,10 +43,10 @@ Click the [Class] button,the module provide a force-directed graph that displays
 
 ### (5) Tree Module: Horizontal graph visualization
 Click the [Tree] button, the tree graph provides a hierarchy structure of the environment’s module directory. Once you click the leaf node, detailed information is provided with a pop-up window.
-
+![Https://pyvisvue3d3.yingshinet.com](Tree-PyTorch.png)
 ### (6) PineTree Module: tree diagram visualization
 Click the [PineTree] button to display a tree map indicating the hierarchical structure of the relevant directories and files. At the same time, the left control area shows the number of nodes on the page.
-
+![Https://pyvisvue3d3.yingshinet.com](pinetree.png)
 ### (7) RadialTree Module: radialtree visualization
 Click the [RadialTree] button to display a Bubble diagram indicating the hierarchical status of the relevant directories and files.
 
@@ -57,7 +58,7 @@ Click the [Cloud] button to display a word cloud map indicating the hierarchical
 
 ### (10) TreeMap Module: treemap visualization
 Click the [TreeMap] button to display a treemap indicating the hierarchical status of the relevant directories and files. 
-
+![Https://pyvisvue3d3.yingshinet.com](TreeMap-Torchvision-TorchText.png)
 ## 5- Download figures
 On the left control region two download buttons are provided for obtaining the visualization figures if you need.
 
