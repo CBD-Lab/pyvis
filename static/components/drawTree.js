@@ -703,7 +703,7 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,pdfClass,gitClass)
     gc.append("text")
         .attr("x", "300px")
         .attr("y", "20px")
-        .attr("fill","black")
+        .attr("fill","white")
         .attr("font-size", "15px")
         .text("build-out classes");
     var datain=gc.selectAll(".textin")

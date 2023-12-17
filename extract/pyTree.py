@@ -113,13 +113,13 @@ def print_files(path, tree):
 
 def pyTree(moduleName):
     global pathGV
-    pytree = {"name": moduleName, "children": ""}
     exec("import " + moduleName)
-    path = basicFunction.get_path(moduleName)
     if '.' in moduleName:
-        pathGV = path[:-len(moduleName.split('.', 1)[0])]
-    else:
-        pathGV = path[:-len(moduleName)]
+        moduleName = moduleName.split('.', 1)[0]
+        exec("import " + moduleName)
+    pytree = {"name": moduleName, "children": ""}
+    path = basicFunction.get_path(moduleName)
+    pathGV = path[:-len(moduleName)]
     print_files(path, pytree)
     f = open('static/treejson/' + moduleName + '.json', 'w')
     f.write(json.dumps(pytree))

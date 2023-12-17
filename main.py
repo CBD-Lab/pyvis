@@ -303,5 +303,17 @@ def info():
     return module_info
 
 
+@app.route("/guide")
+def guide():
+    print("guide-pdf")
+    return send_from_directory('static', 'PyVis-GUIDE4EndUsers.pdf', as_attachment=True)
+
+
+@app.route("/video")
+def video():
+    print("demonstration-mp4")
+    return send_from_directory('static', 'PyVis-Demonstration.mp4', as_attachment=True)
+
+
 if "__main__" == __name__:  # program entrance
     app.run(port=5006, debug=True)

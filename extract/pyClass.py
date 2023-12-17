@@ -35,7 +35,7 @@ def get_classes(path, pname):
                         print("---------2---------")
                         print(inclasspath)
                         for c in inclass:
-                            exec("from" + " " + modulepath + " " + "import" + " " + c)
+                            exec("from " + modulepath + " import " + c)
                             methods, attributes = basicFunction.get_class_method_attr(eval(c))
                             # parent = eval(c).__bases__[0].__name__
                             parent = eval(inclasspath[inclass.index(c)]).__bases__
@@ -93,11 +93,10 @@ def get_links(myclasses, nodes):
 def getClassNet(pname):
     global pathGV
     init()
-    path = basicFunction.get_path(pname)
     if '.' in pname:
-        pathGV = path[:-len(pname.split('.', 1)[0])]
-    else:
-        pathGV = path[:-len(pname)]
+        pname = pname.split('.', 1)[0]
+    path = basicFunction.get_path(pname)
+    pathGV = path[:-len(pname)]
     myclasses = get_classes(path, pname)
     print("-----5----")
     print(myclasses)
