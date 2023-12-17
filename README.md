@@ -45,8 +45,8 @@ Click the [Tree] button, the tree provides a hierarchy structure of a package. O
 ### (6) PineTree Layout: tree diagram visualization
 Click the [PineTree] button to display a new PineTree layout of overview of a package folder.
 ![Https://pyvisvue3d3.yingshinet.com](pinetree.png)
-### (7) RadialTree Module: radialtree visualization
-Click the [RadialTree] button to display a Bubble diagram indicating the hierarchical status of the relevant directories and files.
+### (7) RadialTree Layout: radialtree visualization
+Click the [RadialTree] button to display a RadialTree indicating the hierarchical status of the relevant directories and files.
 
 ### (8) Bubble Module: bubble diagram visualization
 Click the [Bubble] button to display a Bubble diagram indicating the hierarchical status of the relevant directories and files. 
