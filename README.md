@@ -1,12 +1,12 @@
 # PyVisVue3D3: Python Module Visualization(Https://pyvisvue3d3.yingshinet.com)
 
 ## 1- How can users get started with the project?
-To get started with PyVisVue3D3, simply download the source code from https://github.com/CBD-Lab/pyvis. Then install the python module needed here: flask, flask_cores, inspect, importlib, requests...... you can directly run pip install -r requirements.txt to install all modules needed and
+To get started with PyVisVue3D3, simply download the source code from https://github.com/CBD-Lab/pyvis. Then install the python module needed here: flask, flask_cores, pipdeptree, requests. Other the third-party packages(such as PyTorch, torchvision, torchtext, transformers) are experiment data.
 compile main.py to run the whole project. Open the link http://127.0.0.1:5006/ on the browser to use the tool.
 
 ## 2- How can you extract python modules in your local environment?
-Focus on the left region and click the button [ExtractAll] to extract all modules in your local
-environment, the backend programming will scan your site-packages directory and analyze all
+Focus on the left region and click the button [ExtractAll] to extract all modules in your local vertual 
+environment(\emph{venv}), the backend programming will scan your site-packages directory and analyze all
 modules to generate some .json files provided for visualization and module analysis. Also if you
 want to view details of certain module or to update the specific information, It’s available to input
 the module name and click the button [ExtractSingle] to extract message of the module again.
