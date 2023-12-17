@@ -62,6 +62,6 @@ Click the [TreeMap] button to display a treemap indicating the hierarchical stat
 On the left control region two download buttons are provided for obtaining the visualization figures if you need.
 
 ## 6- Who maintains and contributes to the project?
-PyCinemetrics is sponsored by Chunfang Li(Communication University of China), and the development of this software has been contributed to by Junli Lu, Yuchen Pei, Yuhang Hu, Yalv Fan, Yanzhi Tian, Xiaoyu Linghu, and Kun Wang.
+PyCinemetrics is sponsored by Chunfang Li(Communication University of China), and the development of this software has been contributed to by Junli Lu, Yuchen Pei, Yuhang Hu, Yalv Fan, Yuanzhi Tian, Xiaoyu Linghu, and Kun Wang.
 
 # Thanks for your attention and suggestion.
