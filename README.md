@@ -22,14 +22,14 @@ When clicking on ”ExtractSingle”, a single package will be extracted. If the
 ### (3) Matrix Layout: matrix diagram visualization
 ### (4) Class Layout: class force-directed graph visualization(only parent-children relations)
 ### (5) Basic Tree Layout
-![Https://pyvisvue3d3.yingshinet.com](Tree-PyTorch.png)
+<img src="Tree-PyTorch.png" width="800"/>
 ### (6) PineTree Layout: tree diagram visualization
-![Https://pyvisvue3d3.yingshinet.com](pinetree.png)
+<img src="pinetree.png" width="800"/>
 ### (7) RadialTree Layout: radialtree visualization
 ### (8) Bubble Tree: bubble diagram visualization
 ### (9) Cloud Tree: wordcloud visualization
 ### (10) TreeMap Tree: treemap visualization
-![Https://pyvisvue3d3.yingshinet.com](TreeMap-Torchvision-TorchText.png)
+<img src="TreeMap-Torchvision-TorchText.png" width="800"/>
 ## 5- Download figures:SVG, PNG
 ## 6- Who maintains and contributes to the project?
 PyVisVue3D3 is sponsored by Chunfang Li(Communication University of China), and the development of this software has been contributed to by Junli Lu, Yuchen Pei, Yalv Fan, Yuanzhi Tian, Xiaoyu Linghu, and Kun Wang.
