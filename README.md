@@ -4,6 +4,8 @@
 To get started with PyVisVue3D3, simply download the source code from https://github.com/CBD-Lab/pyvis. Then install the python module needed here: flask, flask_cores, pipdeptree, requests. Other the third-party packages(such as PyTorch, torchvision, torchtext, transformers) are experiment data.
 When deploying the PyVisVue3D3, users need to choose a venv, then run the main.py on port 5006. After opening Http://127.0.0.1:5006, the venv path will be displayed.
 ![Https://pyvisvue3d3.yingshinet.com](pylibsnet.png)
+
+<img src="pylibsnet.png" width="200"/>
 ## 2- How can you extract structures of python packages in your local environment?
 When clicking on ”ExtractAll,” it will extract inter-package dependencies and three types of structures within each package. This operation may take a considerable long time.
 
