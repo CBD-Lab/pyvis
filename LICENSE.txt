@@ -1,6 +1,6 @@
-PyCinemetrics - Computational Film Studies Tool
-
-Version 1.0, [2023-09-20]
+PyVisVue3D3: Python Visualization Using Vue3 and D3
+PyVisVue3D3: Python Visualization from Hierarchy Tree to Call Graph
+Version 1.0, [2023-12-20]
 
 Copyright (C) [2023] [Chunfang Li, 115305288@QQ.com]
 
