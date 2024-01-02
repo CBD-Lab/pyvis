@@ -390,7 +390,7 @@ function updateNodes(source, nodes) {
                 .append("xhtml:div")
                 .style("margin", 0)
                 .style("padding", 0)
-                .html('<img src="http://127.0.0.1:5006/get_svg/fileBox.svg" width="100%" height="100%" />')
+                .html('<img src=pathUrl+"/get_svg/fileBox.svg" width="100%" height="100%" />')
                 .on("click",function(event,d)
                  {
                     textclick(event,d);
@@ -409,7 +409,7 @@ function updateNodes(source, nodes) {
                  .append("xhtml:div")
                  .style("margin", 0)
                  .style("padding", 0)
-                 .html('<img src="http://127.0.0.1:5006/get_svg/pdf.svg" width="100%" height="100%" />')
+                 .html('<img src=pathUrl+"/get_svg/pdf.svg" width="100%" height="100%" />')
                  .on("click",function()
                  {
                     var link = d.data.linkAll['pdfModule'];
@@ -506,7 +506,7 @@ function textclick(event,d){
                     }
                 kdoc.moduledir=fullname;
                 kdoc.classname='';
-                fetch('http://127.0.0.1:5006/treeLeaf?wanted=' + fullname)
+                fetch(pathUrl+'/treeLeaf?wanted=' + fullname)
                     .then(response => response.json())
                     .then(data => {
                     if(data !== "null"){
@@ -736,7 +736,7 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,pdfClass,gitClass)
                     return currentY-15;
                 })
                 .append("xhtml:div")
-                .html('<img src="http://127.0.0.1:5006/get_svg/pdf.svg" width="100%" height="100%" />')
+                .html('<img src=pathUrl+"/get_svg/pdf.svg" width="100%" height="100%" />')
                 .on("click",function()
                 {
                     window.open(linkPdf, '_blank');
@@ -762,7 +762,7 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,pdfClass,gitClass)
                     return currentY-15;
                 })
                 .append("xhtml:div")
-                .html('<img src="http://127.0.0.1:5006/get_svg/github.svg" width="100%" height="100%" />')
+                .html('<img src=pathUrl+"/get_svg/github.svg" width="100%" height="100%" />')
                 .on("click",function()
                 {
                     window.open(linkGit, '_blank');
@@ -786,7 +786,7 @@ function drawOutTree(nodes,links,datain,dataout,locX,locY,pdfClass,gitClass)
             lastIndex=i.lastIndexOf('.')
             kdoc.moduledir=i.substring(0,lastIndex);
             kdoc.classname=i.substring(lastIndex+1);
-            fetch('http://127.0.0.1:5006/classVariable?wanted=' + i)
+            fetch(pathUrl+'/classVariable?wanted=' + i)
                     .then(response => response.json())
                     .then(data => {
                     var tips = d3.select("body")

@@ -238,7 +238,7 @@ function drawCloud(data,search,cloudcount,kdoc,showFile){
                     .style("align-items", "center")
                     .style("margin", 0)
                     .style("padding", 0)
-                    .html('<img src="http://127.0.0.1:5006/get_svg/pdf.svg" style="width: 8px; height: 15px; margin-right: 5px;"/>')
+                    .html('<img src=pathUrl+"/get_svg/pdf.svg" style="width: 8px; height: 15px; margin-right: 5px;"/>')
                     .append("span")
                     .attr("class", "close")
                     .attr("color", "red")
@@ -304,7 +304,7 @@ function drawCloud(data,search,cloudcount,kdoc,showFile){
                     .style("align-items", "center")
                     .style("margin", 0)
                     .style("padding", 0)
-                    .html('<img src="http://127.0.0.1:5006/get_svg/github.svg" style="width: 10px; height: 10px; margin-right: 5px;"/>')
+                    .html('<img src=pathUrl+"/get_svg/github.svg" style="width: 10px; height: 10px; margin-right: 5px;"/>')
                     .append("span")
                     .attr("class", "close")
                     .attr("color", "red")
@@ -345,7 +345,7 @@ function drawCloud(data,search,cloudcount,kdoc,showFile){
 	// pdf and git click event
 	function pdfgitclick(classname){
         console.log('pgc',classname);
-        fetch('http://127.0.0.1:5006/classVariable?wanted=' + classname)
+        fetch(pathUrl+'/classVariable?wanted=' + classname)
         .then(response => response.json())
         .then(data => {
             var tips = d3.select("body")

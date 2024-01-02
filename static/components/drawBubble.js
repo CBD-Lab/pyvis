@@ -1,4 +1,5 @@
 function drawBubble(data,bubbleCount,kdoc,showFile) {
+console.log(data.name);
       let tooltip = d3.select('body')
         .append('div')
         .attr("id", "tip")
@@ -22,7 +23,8 @@ function drawBubble(data,bubbleCount,kdoc,showFile) {
       var pack = d3.pack()
         .size([width, height]);
       var hidata = d3.hierarchy(data, d => d.children)
-        .sum(d => d.value);
+        .sum(d => d.value || 1);
+
       var packdata = pack(hidata);
       var nodes = packdata.descendants();
       var gc = svg.selectAll("g")
@@ -122,7 +124,7 @@ function drawBubble(data,bubbleCount,kdoc,showFile) {
                             .style("align-items", "center")
                             .style("margin", 0)
                             .style("padding", 0)
-                            .html('<img src="http://127.0.0.1:5006/get_svg/pdf.svg" style="width: 8px; height: 15px; margin-right: 5px;"/>')
+                            .html('<img src=pathUrl+"/get_svg/pdf.svg" style="width: 8px; height: 15px; margin-right: 5px;"/>')
                             .append('text')
                             .attr("stroke-family", "FangSong")
                             .attr("font-size", "10px")
@@ -142,7 +144,7 @@ function drawBubble(data,bubbleCount,kdoc,showFile) {
                             .style("margin", 0)
                             .style("padding", 0)
                             .style("line-height", "1")
-                            .html('<img src="http://127.0.0.1:5006/get_svg/github.svg" style="width: 8px; height: 15px; margin-right: 5px;"/>')
+                            .html('<img src=pathUrl+"/get_svg/github.svg" style="width: 8px; height: 15px; margin-right: 5px;"/>')
                             .append('text')
                             .attr("stroke-family", "FangSong")
                             .attr("font-size", "10px")
@@ -160,7 +162,7 @@ function drawBubble(data,bubbleCount,kdoc,showFile) {
                             .style("align-items", "center")
                             .style("margin", 0)
                             .style("padding", 0)
-                            .html('<img src="http://127.0.0.1:5006/get_svg/pdf.svg" style="width: 8px; height: 15px; margin-right: 5px;"/>')
+                            .html('<img src=pathUrl+"/get_svg/pdf.svg" style="width: 8px; height: 15px; margin-right: 5px;"/>')
                             .append('text')
                             .attr("stroke-family", "FangSong")
                             .attr("font-size", "10px")
@@ -265,7 +267,7 @@ function drawBubble(data,bubbleCount,kdoc,showFile) {
 
     function pdfgitclick(classname){
         console.log('pgc',classname);
-        fetch('http://127.0.0.1:5006/classVariable?wanted=' + classname)
+        fetch(pathUrl+'/classVariable?wanted=' + classname)
         .then(response => response.json())
         .then(data => {
             var tips = d3.select("body")
@@ -363,7 +365,7 @@ function drawBubble(data,bubbleCount,kdoc,showFile) {
                     .style("align-items", "center")
                     .style("margin", 0)
                     .style("padding", 0)
-                    .html('<img src="http://127.0.0.1:5006/get_svg/pdf.svg" style="width: 8px; height: 15px; margin-right: 5px;"/>')
+                    .html('<img src=pathUrl+"/get_svg/pdf.svg" style="width: 8px; height: 15px; margin-right: 5px;"/>')
                     .append("span")
                     .attr("class", "close")
                     .attr("color", "red")
@@ -430,7 +432,7 @@ function drawBubble(data,bubbleCount,kdoc,showFile) {
                     .style("align-items", "center")
                     .style("margin", 0)
                     .style("padding", 0)
-                    .html('<img src="http://127.0.0.1:5006/get_svg/github.svg" style="width: 10px; height: 10px; margin-right: 5px;"/>')
+                    .html('<img src=pathUrl+"/get_svg/github.svg" style="width: 10px; height: 10px; margin-right: 5px;"/>')
                     .append("span")
                     .attr("class", "close")
                     .attr("color", "red")

@@ -13,7 +13,9 @@
     <script src="/static/vue3.min.js"></script>
     <script src="/static/vant.min.js"></script>
     <script src="/static/axios.min.js"></script>
-    <script src="static/d3.layout.cloud.js"></script>
+    <script src="/static/d3.layout.cloud.js"></script>
+    <script src="/static/d3.v7.min.js"></script>
+
     <!-- Introducing the drawing js file -->
     <script type="text/javascript" src="/static/components/drawNet.js"></script>
     <script type="text/javascript" src="/static/components/drawMatrix.js"></script>
@@ -244,7 +246,6 @@
 </head>
 <body>
 
-<script src="static/d3.v7.min.js"></script>
 <div id="app">
     <!-- Top Navigation -->
     <van-row style="height:10vh">
@@ -515,6 +516,15 @@
 </div>
 
 <script>
+    let currentHost=window.location.host;
+    let pathUrl;
+    if (currentHost === "localhost" || currentHost.startsWith("127.")){
+        pathUrl="http://127.0.0.1:5006";
+        }
+       else{
+        pathUrl="https://pyvisvue3d3.yingshinet.com";
+    }
+
     function updateColorValue(value) {
             document.getElementById('colorValue').innerText = value;
     }
@@ -542,8 +552,6 @@
 
         currentValue = parseInt(inputElement.value);
     }
-</script>
-<script>
     var width=(window.innerWidth||document.documentElement.clientWidth||document.body.clientWidth)*0.95;
     var height=(window.innerHeight||document.documentElement.clientHeight||document.body.clientHeight)*0.92;
     var color = d3.schemeCategory10;
@@ -669,15 +677,11 @@
                 this.showOption=!this.showOption;
                 console.log(this.showOption);
                 },
-            onOptionChange()
-            {
-
-            },
             netvis() {
                 var that = this;
                 this.clearPage();
                 this.viewSelection="net";
-                axios.get("http://127.0.0.1:5006/module?wanted=" + this.keyword).then(res=>{
+                axios.get(pathUrl+"/module?wanted=" + this.keyword).then(res=>{
                     onDrawNetReady(res.data, this.keyword,this.search,this.netcount,this.keyworddoc,0,showFile);
                     if(this.keyword=='')
                     {
@@ -700,7 +704,7 @@
                 var that = this;
                 this.clearPage();
                 this.viewSelection="matrix";
-                axios.get("http://127.0.0.1:5006/module?wanted=" + this.keyword).then(res=>{
+                axios.get(pathUrl+"/module?wanted=" + this.keyword).then(res=>{
                     onDrawMatrixReady(res.data,this.keyworddoc,showFile);
                 });
             },
@@ -710,7 +714,7 @@
                 this.viewSelection="class";
                 if (this.keyword == "" || this.keyword == "undefined" || this.keyword == "None")
                     this.keyword = "flask"
-                axios.get("http://127.0.0.1:5006/module?wanted=" + this.keyword + "class").then(res=>{
+                axios.get(pathUrl+"/module?wanted=" + this.keyword + "class").then(res=>{
                     onDrawNetReady(res.data, this.keyword,this.search,this.netcount,this.keyworddoc,1,showFile);
                 });
             },
@@ -718,7 +722,7 @@
                 var that = this;
                 this.clearPage();
                 this.viewSelection="tree";
-                axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
+                axios.get(pathUrl+"/treevis?wanted=" + this.keyword).then(res=>{
                     onDrawTreeReady(res.data,this.treecount,this.keyworddoc,showFile);
                 });
             },
@@ -726,7 +730,7 @@
                 this.clearPage();
                 var that = this;
                 this.viewSelection="pinetree";
-                axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
+                axios.get(pathUrl+"/treevis?wanted=" + this.keyword).then(res=>{
                     onDrawPineTreeReady(res.data,this.pinecount,this.keyworddoc,showFile);
                 });
             },
@@ -734,7 +738,7 @@
                 this.clearPage();
                 var that = this;
                 this.viewSelection="radialtree";
-                axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
+                axios.get(pathUrl+"/treevis?wanted=" + this.keyword).then(res=>{
                     onDrawRadialTreeReady(res.data, this.radialTreeCount,this.keyworddoc,showFile);
                 });
             },
@@ -742,7 +746,7 @@
                 var that = this;
                 this.clearPage();
                 this.viewSelection="bubble";
-                axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
+                axios.get(pathUrl+"/treevis?wanted=" + this.keyword).then(res=>{
                     onDrawBubbleReady(res.data,this.bubblecount,this.keyworddoc,showFile);
                 });
             },
@@ -750,7 +754,7 @@
                 var that = this;
                 this.clearPage();
                 this.viewSelection="cloud";
-                axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
+                axios.get(pathUrl+"/treevis?wanted=" + this.keyword).then(res=>{
                     onDrawCloudReady(res.data,this.search,this.cloudcount,this.keyworddoc,showFile);
                 });
             },
@@ -758,7 +762,7 @@
                 this.clearPage();
                 var that = this;
                 this.viewSelection="treemap";
-                axios.get("http://127.0.0.1:5006/treevis?wanted=" + this.keyword).then(res=>{
+                axios.get(pathUrl+"/treevis?wanted=" + this.keyword).then(res=>{
                     onDrawTreeMapReady(res.data,this.flag,this.pdf,this.mapcount,this.allRootsArrayLength,this.keyworddoc,this.raw,showFile);
                 });
             },
@@ -830,7 +834,8 @@
 
             select() {
                 const message = 'Confirm reloading folder data?';
-
+<!--                const messageOnline="Function not available now!";-->
+                alert(message);
                 if (window.confirm(message)) {
                     this.isLoading = true;
                     fetch("/userPath").then(res => {
@@ -872,7 +877,7 @@
             async showPDF() {
                 this.clearPage();
                 try {
-                    const response = await axios.get('http://127.0.0.1:5006/guide', { responseType: 'arraybuffer' });
+                    const response = await axios.get(pathUrl+'/guide', { responseType: 'arraybuffer' });
                     const blob = new Blob([response.data], { type: 'application/pdf' });
 
                     const iframe = document.createElement('iframe');
@@ -891,7 +896,7 @@
             async showVideo() {
                 this.clearPage();
                 try {
-                    const response = await axios.get('http://127.0.0.1:5006/video', { responseType: 'arraybuffer' });
+                    const response = await axios.get(pathUrl+'/video', { responseType: 'arraybuffer' });
                     const blob = new Blob([response.data], { type: 'video/mp4' });
                     const video = document.createElement('video');
                     video.classList.add('video-iframe');
@@ -912,7 +917,7 @@
         },
 
         mounted() {
-            axios.get("http://127.0.0.1:5006/localPath")
+            axios.get(pathUrl+"/localPath")
                 .then((response) => {
                     this.localValue = response.data.result[0];
                 })

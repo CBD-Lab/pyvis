@@ -5,7 +5,7 @@ function showFile(keyworddoc)
     moduledir: keyworddoc.moduledir
     };
     var keywordJson = JSON.stringify(keyword);
-    axios.get("http://127.0.0.1:5006/codeDoc?wanted=" + keywordJson).then(res=>{
+    axios.get(pathUrl+"/codeDoc?wanted=" + keywordJson).then(res=>{
                     var tips = d3.select("body")
 										   .append("div")
 										   .attr("class", "popup");

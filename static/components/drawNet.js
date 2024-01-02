@@ -101,7 +101,7 @@ function drawNet(data, k, search, netCount, kdoc,isclassnet,showFile){
 					            .style("background-color", "#FFDF76");
 					  }
 					  else if(fullname.lastIndexOf('.') == -1) {  // Displaying Root Node Information
-					      fetch('http://127.0.0.1:5006/info?wanted=' + fullname)
+					      fetch(pathUrl+'/info?wanted=' + fullname)
 					      .then(response => response.json())  // Use json() method to extract JSON data
 					      .then(data => {  // Displaying Root Node Module Information
 					          const tooltipContent = `<div style="background-color:grey">Name:${data.Name}</div><div>Version:${data.Version}</div><div>Summary:${data.Summary}</div><div>Author:${data.Author}</div><div>License:${data.License}</div><div>Location:${data.Location}</div>${data.RequiredBy ?`<div>Required by:${data.RequiredBy}</div>`:''}${data.Requires?`<div>Requires:${data.Requires}</div>`:''}<div>Home page:${data.HomePage}</div>`;

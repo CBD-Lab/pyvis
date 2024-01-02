@@ -279,7 +279,7 @@ function drawMatrixGraph(graph,kdoc,showFile){
                             moduledir: i.name
                             };
                         var keywordJson = JSON.stringify(keyword);
-          fetch('http://127.0.0.1:5006/codeDoc?wanted=' + keywordJson)
+          fetch(pathUrl+'/codeDoc?wanted=' + keywordJson)
             .then(response => response.json())
             .then(data => {
               const language = 'python';
