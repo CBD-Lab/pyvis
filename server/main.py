@@ -302,13 +302,13 @@ def info():
 @app.route("/guide")
 def guide():
     print("guide-pdf")
-    return send_from_directory('/static', 'PyVis-GUIDE4EndUsers.pdf', as_attachment=True)
+    return send_from_directory(app.static_folder+'/static/', 'PyVis-GUIDE4EndUsers.pdf', as_attachment=True)
 
 
 @app.route("/video")
 def video():
     print("demonstration-mp4")
-    return send_from_directory('/static', 'PyVis-Demonstration.mp4', as_attachment=True)
+    return send_from_directory(app.static_folder+'./static', 'PyVis-Demonstration.mp4', as_attachment=True)
 
 @app.route("/codeExample")
 def codeExample():
