@@ -1,4 +1,14 @@
 # PyVisVue3D3: Python Module Visualization(Https://pyvisvue3d3.yingshinet.com)
+## 0-【Cite the paper】
+Chunfang Li, Yuchen Pei, Yushi Shen, Junli Lu, Yalv Fan, Xiaoyu Linghu, Yuanzhi Tian, Kun Wang,
+PyVisVue3D3: Python visualization from hierarchy tree to call graph,
+SoftwareX,
+Volume 26,
+2024,
+101689,
+ISSN 2352-7110,
+https://doi.org/10.1016/j.softx.2024.101689.
+(https://www.sciencedirect.com/science/article/pii/S2352711024000608)
 
 ## 1- How can users get started with the project?
 To get started with PyVisVue3D3, simply download the source code from https://github.com/CBD-Lab/pyvis. Then install the python module needed here: flask, flask_cores, pipdeptree, requests. Other the third-party packages(such as PyTorch, torchvision, torchtext, transformers) are experiment data.
